@@ -45,18 +45,18 @@ endfunction()
 
 #
 # Macro for finding a dependency and building it if it is not found.  Either way
-# a target with the name of the dependency suffixed with "_External" will be
+# a target with the name of the dependency suffixed with "TARGET_SUFFIx" will be
 # added.
 #    - name : The case-sensitive name for the dependency
 #
 function(find_or_build_dependency __name)
     find_package(${__name} QUIET)
     string(TOUPPER ${__name} __NAME)
-    if(TARGET ${__name}_External)
+    if(TARGET ${__name}${TARGET_SUFFIX})
         message(STATUS "${__name} already handled.")
     elseif(${__name}_FOUND OR ${__NAME}_FOUND)
         message(STATUS "Suitable ${__name} was located and will not be built.")
-        add_library(${__name}_External INTERFACE)
+        add_library(${__name}${TARGET_SUFFIX} INTERFACE)
     else()
         message(STATUS "Unable to locate ${__name}.  Building one instead.")
         include("external/Build${__name}.cmake")

@@ -8,8 +8,12 @@
 #We require C++14
 set(CMAKE_CXX_STANDARD 14)
 
+#To "namespace" protect our targets we append this to them
+set(TARGET_SUFFIX _nwx)
+
 #Source our macros
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/macros")
+
 include(OptionMacros)
 include(Flags)
 
@@ -70,7 +74,7 @@ endforeach()
 #
 ################################################################################
 
-ExternalProject_Add(${PROJECT_NAME}_External
+ExternalProject_Add(${PROJECT_NAME}${TARGET_SUFFIX}
     SOURCE_DIR ${SUPER_PROJECT_SRC}
     CMAKE_ARGS -DSUPER_PROJECT_ROOT=${SUPER_PROJECT_ROOT}
                ${CORE_CMAKE_OPTIONS}
@@ -78,12 +82,10 @@ ExternalProject_Add(${PROJECT_NAME}_External
     INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
     CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}
                      ${CORE_CMAKE_STRINGS}
-                     -DNWCHEMEX_LIBRARY_LIBRARIES:STRING=${NWCHEMEX_LIBRARY_LIBRARIES}
-                     -DNWCHEMEX_LIBRARY_INCLUDE_DIRS:STRING=${NWCHEMEX_LIBRARY_INCLUDE_DIRS}
                      -DNWCHEMEX_LIBRARY_DEPENDS:STRING=${NWCHEMEX_LIBRARY_DEPENDS}
 )
 foreach(depend ${NWCHEMEX_LIBRARY_DEPENDS})
-    add_dependencies(${PROJECT_NAME}_External ${depend})
+    add_dependencies(${PROJECT_NAME}${TARGET_SUFFIX} ${depend}${TARGET_SUFFIX})
 endforeach()
 
 ################################################################################
@@ -98,7 +100,7 @@ endforeach()
 
 find_package(NWChemExBase QUIET)
 if(NOT NWCHEMEXLIBRARYBASE_FOUND)
-    ExternalProject_Add(NWChemExBase_External
+    ExternalProject_Add(NWChemExBase${TARGET_SUFFIX}
         SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/NWChemExBase
         CMAKE_ARGS -DPLB_PREFIX=${CMAKE_CURRENT_SOURCE_DIR}
                    -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
@@ -106,9 +108,9 @@ if(NOT NWCHEMEXLIBRARYBASE_FOUND)
         INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
     )
 else() # Add a fake target so we don't need if statements
-    add_library(NWChemExBase_External INTERFACE)
+    add_library(NWChemExBase${TARGET_SUFFIX} INTERFACE)
 endif()
-add_dependencies(NWChemExBase_External ${PROJECT_NAME}_External)
+add_dependencies(NWChemExBase${TARGET_SUFFIX} ${PROJECT_NAME}${TARGET_SUFFIX})
 
 ################################################################################
 #                                                                              #
@@ -130,7 +132,7 @@ if(${BUILD_TESTS})
                          -DCMAKE_MODULE_PATH:LIST=${CMAKE_MODULE_PATH}
                          ${CORE_CMAKE_STRINGS}
     )
-    add_dependencies(${PROJECT_NAME}_TEST NWChemExBase_External)
+    add_dependencies(${PROJECT_NAME}_TEST NWChemExBase${TARGET_SUFFIX})
 
     # This file will allow us to run ctest in the top-level build dir
     # Basically it just defers to the actual top-level CTestTestfile.cmake in the
