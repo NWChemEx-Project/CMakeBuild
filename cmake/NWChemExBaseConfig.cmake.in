@@ -42,6 +42,6 @@ list(APPEND CMAKE_MODULE_PATH ${${__name}_MODULE_PATH}/macros
                               ${${__name}_MODULE_PATH}/external/find_external)
 
 #Find the testing infrastructure
-find_package(CatchEx REQUIRED)
+find_package(NWX_Catch REQUIRED)
 
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(${__name} DEFAULT_MSG ${${__name}_MODULES})
