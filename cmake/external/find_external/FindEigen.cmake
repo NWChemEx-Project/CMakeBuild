@@ -1,7 +1,7 @@
-# - Try to find Eigen3
+# - Try to find Eigen
 #  Once done this will define
-#  EIGEN_FOUND - System has Eigen3
-#  EIGEN_INCLUDE_DIRS - The Eigen3 include directories
+#  EIGEN_FOUND - System has Eigen
+#  EIGEN_INCLUDE_DIRS - The Eigen include directories
 
 find_package(PkgConfig)
 pkg_check_modules(PC_EIGEN eigen3)
