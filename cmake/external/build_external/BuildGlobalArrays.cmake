@@ -1,50 +1,42 @@
-include(ExternalProject)
-find_package(GlobalArrays)
-
-if (GLOBALARRAYS_FOUND)
-    add_library(globalarrays_nwx INTERFACE)
+if(NOT ARMCI_NETWORK)
+    set(GA_ARMCI "--with-mpi-ts") #Default if ARMCI_NETWORK is not set
 else()
-    set(GLOBALARRAYS_ROOT_DIR ${CMAKE_INSTALL_PREFIX}/globalarrays)
-    message(STATUS "Building Global Arrays at: ${GLOBALARRAYS_ROOT_DIR}")
-
-    if(NOT ARMCI_NETWORK)
-        set(GA_ARMCI "--with-mpi-ts") #Default if ARMCI_NETWORK is not set
-    else()
-        string(FIND ${ARMCI_NETWORK} BGML BGML_FOUND)
-        string(FIND ${ARMCI_NETWORK} DCMF DCMF_FOUND)
+    string(FIND ${ARMCI_NETWORK} BGML BGML_FOUND)
+    string(FIND ${ARMCI_NETWORK} DCMF DCMF_FOUND)
         
-        if (${ARMCI_NETWORK} STREQUAL DMAPP)   
-            message(WARNING "We discourage the use of ARMCI_NETWORK=DMAPP")
-            message(WARNING "Please consider using ARMCI_NETWORK=MPI-PR instead")
-        endif()
+    if (${ARMCI_NETWORK} STREQUAL DMAPP)
+        message(WARNING "We discourage the use of ARMCI_NETWORK=DMAPP")
+        message(WARNING "Please consider using ARMCI_NETWORK=MPI-PR instead")
+    endif()
 
-        set(ARMCI_NETWORK_OPTIONS OPENIB GEMINI DMAPP PORTALS GM VIA
+    set(ARMCI_NETWORK_OPTIONS OPENIB GEMINI DMAPP PORTALS GM VIA
         LAPI MPI-SPAWN MPI-PT MPI-MT MPI-PR MPI-TS MPI3 OFI OFA SOCKETS) #MELLANOX
 
-        if(${ARMCI_NETWORK} IN_LIST ARMCI_NETWORK_OPTIONS)
-            string(TOLOWER ${ARMCI_NETWORK} armci_network_nwx)
-            set(GA_ARMCI "--with-${armci_network_nwx}")
-        elseif(${BGML_FOUND} GREATER 0 OR ${ARMCI_NETWORK} STREQUAL BGML)
-            set(GA_ARMCI "--with-bgml")
-        elseif(${DCMF_FOUND} GREATER 0 OR ${ARMCI_NETWORK} STREQUAL DCMF)
-            set(GA_ARMCI "--with-dcmf") 
-        elseif(${ARMCI_NETWORK} STREQUAL MELLANOX)
-            set(GA_ARMCI "--with-openib")    
-        else()
-            message(WARNING "Unknown ARMCI Network: ${ARMCI_NETWORK} provided. Configuring with MPI-TS")
-            set(GA_ARMCI "--with-mpi-ts")
-        endif()
+    if(${ARMCI_NETWORK} IN_LIST ARMCI_NETWORK_OPTIONS)
+        string(TOLOWER ${ARMCI_NETWORK} armci_network_nwx)
+        set(GA_ARMCI "--with-${armci_network_nwx}")
+    elseif(${BGML_FOUND} GREATER 0 OR ${ARMCI_NETWORK} STREQUAL BGML)
+         set(GA_ARMCI "--with-bgml")
+    elseif(${DCMF_FOUND} GREATER 0 OR ${ARMCI_NETWORK} STREQUAL DCMF)
+         set(GA_ARMCI "--with-dcmf")
+    elseif(${ARMCI_NETWORK} STREQUAL MELLANOX)
+         set(GA_ARMCI "--with-openib")
+    else()
+         message(WARNING "Unknown ARMCI Network: ${ARMCI_NETWORK} provided. Configuring with MPI-TS")
+         set(GA_ARMCI "--with-mpi-ts")
+    endif()
 endif()
 
 #-----------------------------------------------------------------
 
+#TODO: Add an if statement to find_dependency for MPI that will automatically
+#      add the libraries to MPI_LIBRARIES and the includes to MPI_INCLUDE_DIRS?
 find_package(MPI)
 set(_nwx_mpi_libraries ${MPI_C_LIBRARIES} ${MPI_Fortran_LIBRARIES} ${MPI_EXTRA_LIBRARY}) #${MPI_CXX_LIBRARIES}
 set(_nwx_mpi_include_dirs ${MPI_C_INCLUDE_PATH} ${MPI_Fortran_INCLUDE_PATH}) #${MPI_CXX_INCLUDE_PATH}
 
 message("_nwx_mpi_include_dirs=${_nwx_mpi_include_dirs}")
 message("_nwx_mpi_libraries=${_nwx_mpi_libraries}")
-
 
 foreach(_nwx_mpi_inc ${_nwx_mpi_include_dirs})
     set(NWX_MPI_INCLUDE_DIRS "${NWX_MPI_INCLUDE_DIRS} -I${_nwx_mpi_inc}")
