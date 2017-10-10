@@ -1,18 +1,11 @@
 include(ExternalProject)
 find_package(GlobalArrays)
 
-if(NOT NWX_PROC_COUNT)
-    set(NWX_PROC_COUNT 2)
-endif()
-
 if (GLOBALARRAYS_FOUND)
     add_library(globalarrays_nwx INTERFACE)
 else()
-    set(GA_VERSION ga-5.6.2)
-    set(GA_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/globalarrays)
-    message(STATUS "Building Global Arrays 5.6.2 at: ${GA_INSTALL_PATH}")
-    set(GA_PREFIX ${PROJECT_BINARY_DIR}/external/${GA_VERSION})
-    
+    set(GLOBALARRAYS_ROOT_DIR ${CMAKE_INSTALL_PREFIX}/globalarrays)
+    message(STATUS "Building Global Arrays at: ${GLOBALARRAYS_ROOT_DIR}")
 
     if(NOT ARMCI_NETWORK)
         set(GA_ARMCI "--with-mpi-ts") #Default if ARMCI_NETWORK is not set
@@ -77,37 +70,39 @@ if (USE_OFFLOAD)
 endif()
 
 
-if (DEFINED BLAS_LIBRARIES)
+if (BLAS_LIBRARIES)
     set(GA_BLAS "--with-blas8=${BLAS_LIBRARIES}")
 else()
-    #Assume scalapack is not provided if blas is not specified  
-    set(GA_BLAS "--with-blas8=-lblas -llapack --without-scalapack")
+    #Have cmake build install BLAS+LAPACK and provide it to GA
+    set(GA_BLAS "--with-blas8=-lblas -llapack")
 endif()
 
-if (DEFINED LAPACK_LIBRARIES)
+if (LAPACK_LIBRARIES)
+    set(GA_LAPACK "--with-lapack=${LAPACK_LIBRARIES}")
+else()
+    #Have cmake build install BLAS+LAPACK and provide it to GA
     set(GA_LAPACK "--with-lapack=-lblas -llapack")
 endif()
 
-if (DEFINED SCALAPACK_LIBRARIES)
+if (SCALAPACK_LIBRARIES)
     set(GA_SCALAPACK "--with-scalapack8=${SCALAPACK_LIBRARIES}")
 else()
     set(SCALAPACK_LIBRARIES OFF)
+    set(GA_SCALAPACK "--without-scalapack")
 endif()
 
 # Build GA
 ExternalProject_Add(globalarrays_nwx
     URL https://github.com/GlobalArrays/ga/releases/download/v5.6.2/ga-5.6.2.tar.gz
-    SOURCE_DIR ${GA_PREFIX}
     #Pass location where autotools needs to be built 
-    CONFIGURE_COMMAND ${GA_PREFIX}/autogen.sh 
-     #${GA_PREFIX}/autotools 
-    COMMAND ${GA_PREFIX}/configure --with-tcgmsg 
+    CONFIGURE_COMMAND ./autogen.sh 
+    COMMAND ./configure --with-tcgmsg 
     ${GA_MPI} --enable-underscoring --disable-mpi-tests #--enable-peigs
     ${GA_SCALAPACK} ${GA_BLAS} ${GA_LAPACK} ${GA_ARMCI} ${GA_OFFLOAD} CC=${CMAKE_C_COMPILER}
-    CXX=${CMAKE_CXX_COMPILER} F77=${CMAKE_Fortran_COMPILER} ${GA_SYSVSHMEM} --prefix=${GA_INSTALL_PATH} #--enable-cxx
+    CXX=${CMAKE_CXX_COMPILER} F77=${CMAKE_Fortran_COMPILER} ${GA_SYSVSHMEM} --prefix=${GLOBALARRAYS_ROOT_DIR} #--enable-cxx
     #TODO:Fix LDFLAGS
     LDFLAGS=-L${CMAKE_INSTALL_PREFIX}/blas_lapack/lib
-    BUILD_COMMAND ${CMAKE_MAKE_PROGRAM} -j${NWX_PROC_COUNT}
+    #BUILD_COMMAND $(MAKE) 
     INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install
     BUILD_IN_SOURCE 1
     #LOG_CONFIGURE 1
