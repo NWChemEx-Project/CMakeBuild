@@ -12,8 +12,9 @@ Contents
    a. [Superbuild Settings](#superbuild-settings)  
    b. [Declaring Your Library](#declaring-your-library)  
    c. [Declaring Your Tests](#delcaring-your-tests)  
-   d. [Known Limitations](#known-limitations)  
-4. [Enabling Additional Dependencies](#enabling-additional-dependencies)  
+   d. [Known Limitations](#known-limitations)
+4. [Finding Dependencies](#finding-dependencies)  
+5. [Enabling Additional Dependencies](#enabling-additional-dependencies)  
    a. [Writing a FindXXX.cmake File](#writing-a-findxxxcmake-file)  
    b. [Supported Dependencies](#supported-dependencies)
   
@@ -297,7 +298,35 @@ customizable options incurs some limitations.  At the moment these are:
     - Each library would get to set its own dependencies, sources, *etc.*
 - No support for restricting the version of a found library
   - Needs fixed, will happen before a 1.0 release
- 
+
+Finding Dependencies
+--------------------
+
+*N.B.* in this section `<Name>` is the name of a package as passed to 
+`find_package` and `<NAME>` is the name of that package in all uppercase.  
+
+CMake provides the `find_package` function for finding dependencies.  
+Unfortunately, much of how this function works relies on naming conventions.  By
+convention `find_package(<Name>)` is supposed to set minimally three variables:
+
+1. `<NAME>_FOUND`        : Set to true if the package `<Name>` was found.
+                           Unfortunately CMake does not specify the state of
+                           this variable in the event it is not found.
+2. `<NAME>_INCLUDE_DIRS` : All paths that a user of `<Name>` will need to 
+                           include (`<Name>`'s headers and its dependencies)
+3. `<NAME>_LIBRARIES`    : Same as `<NAME>_INCLUDE_DIRS1 except for libraries to 
+                           link against                      
+Optionally a package may set:
+
+4. `<NAME>_DEFINITIONS`  : List of definitions and flags to use while compiling
+5. `<Name>_FOUND`        : `find_package` expects a variable of the same case
+                           back.  Setting this is needed for it to properly use
+                           the REQUIRED keyword.                                        
+
+Of course, many packages do not adhere to these standards complicating
+automation.  Currently our solution is to write `Find<Name>Ex.cmake` files for
+packages not adhering to them and to prefer projects us the *Ex* versions
+instead of the normal ones.
 
 Enabling Additional Dependencies
 --------------------------------
@@ -405,7 +434,12 @@ ExternalProject_Add(
 
 These are dependencies that NWChemExBase currently knows how to find:
 
-| Name         | Brief Description                                             |  
-| :----------: | :------------------------------------------------------------ |  
-| MPI          | MPI compilers, includes, and libraries                        | 
-| OpenMP       | Determines the flags for compiling/linking to OpenMP          |  
+| Name            | Brief Description                                          |  
+| :-------------: | :--------------------------------------------------------- |  
+| MPI             | MPI compilers, includes, and libraries                     | 
+| OpenMP          | Determines the flags for compiling/linking to OpenMP       |  
+| AntlrCppRuntime | The ANTLR grammar parsing library                          |
+| Eigen3          | The Eigen C++ matrix library                               |
+| GTest           | Google's testing framework                                 |
+| CatchEx         | Catch testing framework installed our way                  |
+| GlobalArrays    | The Global Arrays distributed matrix library               |

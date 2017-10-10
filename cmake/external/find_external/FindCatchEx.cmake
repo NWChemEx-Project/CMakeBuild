@@ -12,8 +12,9 @@
 find_path(CATCHEX_INCLUDE_DIR catch/catch.hpp)
 #find_path(CATCHEX_LIBRARY libcatch.so)
 
-find_package_handle_standard_args(CatchEx DEFAULT_MSG CATCHEX_INCLUDE_DIR)
+find_package_handle_standard_args(CATCHEX DEFAULT_MSG CATCHEX_INCLUDE_DIR)
 #                                                       CATCHEX_LIBRARY)
 
+set(CatchEx_FOUND ${CATCHEX_FOUND})
 set(CATCHEX_INCLUDE_DIRS ${CATCHEX_INCLUDE_DIR})
 #set(CATCHEX_LIBRARIES ${CATCHEX_LIBRARY})
