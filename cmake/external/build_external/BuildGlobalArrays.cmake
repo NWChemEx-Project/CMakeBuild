@@ -85,7 +85,7 @@ else()
 endif()
 
 # Build GA
-ExternalProject_Add(globalarrays_nwx
+ExternalProject_Add(GlobalArrays${TARGET_SUFFIX}
     URL https://github.com/GlobalArrays/ga/releases/download/v5.6.2/ga-5.6.2.tar.gz
     #Pass location where autotools needs to be built 
     CONFIGURE_COMMAND ./autogen.sh 
