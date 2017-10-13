@@ -15,7 +15,7 @@ elseif(BUILD_NETLIB_BLAS_LAPACK)
         INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}        
     )
 else()
-    message(ERROR "Please provide the SCALAPACK_LIBRARIES cmake variable or 
+    message(FATAL_ERROR "Please provide the SCALAPACK_LIBRARIES cmake variable or 
     set BUILD_NETLIB_BLAS_LAPACK to ON if you the NWChemEx build to install Netlib SCALAPACK.")
 
 endif()
