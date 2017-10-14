@@ -448,13 +448,14 @@ These are dependencies that NWChemExBase currently knows how to find:
 
 Following are dependencies that NWChemExBase will build for you if it cannot find them:
 
-| Name            | Brief Description                                          |  
-| :-------------: | :--------------------------------------------------------- |  
-| AntlrCppRuntime | The ANTLR grammar parsing library                          |
-| Eigen3          | The Eigen C++ matrix library                               |
-| GTest           | Google's testing framework                                 |
-| CatchEx         | Catch testing framework installed our way                  |
-| GlobalArrays    | The Global Arrays distributed matrix library               |
+| Name            | Brief Description                                             |  
+| :-------------: | :------------------------------------------------------------ |  
+| Eigen3          | The Eigen C++ matrix library                                  |
+| GTest           | Google's testing framework                                    |
+| CatchEx         | Catch testing framework installed our way                     |
+| Libint          | library for computing Gaussian integrals in quantum mechanics |
+| GlobalArrays    | The Global Arrays distributed matrix library                  |
+| AntlrCppRuntime | The ANTLR grammar parsing library                             |
 
 The following dependencies have to be specified. Alternatively, an option can also
 be specified to NWChemExBase to build the Netlib versions for you. 
