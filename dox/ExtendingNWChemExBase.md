@@ -448,6 +448,8 @@ These are dependencies that NWChemExBase currently knows how to find:
 
 Following are dependencies that NWChemExBase will build for you if it cannot find them:
 
+| Name            | Brief Description                                          |  
+| :-------------: | :--------------------------------------------------------- |  
 | AntlrCppRuntime | The ANTLR grammar parsing library                          |
 | Eigen3          | The Eigen C++ matrix library                               |
 | GTest           | Google's testing framework                                 |
@@ -457,6 +459,8 @@ Following are dependencies that NWChemExBase will build for you if it cannot fin
 The following dependencies have to be specified. Alternatively, an option can also
 be specified to NWChemExBase to build the Netlib versions for you. 
 
+| Name            | Brief Description                                          |  
+| :-------------: | :--------------------------------------------------------- |  
 | BLAS            | Basic Linear Algebra Subprograms
 | LAPACK          | Linear Algebra PACKage
 | SCALAPACK       | Scalable Linear Algebra PACKage
