@@ -107,14 +107,13 @@ elseif(${value2})
   message(STATUS "This will not be printed")
 endif()
 
-**NOTE:** if(value2 AND ${value3}) will result in a cmake error if
-     no variable value3 is defined.
+:memo: if(value2 AND ${value3}) will result in a cmake error if
+     no variable value3 is defined or if it is defined as empty/empty string.
      #Deref of value2 gives a non-empty value as mentioned above,
      while deref of value3 gives empty if not defined.
 ~~~
 
 To check if a variable is defined, use: `if(DEFINED variable_name)`.
-Note that this will result in an error if variable is defined as empty i.e. `set(variable_name )`.
 
 You can look for a particular dependency with:
 ~~~cmake

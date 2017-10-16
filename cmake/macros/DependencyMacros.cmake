@@ -45,7 +45,7 @@ endfunction()
 
 #
 # Macro for finding a dependency and building it if it is not found.  Either way
-# a target with the name of the dependency suffixed with "TARGET_SUFFIx" will be
+# a target with the name of the dependency suffixed with "TARGET_SUFFIX" will be
 # added.
 #    - name : The case-sensitive name for the dependency
 #
@@ -59,6 +59,6 @@ function(find_or_build_dependency __name)
         add_library(${__name}${TARGET_SUFFIX} INTERFACE)
     else()
         message(STATUS "Unable to locate ${__name}.  Building one instead.")
-        include("external/Build${__name}.cmake")
+        include(Build${__name})
     endif()
 endfunction()

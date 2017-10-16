@@ -68,7 +68,7 @@ endfunction()
 #
 function(bundle_cmake_list __out_var)
     foreach(__arg ${ARGN})
-        if(NOT ${${__arg}} STREQUAL "")
+        if(DEFINED __arg)
             list(APPEND ${__out_var} -D${__arg}:LIST=${${__arg}})
         endif()
     endforeach()

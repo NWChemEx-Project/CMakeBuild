@@ -32,11 +32,11 @@ endif()
 #TODO: Add an if statement to find_dependency for MPI that will automatically
 #      add the libraries to MPI_LIBRARIES and the includes to MPI_INCLUDE_DIRS?
 find_package(MPI)
-set(_nwx_mpi_libraries ${MPI_C_LIBRARIES} ${MPI_Fortran_LIBRARIES} ${MPI_EXTRA_LIBRARY}) #${MPI_CXX_LIBRARIES}
-set(_nwx_mpi_include_dirs ${MPI_C_INCLUDE_PATH} ${MPI_Fortran_INCLUDE_PATH}) #${MPI_CXX_INCLUDE_PATH}
+set(_nwx_mpi_libraries ${MPI_C_LIBRARIES} ${MPI_Fortran_LIBRARIES} ${MPI_EXTRA_LIBRARY} ${MPI_CXX_LIBRARIES})
+set(_nwx_mpi_include_dirs ${MPI_C_INCLUDE_PATH} ${MPI_Fortran_INCLUDE_PATH} ${MPI_CXX_INCLUDE_PATH})
 
-message("_nwx_mpi_include_dirs=${_nwx_mpi_include_dirs}")
-message("_nwx_mpi_libraries=${_nwx_mpi_libraries}")
+#message("_nwx_mpi_include_dirs=${_nwx_mpi_include_dirs}")
+#message("_nwx_mpi_libraries=${_nwx_mpi_libraries}")
 
 foreach(_nwx_mpi_inc ${_nwx_mpi_include_dirs})
     set(NWX_MPI_INCLUDE_DIRS "${NWX_MPI_INCLUDE_DIRS} -I${_nwx_mpi_inc}")
@@ -92,15 +92,12 @@ ExternalProject_Add(GlobalArrays${TARGET_SUFFIX}
     COMMAND ./configure --with-tcgmsg 
     ${GA_MPI} --enable-underscoring --disable-mpi-tests #--enable-peigs
     ${GA_SCALAPACK} ${GA_BLAS} ${GA_LAPACK} ${GA_ARMCI} ${GA_OFFLOAD} CC=${CMAKE_C_COMPILER}
-    CXX=${CMAKE_CXX_COMPILER} F77=${CMAKE_Fortran_COMPILER} ${GA_SYSVSHMEM} --prefix=${GLOBALARRAYS_ROOT_DIR} #--enable-cxx
+    CXX=${CMAKE_CXX_COMPILER} F77=${CMAKE_Fortran_COMPILER} ${GA_SYSVSHMEM} --prefix=${CMAKE_INSTALL_PREFIX} #--enable-cxx
     #TODO:Fix LDFLAGS
-    LDFLAGS=-L${CMAKE_INSTALL_PREFIX}/blas_lapack/lib
+    LDFLAGS=-L${STAGE_INSTALL_DIR}/lib
     #BUILD_COMMAND $(MAKE) 
-    INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install
+    INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
     BUILD_IN_SOURCE 1
     #LOG_CONFIGURE 1
     #LOG_BUILD 1
 )
-endif()
-
-
