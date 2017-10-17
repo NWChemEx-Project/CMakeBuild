@@ -41,6 +41,8 @@ bundle_cmake_strings(CORE_CMAKE_STRINGS CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG)
 ################################################################################
 
 option_w_default(BUILD_TESTS TRUE)
+option_w_default(NWX_SRC_DIRS ${PROJECT_NAME})
+option_w_default(NWX_TEST_DIRS "${PROJECT_NAME}_TEST")
 
 ################################################################################
 #
@@ -69,26 +71,6 @@ foreach(depend ${NWCHEMEX_LIBRARY_DEPENDS})
 endforeach()
 
 ################################################################################
-#
-# Build the main library
-#
-################################################################################
-
-ExternalProject_Add(${PROJECT_NAME}${TARGET_SUFFIX}
-    SOURCE_DIR ${SUPER_PROJECT_SRC}
-    CMAKE_ARGS -DSUPER_PROJECT_ROOT=${SUPER_PROJECT_ROOT}
-               ${CORE_CMAKE_OPTIONS}
-    BUILD_ALWAYS 1
-    INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
-    CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}
-                     ${CORE_CMAKE_STRINGS}
-                     -DNWCHEMEX_LIBRARY_DEPENDS:STRING=${NWCHEMEX_LIBRARY_DEPENDS}
-)
-foreach(depend ${NWCHEMEX_LIBRARY_DEPENDS})
-    add_dependencies(${PROJECT_NAME}${TARGET_SUFFIX} ${depend}${TARGET_SUFFIX})
-endforeach()
-
-################################################################################
 #                                                                              #
 # The generated ProjectConfig.cmake file will need access to some of the CMake #
 # tools packaged with NWChemExBase.  Rather than installing it under that      #
@@ -101,17 +83,41 @@ endforeach()
 find_package(NWChemExBase QUIET)
 if(NOT NWCHEMEXLIBRARYBASE_FOUND)
     ExternalProject_Add(NWChemExBase${TARGET_SUFFIX}
-        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/NWChemExBase
-        CMAKE_ARGS -DPLB_PREFIX=${CMAKE_CURRENT_SOURCE_DIR}
-                   -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
-                   -DTARGET_SUFFIX=${TARGET_SUFFIX}
-        BUILD_ALWAYS 1
-        INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
-    )
+                        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/NWChemExBase
+                        CMAKE_ARGS -DPLB_PREFIX=${CMAKE_CURRENT_SOURCE_DIR}
+                        -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+                        -DTARGET_SUFFIX=${TARGET_SUFFIX}
+                        BUILD_ALWAYS 1
+                        INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
+                        )
 else() # Add a fake target so we don't need if statements
     add_library(NWChemExBase${TARGET_SUFFIX} INTERFACE)
 endif()
-add_dependencies(NWChemExBase${TARGET_SUFFIX} ${PROJECT_NAME}${TARGET_SUFFIX})
+
+################################################################################
+#
+# Build the main library
+#
+################################################################################
+
+foreach(__src_dir ${NWX_SRC_DIRS})
+    ExternalProject_Add(${__src_dir}${TARGET_SUFFIX}
+        SOURCE_DIR ${SUPER_PROJECT_SRC}
+        CMAKE_ARGS -DSUPER_PROJECT_ROOT=${SUPER_PROJECT_ROOT}
+                   ${CORE_CMAKE_OPTIONS}
+        BUILD_ALWAYS 1
+        INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
+        CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}
+                         ${CORE_CMAKE_STRINGS}
+                         -DNWCHEMEX_LIBRARY_DEPENDS:STRING=${NWCHEMEX_LIBRARY_DEPENDS}
+    )
+    foreach(depend ${NWCHEMEX_LIBRARY_DEPENDS})
+        add_dependencies(${__src_dir}${TARGET_SUFFIX} ${depend}${TARGET_SUFFIX})
+    endforeach()
+    add_dependencies(NWChemExBase${TARGET_SUFFIX} ${__src_dir}${TARGET_SUFFIX})
+endforeach()
+
+
 
 ################################################################################
 #                                                                              #
@@ -122,18 +128,23 @@ add_dependencies(NWChemExBase${TARGET_SUFFIX} ${PROJECT_NAME}${TARGET_SUFFIX})
 if(${BUILD_TESTS})
     list(APPEND CMAKE_PREFIX_PATH "${STAGE_INSTALL_DIR}")
     list(APPEND CMAKE_MODULE_PATH "${STAGE_INSTALL_DIR}")
-    ExternalProject_Add(${PROJECT_NAME}_TEST
-        SOURCE_DIR ${SUPER_PROJECT_TEST}
-        CMAKE_ARGS -DSUPER_PROJECT_ROOT=${SUPER_PROJECT_TEST}
-                   ${CORE_CMAKE_OPTIONS}
-        BUILD_ALWAYS 1
-        INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${TEST_STAGE_DIR}
-        CMAKE_CACHE_ARGS -DCMAKE_PREFIX_PATH:LIST=${CMAKE_PREFIX_PATH}
-                         -DCMAKE_INSTALL_RPATH:LIST=${CMAKE_INSTALL_RPATH}
-                         -DCMAKE_MODULE_PATH:LIST=${CMAKE_MODULE_PATH}
-                         ${CORE_CMAKE_STRINGS}
-    )
-    add_dependencies(${PROJECT_NAME}_TEST NWChemExBase${TARGET_SUFFIX})
+    foreach(__test_dir ${NWX_TEST_DIRS})
+        ExternalProject_Add(${__test_dir}${TARGET_SUFFIX}
+            SOURCE_DIR ${SUPER_PROJECT_TEST}
+            CMAKE_ARGS -DSUPER_PROJECT_ROOT=${SUPER_PROJECT_TEST}
+                       ${CORE_CMAKE_OPTIONS}
+            BUILD_ALWAYS 1
+            INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${TEST_STAGE_DIR}
+            CMAKE_CACHE_ARGS -DCMAKE_PREFIX_PATH:LIST=${CMAKE_PREFIX_PATH}
+                             -DCMAKE_INSTALL_RPATH:LIST=${CMAKE_INSTALL_RPATH}
+                             -DCMAKE_MODULE_PATH:LIST=${CMAKE_MODULE_PATH}
+                             ${CORE_CMAKE_STRINGS}
+        )
+        foreach(__src_dir ${NWX_SRC_DIRS})
+            add_dependencies(${__test_dir}${TARGET_SUFFIX}
+                             ${__src_dir}${TARGET_SUFFIX})
+        endforeach()
+    endforeach()
 
     # This file will allow us to run ctest in the top-level build dir
     # Basically it just defers to the actual top-level CTestTestfile.cmake in the
