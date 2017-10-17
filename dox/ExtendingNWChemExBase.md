@@ -7,17 +7,22 @@ and to provide guidance on how to extend it.
 Contents
 --------
 1. [Preliminaries](#preliminaries)
-2. [Superbuild](#superbuild)
-3. [NWChemExBase Model](#nwchemexbase-model)  
+2. [Superbuild Basics](#superbuild-basics)  
+   a. [Why a Superbuild?](#why-a-superbuild)  
+   b. [Anatomy of a Superbuild](#anatomy-of-a-superbuild)  
+3. [Superbuild Technical Details](#superbuild-technical-details)  
+   a. [Staging the Build](#staging-the-build)  
+   b. [RPATHs](#rpaths)  
+   c. [Target Names](#target-names)
+4. [NWChemExBase Model](#nwchemexbase-model)  
    a. [Superbuild Settings](#superbuild-settings)  
    b. [Declaring Your Library](#declaring-your-library)  
    c. [Declaring Your Tests](#delcaring-your-tests)  
    d. [Known Limitations](#known-limitations)
-4. [Finding Dependencies](#finding-dependencies)  
-5. [Enabling Additional Dependencies](#enabling-additional-dependencies)  
+5. [Finding Dependencies](#finding-dependencies)  
+6. [Enabling Additional Dependencies](#enabling-additional-dependencies)  
    a. [Writing a FindXXX.cmake File](#writing-a-findxxxcmake-file)  
-   b. [Supported Dependencies](#supported-dependencies)
-  
+   b. [Supported Dependencies](#supported-dependencies)             
 
 Preliminaries
 -------------
@@ -26,16 +31,31 @@ For its "build" system NWChemExBase uses CMake.  The main assets of CMake is it
 provides a nicer syntax than make, provides robust cross-platform builds, and it
 is widely supported.  Technically speaking CMake is a build system generator,
 which has important ramifications discussed below.  For now, realize that there 
-really are two phases to a CMake build: the configuration phase and the build 
-phase.  The configuration phase is when the build files are generated and the 
-build phase is when the source files are compiled using said build files.  This 
-is important because data generated during the build phase can not be acted on 
-in the configuration phase as it is already over.
+really are four phases to a CMake build: 
+1. Configuration phase 
+   - The "true" CMake step
+   - CMake generates the build files 
+2. Build phase
+   - Build files are consumed by a build program (typically by make)
+   - Build program invokes compiler, linker, archiver to form compiled code
+3. Test phase 
+   - Products made in build phase are tested
+   - CMake provides a utility CTest that makes this step easy for CMake projects
+4. Install phase
+   - Handled by the build program
+   - Verified build products are put in their final resting places
+Technically speaking CMake defines several other phases, but we ignore them 
+for simplicity.  Regardless of which phase you want to influence the details 
+of what to do will be provided to CMake via configuration files, which by 
+default have the name `CMakeLists.txt`.  Typically, there is one of these per 
+directory.  Each of these configuration files describes what is to be done with
+the contents of that directory during each of the four aforementioned 
+phases.  These files are written using the CMake language, the syntax of 
+which, is reminiscent of a Linux shell script.  The remainder of this section
+will aim to acquaint you with the CMAke language. 
 
-CMake itself uses a series of files named `CMakeLists.txt` to aid in the
-configuration.  Typically, there is one of these per directory of your source
-tree.  These files are written using the CMake language, the syntax of which, is
-reminiscent of a Linux shell script. You can define and print variables like:
+
+You can define and print variables like:
 
 ~~~cmake
 #Comments start with #'s
@@ -126,42 +146,128 @@ part you'll be interacting with them via the NWChemExBase API, which modifies
 those commands.  The rest of this page will get you acquainted with the 
 NWChemExBase workflow.
 
-Superbuild
-----------
+Superbuild Basics
+-----------------
 
-Unfortunately the two phase build leads to problems for more complex builds.
-For example, assume you are building library B, which depends on some external
-library A.  You start off by looking for A.  As mentioned, CMake provides a 
-function `find_package` specifically for this reason.  Let's say `find_package` 
-finds A. Great, you simply compile B against the A found by CMake.  What if it 
-doesn't find it? You can crash and tell the user to go build it or you can 
-attempt to build it yourself.  Wanting to be user friendly, you add an optional 
-target that will build A if it's not found.  CMake provides a command 
-`ExternalProject_Add` specifically for this purpose.  The problem is that A 
- will not be built until the build phase, thus all `find_package` calls in B 
- will fail as `find_package` happens during the configuration phase (and A 
- hasn't been built yet).
+Let us assume that our main project has dependencies.  Furthermore, let us also
+assume that we are good software scientists and do not simply always build 
+said dependencies without giving the user a chance to provide them to us. It 
+then follows that we need a mechanism for finding, and then possibly building
+these dependencies.  As mentioned CMake provides `find_package` specifically 
+for this purpose.  Our last assumption is that in an effort to strive for 
+uniformity we will only use `find_package` to locate dependencies.  Although we
+took quite some time to lay out these assumptions they are quite basic from a
+build perspective.  Somewhat surprising these innocent enough assumptions are
+quite problematic for CMake owing to the separation between configure and 
+build.   Given that these are common assumptions, its perhaps unsurprising 
+that a CMake pattern has emerged for working within them.  The pattern is 
+termed the superbuild pattern. The hallmark of which is that the build is 
+driven by an additional build on top of it.  Practically speaking this amounts
+to ensuring all CMake projects and dependencies are brought into the build via
+the `ExternalProject_Add` mechanism. 
+
+### Why a Superbuild?
+
+To better understand why we need a superbuild consider a simple example.  Assume
+you are building library B, which depends on some external library A.  You 
+start off by looking for A.  As mentioned, CMake provides a function 
+`find_package` specifically for this reason.  Let's say `find_package` 
+finds A. Great, you simply compile B against the A found by CMake.  What if 
+CMake doesn't find it? There's two options:
+1. Crash, tell the user to build A, have user rerun CMake.
+   - Basically the same as the prior scenario at this point
+2. You can attempt to build A yourself.  
+Wanting to be user friendly, you add an optional target that will build A if 
+it's not found.  As alluded to, CMake provides a command 
+`ExternalProject_Add` specifically for this purpose.  `ExternalProject_Add` 
+will add some steps to the build phase that will build A.  The problem is 
+that this means A won't be built (and therefore findable) until the build 
+phase.  Thus all `find_package` calls in B will still fail as `find_package` 
+happens during B's configuration phase (and A hasn't been built yet).  
  
- This problem is common enough that a CMake pattern has emerged for it.  It is
- called the superbuild pattern. In this pattern all dependencies, as well as the
- main project itself, are included in the project as external projects.  This is
- because CMake runs the contents of external projects at build time, even if 
- there is CMake commands inside them.
+As mentioned the solution is to tell CMake about B via `ExternalProject_Add`.
+This is because, like it did for A, this command will add steps to the build
+phase that will configure, build, test, and install A.  Furthermore, because of
+the dependency between A and B, CMake will ensure that A is built first.  
+Thus when B's configure step runs `find_package` will be able to find A. 
+
+### Anatomy of a Superbuild
+
+Building on what we just described the superbuild process proceeds via:  
+
+1. The "configure" phase so far as CMake knows  
+   a. Establish dependencies among projects  
+   b. Determine dependencies that need built.  
+2. The "build" phase according to CMake  
+   1.  Build dependencies
+       1. Configure phase for dependency
+       2. Build phase for dependency
+   2.  Build main project
+       1. Configure phase for main project
+       2. Build phase for main project
+   3.  Build tests for main project
+       1. Configure phase for tests  
+       2. Build phase for tests
+3. Test the main project
+4. Install the main project
+
+Looking only at the outermost bullets you can see to the outside world the
+build looks normal.  This is important as it allows CMake projects relying on a
+superbuild to be subprojects of other CMake projects (which themselves may
+possibly be superbuilds).
+
+Superbuild Technical Details
+----------------------------
+
+### Staging the Build
+
+During the build phase each dependency has the whole gamut of phases run on it
+including the install phase.  When invoking CMake on the entire project the 
+user set the variable `CMAKE_INSTALL_PREFIX` (or if they didn't it defaulted 
+to something like `/usr/local`).  This is the root of the path into 
+which all products are to be installed (*e.g.* libraries would be installed 
+to `${CMAKE_INSTALL_PREFIX}/lib` and headers to 
+`${CMAKE_INSTALL_PREFIX}/include`).  If we simply let each dependency install
+ itself there's the possibility (particularly if the user didn't specify 
+ `CMAKE_INSTALL_PREFIX`) that the build phase would then try to install into 
+ a place like `/usr/local`, which requires administrator privileges.  It is 
+ generally considered a bad idea to run any part of the build process, with the
+ exception of the install phase, with elevated privileges (poorly written or 
+ maliciously written builds would then have the ability to wreck hell on your
+ system; install just copies files so if they built ok it's more likely that 
+ they won't screw up your system).  The solution is simple, during the build
+ phase we create a directory `STAGE_DIR` that will focus as the effective root
+ of the file system for the duration of the build and testing phases.  All 
+ dependencies and projects are then installed to paths like 
+ `${STAGE_DIR}${CMAKE_INSTALL_PREFIX}/lib`.  Tests are then run on the staged
+ version of the project.  Finally, during the install phase we just copy the
+ contents of `${STAGE_DIR}` to `${CMAKE_INSTALL_PREFIX}`.
  
- What does this mean to us?  Well it means the general control flow, at the top
- level of our project is:
- - Find dependencies using `find_package`
-   - If dependency is found, great
-   - Else if we are capable of building it, add its external project file
-   - Crash
- - Build our main project(s) as external projects
-   - Internally, find dependencies via `find_package`
-   
-Although there are other mechanisms for accomplishing the same result few are as
-clean and uniform as the superbuild.  Furthermore, the superbuild has the
-additional advantage of encapsulating the builds of each target.  This means it
-is straightforward within any of the external projects to tweak paths, compiler 
-flags, *etc.* without impacting other targets.
+ ### RPATHs
+ 
+ When using a superbuild RPATHs become significantly more complicated.  This is
+ because of the staging step.  Basically we need two RPATHs: one for the 
+ staging directory that is used during the testing phase, and one for the actual
+ install phase.
+ 
+ *Expand on this section when RPATHs are more stable*
+
+### Target Names
+
+If you look at `NWChemExBase/CMakeLists.txt` you'll notice that we put a suffix
+on all target names.  CMake (and the underlying build programs) prohibit two 
+targets from having the same name.  In particular it is quite natural for say
+library A to name its target A.  `ExternalProject_Add` command 
+introduces a new namespace (targets defined within the `ExternalProject_Add` 
+are not visible to the caller of the `ExternalProject_Add` and vice versa) so if
+while building library A, it uses CMake and declares a target A, it will not 
+affect the superbuild.  The problem comes in when we call `find_package` (say
+in preparing another dependency).  In this scenario, particularly if 
+`find_package` finds the package via its `XXXConfig.cmake` file, it is likely
+that another target will be produced (to aid in you in linking).  This 
+additional target will not be namespace protected and may collided with our 
+targets.  To avoid this we append a suffix that we expect to be unique. 
+
 
 NWChemExBase Model
 ------------------
@@ -171,7 +277,9 @@ boiler-plate to them.  The primary goal of NWChemExBase is to take care of this
 boiler-plate for you in a customizable and robust manner.  To that end, it is
 far easier to accomplish this mission if we make some basic assumptions.
 
-The first assumption is that your project source tree is setup like:
+Given the details in the Superbuild section we have modeled our directory 
+layout after the flow of the Superbuild.  Ultimately, we assume your project 
+source tree is setup like:
 
 ~~~
 ProjectRoot/
@@ -186,8 +294,33 @@ ProjectRoot/
 You are free to have additional folders and files, but they are not required for
 the purposes of using NWChemExBase.  It should be noted that the folder 
 `NWChemExBase` is a clone of the `NWChemExBase` repo (preferably as a git 
-subrepo so that it can be updated as the need occurs).  The following 
-subsections describe the files in a bit more detail.
+subrepo so that it can be updated as the need occurs).  Assuming you are using
+git, `ProjectRoot` would be the root directory of your repo and the directory
+users of your library clone.  So far as the outside world is concerned it is
+your project.  Directly inside this folder are the configuration instructions 
+for the superbuild (the top-level `CMakeLists.txt` and much of 
+`NWChemExBase/`) as well as the recipes for the dependencies (in 
+`NWChemExBase/`).  The folder `ProjectName` is, from the perspective of the 
+superbuild, your project (this is why we don't name it `src/`; *i.e.* typically 
+the more canonical folders like `include/`, `src/`, `share/`, *etc.* will live
+inside this folder).  Realizing that tests can be thought of as a set of 
+libraries or executables that depend on you library they are elevated to 
+the same rank as your project (so as to also be included via the 
+`ExternalProject_Add` mechanism).
+
+:memo: `ProjectName` and `ProjectName_Test` are the default folder names 
+derived from the CMake variable `PROJECT_NAME`, which you will set in the 
+top-level `CMakeLists.txt`.  If you don't like these names for some reason, 
+we have provided the advanced options `NWX_SRC_DIRS` and `NWX_TEST_DIRS` which
+can be respectively set to what you decided to call your "source" and test
+directories. 
+
+:memo: CMake is really written for your directory structure to match you 
+build structure.  This is largely an artifact of directory boundaries 
+defining scopes.  Although it is in theory possible to lay the project out in
+ a different manner, doing so is an uphill battle and not particularly easy 
+ to automate.
+
 
 ### Superbuild Settings
 
