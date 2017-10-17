@@ -8,6 +8,8 @@ Contents
 --------
 1. [Preliminaries](#preliminaries)
 2. [Superbuild](#superbuild)
+   a. [Why a Superbuild?](#why-a-superbuild)
+   b. [Staging the Build](#staging-the-build)
 3. [NWChemExBase Model](#nwchemexbase-model)  
    a. [Superbuild Settings](#superbuild-settings)  
    b. [Declaring Your Library](#declaring-your-library)  
@@ -129,24 +131,40 @@ NWChemExBase workflow.
 Superbuild
 ----------
 
-Unfortunately the two phase build leads to problems for more complex builds.
-For example, assume you are building library B, which depends on some external
-library A.  You start off by looking for A.  As mentioned, CMake provides a 
-function `find_package` specifically for this reason.  Let's say `find_package` 
-finds A. Great, you simply compile B against the A found by CMake.  What if it 
-doesn't find it? You can crash and tell the user to go build it or you can 
-attempt to build it yourself.  Wanting to be user friendly, you add an optional 
-target that will build A if it's not found.  CMake provides a command 
+Unfortunately the two phase build leads to problems for more complex builds. 
+The main problem comes from dependencies.  This problem is common enough that a 
+CMake pattern has emerged for it.  It is called the superbuild pattern. In 
+this pattern all dependencies, as well as the main project itself, are 
+included in via CMake's external projects system.  Thus they all appear on equal
+footing and it is simpler to manage the build.
+
+### Why a Superbuild?
+
+To better understand why we need a superbuild consider a simple example.  Assume
+you are building library B, which depends on some external library A.  You 
+start off by looking for A.  As mentioned, CMake provides a function 
+`find_package` specifically for this reason.  Let's say `find_package` 
+finds A. Great, you simply compile B against the A found by CMake.  What if 
+CMake doesn't find it? You can crash and tell the user to go build it or you 
+can attempt to build it yourself.  Wanting to be user friendly, you add an 
+optional target that will build A if it's not found.  CMake provides a command 
 `ExternalProject_Add` specifically for this purpose.  The problem is that A 
  will not be built until the build phase, thus all `find_package` calls in B 
  will fail as `find_package` happens during the configuration phase (and A 
- hasn't been built yet).
+ hasn't been built yet).  As mentioned the solution is to also build B as an 
+ external project.
  
- This problem is common enough that a CMake pattern has emerged for it.  It is
- called the superbuild pattern. In this pattern all dependencies, as well as the
- main project itself, are included in the project as external projects.  This is
- because CMake runs the contents of external projects at build time, even if 
- there is CMake commands inside them.
+To understand why making B an external project fixes our situation you first 
+need to realize that the CMake commands inside an external project are run at
+build time.  Now because of the dependency between A and B.  CMake is smart 
+enough to ensure that A is built first.  Now when B's build is called the CMake
+commands are run, and given that A was just built, B's `find_package` calls 
+will find A.
+
+### Anatomy of a Superbuild
+
+The pattern described so far is that there is a meta build step that basically
+figures out the order to call the normal build systems in.  This n 
  
  What does this mean to us?  Well it means the general control flow, at the top
  level of our project is:
