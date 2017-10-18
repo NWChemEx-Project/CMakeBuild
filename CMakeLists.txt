@@ -101,10 +101,9 @@ endif()
 # Build the main library
 #
 ################################################################################
-
 foreach(__src_dir ${NWX_SRC_DIRS})
     ExternalProject_Add(${__src_dir}${TARGET_SUFFIX}
-        SOURCE_DIR ${__src_dir}
+        SOURCE_DIR ${SUPER_PROJECT_ROOT}/${__src_dir}
         CMAKE_ARGS -DSUPER_PROJECT_ROOT=${SUPER_PROJECT_ROOT}
                    ${CORE_CMAKE_OPTIONS}
         BUILD_ALWAYS 1
@@ -132,7 +131,7 @@ if(${BUILD_TESTS})
     list(APPEND CMAKE_MODULE_PATH "${STAGE_INSTALL_DIR}")
     foreach(__test_dir ${NWX_TEST_DIRS})
         ExternalProject_Add(${__test_dir}${TARGET_SUFFIX}
-            SOURCE_DIR ${__test_dir}
+            SOURCE_DIR ${SUPER_PROJECT_ROOT}/${__test_dir}
             CMAKE_ARGS -DSUPER_PROJECT_ROOT=${SUPER_PROJECT_TEST}
                        ${CORE_CMAKE_OPTIONS}
             BUILD_ALWAYS 1

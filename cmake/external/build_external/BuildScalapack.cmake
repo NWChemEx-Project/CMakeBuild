@@ -2,7 +2,7 @@
 include(ExternalProject)
 
 if (SCALAPACK_LIBRARIES)
-    add_library(scalapack${TARGET_SUFFIX} INTERFACE)
+    add_library(Scalapack${TARGET_SUFFIX} INTERFACE)
 elseif(BUILD_NETLIB_BLAS_LAPACK)
     ExternalProject_Add(scalapack${TARGET_SUFFIX}
         URL ${CMAKE_CURRENT_SOURCE_DIR}/cmake/external/misc/scalapack.tar.gz

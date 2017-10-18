@@ -1,4 +1,4 @@
-ExternalProject_Add(GTest${TARGET_SUFFIX}
+ExternalProject_Add(GoogleTest${TARGET_SUFFIX}
     URL https://github.com/google/googletest/archive/release-1.8.0.tar.gz
     CMAKE_ARGS -DCMAKE_BUILD_TYPE=RELEASE
                -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
