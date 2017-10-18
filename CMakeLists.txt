@@ -53,8 +53,8 @@ option_w_default(NWX_TEST_DIRS "${PROJECT_NAME}_TEST")
 ################################################################################
 
 get_filename_component(SUPER_PROJECT_ROOT ${CMAKE_CURRENT_SOURCE_DIR} DIRECTORY)
-set(SUPER_PROJECT_SRC ${SUPER_PROJECT_ROOT}/${NWX_SRC_DIRS})
-set(SUPER_PROJECT_TEST ${SUPER_PROJECT_ROOT}/${NWX_TEST_DIRS})
+set(SUPER_PROJECT_SRC ${SUPER_PROJECT_ROOT}/${PROJECT_NAME})
+set(SUPER_PROJECT_TEST ${SUPER_PROJECT_ROOT}/${PROJECT_NAME}_Test)
 set(STAGE_DIR ${CMAKE_BINARY_DIR}/stage)
 set(STAGE_INSTALL_DIR ${STAGE_DIR}${CMAKE_INSTALL_PREFIX})
 #We use a different dir so tests don't get installed
@@ -104,16 +104,16 @@ endif()
 
 foreach(__src_dir ${NWX_SRC_DIRS})
     ExternalProject_Add(${__src_dir}${TARGET_SUFFIX}
-        SOURCE_DIR ${SUPER_PROJECT_SRC}
+        SOURCE_DIR ${__src_dir}
         CMAKE_ARGS -DSUPER_PROJECT_ROOT=${SUPER_PROJECT_ROOT}
                    ${CORE_CMAKE_OPTIONS}
         BUILD_ALWAYS 1
         INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
         CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}
                          ${CORE_CMAKE_STRINGS}
-                         -DNWCHEMEX_LIBRARY_DEPENDS:STRING=${NWCHEMEX_LIBRARY_DEPENDS}
+                         -DNWCHEMEX_LIBRARY_DEPENDS:STRING=${${PROJECT_NAME}_LIBRARY_DEPENDS}
     )
-    foreach(depend ${NWCHEMEX_LIBRARY_DEPENDS})
+    foreach(depend ${${PROJECT_NAME}_LIBRARY_DEPENDS})
         add_dependencies(${__src_dir}${TARGET_SUFFIX} ${depend}${TARGET_SUFFIX})
     endforeach()
     add_dependencies(NWChemExBase${TARGET_SUFFIX} ${__src_dir}${TARGET_SUFFIX})
@@ -132,7 +132,7 @@ if(${BUILD_TESTS})
     list(APPEND CMAKE_MODULE_PATH "${STAGE_INSTALL_DIR}")
     foreach(__test_dir ${NWX_TEST_DIRS})
         ExternalProject_Add(${__test_dir}${TARGET_SUFFIX}
-            SOURCE_DIR ${SUPER_PROJECT_TEST}
+            SOURCE_DIR ${__test_dir}
             CMAKE_ARGS -DSUPER_PROJECT_ROOT=${SUPER_PROJECT_TEST}
                        ${CORE_CMAKE_OPTIONS}
             BUILD_ALWAYS 1
