@@ -13,6 +13,8 @@ set(TARGET_SUFFIX _nwx)
 
 #Source our macros
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/macros")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/external/find_external")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/external/build_external")
 
 include(OptionMacros)
 include(Flags)
@@ -51,8 +53,8 @@ option_w_default(NWX_TEST_DIRS "${PROJECT_NAME}_TEST")
 ################################################################################
 
 get_filename_component(SUPER_PROJECT_ROOT ${CMAKE_CURRENT_SOURCE_DIR} DIRECTORY)
-set(SUPER_PROJECT_SRC ${SUPER_PROJECT_ROOT}/${PROJECT_NAME})
-set(SUPER_PROJECT_TEST ${SUPER_PROJECT_ROOT}/${PROJECT_NAME}_Test)
+set(SUPER_PROJECT_SRC ${SUPER_PROJECT_ROOT}/${NWX_SRC_DIRS})
+set(SUPER_PROJECT_TEST ${SUPER_PROJECT_ROOT}/${NWX_TEST_DIRS})
 set(STAGE_DIR ${CMAKE_BINARY_DIR}/stage)
 set(STAGE_INSTALL_DIR ${STAGE_DIR}${CMAKE_INSTALL_PREFIX})
 #We use a different dir so tests don't get installed
@@ -66,7 +68,7 @@ set(TEST_STAGE_DIR ${CMAKE_BINARY_DIR}/test_stage)
 ################################################################################
 include(DependencyMacros)
 include(ExternalProject)
-foreach(depend ${NWCHEMEX_LIBRARY_DEPENDS})
+foreach(depend ${${PROJECT_NAME}_LIBRARY_DEPENDS})
     find_or_build_dependency(${depend})
 endforeach()
 
