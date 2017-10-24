@@ -12,11 +12,6 @@ elseif(BUILD_NETLIB_BLAS_LAPACK)
         -DCMAKE_INSTALL_LIBDIR:PATH=${STAGE_INSTALL_DIR}/lib        
         INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
         )
-    
-    set(BLAS_INCLUDE_PATH ${STAGE_INSTALL_DIR}/include PARENT_SCOPE)
-    set(BLAS_LIBRARY_PATH ${STAGE_INSTALL_DIR}/lib PARENT_SCOPE)
-    set(BLAS_LIBRARIES "-lblas -lcblas" PARENT_SCOPE)
-    set(LAPACK_LIBRARIES "-llapack -llapacke" PARENT_SCOPE)
 else()
     message(FATAL_ERROR "Please provide the BLAS/LAPACK cmake variables specified or 
     set BUILD_NETLIB_BLAS_LAPACK to ON if you the NWChemEx build to install Netlib BLAS and LAPACK.")

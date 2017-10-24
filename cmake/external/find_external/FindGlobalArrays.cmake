@@ -5,7 +5,8 @@
 #
 #  Once done this will define
 #  GLOBALARRAYS_FOUND - System has Global Arrays
-#  GLOBALARRAYS_INCLUDE_DIRS - The Global Arrays include directories
+#  GLOBALARRAYS_CONFIG - The ga-config binary path
+#  GLOBALARRAYS_INCLUDE_DIR - The Global Arrays include directories
 #  GLOBALARRAYS_LIBRARIES - The libraries needed to use Global Arrays
 
 if(NOT DEFINED GLOBALARRAYS_ROOT_DIR)
@@ -19,6 +20,13 @@ find_path(GLOBALARRAYS_INCLUDE_DIR ga.h
           PATHS ${GLOBALARRAYS_ROOT_DIR}
          )
 
+find_path(GLOBALARRAYS_CONFIG ga-config
+         HINTS ${PC_GLOBALARRAYS_BINDIR}
+               ${PC_GLOBALARRAYS_BIN_DIRS}
+         PATHS ${GLOBALARRAYS_ROOT_DIR} 
+         PATH_SUFFIXES bin
+        )         
+
 find_library(GLOBALARRAYS_C_LIBRARY NAMES libga${CMAKE_STATIC_LIBRARY_SUFFIX}
              HINTS ${PC_GLOBALARRAYS_LIBDIR}
                    ${PC_GLOBALARRAYS_LIBRARY_DIRS}
@@ -30,15 +38,13 @@ find_library(GLOBALARRAYS_ARMCI_LIBRARY libarmci${CMAKE_STATIC_LIBRARY_SUFFIX}
                    ${PC_GLOBALARRAYS_LIBRARY_DIRS}
              PATHS ${GLOBALARRAYS_ROOT_DIR}
         )
-set(GLOBALARRAYS_LIBRARY ${GLOBALARRAYS_C_LIBRARY}
+set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_C_LIBRARY}
                          ${GLOBALARRAYS_ARMCI_LIBRARY})
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(GLOBALARRAYS DEFAULT_MSG
-                                  GLOBALARRAYS_LIBRARY
+find_package_handle_standard_args(GlobalArrays DEFAULT_MSG
+                                  GLOBALARRAYS_LIBRARIES
                                   GLOBALARRAYS_INCLUDE_DIR
+                                  GLOBALARRAYS_CONFIG
 )
 
-set(GlobalArrays_FOUND ${GLOBALARRAYS_FOUND})
-set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARY})
-set(GLOBALARRAYS_INCLUDE_DIRS ${GLOBALARRAYS_INCLUDE_DIR})

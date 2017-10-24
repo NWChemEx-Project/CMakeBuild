@@ -66,14 +66,14 @@ endif()
 if (BLAS_LIBRARIES)
     set(GA_BLAS "--with-blas8=${BLAS_LIBRARIES}")
 else()
-    #Have cmake build install BLAS+LAPACK and provide it to GA
+    #Have cmake build BLAS+LAPACK and provide it to GA
     set(GA_BLAS "--with-blas8=-lblas -llapack")
 endif()
 
 if (LAPACK_LIBRARIES)
     set(GA_LAPACK "--with-lapack=${LAPACK_LIBRARIES}")
 else()
-    #Have cmake build install BLAS+LAPACK and provide it to GA
+    #Have cmake build BLAS+LAPACK and provide it to GA
     set(GA_LAPACK "--with-lapack=-lblas -llapack")
 endif()
 
@@ -88,13 +88,11 @@ endif()
 ExternalProject_Add(GlobalArrays${TARGET_SUFFIX}
     URL https://github.com/GlobalArrays/ga/releases/download/v5.6.2/ga-5.6.2.tar.gz
     #Pass location where autotools needs to be built 
-    CONFIGURE_COMMAND ./autogen.sh 
-    COMMAND ./configure --with-tcgmsg 
+    #CONFIGURE_COMMAND ./autogen.sh 
+    CONFIGURE_COMMAND ./configure --with-tcgmsg 
     ${GA_MPI} --enable-underscoring --disable-mpi-tests #--enable-peigs
     ${GA_SCALAPACK} ${GA_BLAS} ${GA_LAPACK} ${GA_ARMCI} ${GA_OFFLOAD} CC=${CMAKE_C_COMPILER}
     CXX=${CMAKE_CXX_COMPILER} F77=${CMAKE_Fortran_COMPILER} ${GA_SYSVSHMEM} --prefix=${CMAKE_INSTALL_PREFIX} #--enable-cxx
-    #TODO:Fix LDFLAGS
-    LDFLAGS=-L${STAGE_INSTALL_DIR}/lib
     #BUILD_COMMAND $(MAKE) 
     INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
     BUILD_IN_SOURCE 1

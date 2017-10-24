@@ -6,8 +6,8 @@
 #
 #  Once done this will define
 #  ANTLRCPPRUNTIME_FOUND - System has Antlr CppRuntime
-#  ANTLRCPPRUNTIME_INCLUDE_DIRS - The Antlr CppRuntime include directories
-#  ANTLRCPPRUNTIME_LIBRARIES - The libraries needed to use Antlr CppRuntime
+#  ANTLRCPPRUNTIME_INCLUDE_DIR - The Antlr CppRuntime include directories
+#  ANTLRCPPRUNTIME_LIBRARY - The library needed to use Antlr CppRuntime
 
 if(NOT DEFINED ANTLRCPPRUNTIME_ROOT_DIR)
     find_package(PkgConfig)
@@ -26,10 +26,6 @@ find_library(ANTLRCPPRUNTIME_LIBRARY
                    ${PC_ANTLRCPPRUNTIME_LIBRARY_DIRS})
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(ANTLRCPPRUNTIME DEFAULT_MSG
+find_package_handle_standard_args(AntlrCppRuntime DEFAULT_MSG
                                   ANTLRCPPRUNTIME_LIBRARY
                                   ANTLRCPPRUNTIME_INCLUDE_DIR)
-
-set(AntlrCppRuntime_FOUND ${ANTLRCPPRUNTIME_FOUND})
-set(ANTLRCPPRUNTIME_LIBRARIES ${ANTLRCPPRUNTIME_LIBRARY})
-set(ANTLRCPPRUNTIME_INCLUDE_DIRS ${ANTLRCPPRUNTIME_INCLUDE_DIR})
