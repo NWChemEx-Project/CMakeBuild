@@ -14,7 +14,7 @@
 #            Debug build for the build type set value to Debug
 #
 function(option_w_default name value)
-    if(${name})
+    if(DEFINED ${name})
         message(STATUS "Value of ${name} was set by user to : ${${name}}")
     else()
         set(${name} ${value} PARENT_SCOPE)
@@ -68,7 +68,7 @@ endfunction()
 #
 function(bundle_cmake_list __out_var)
     foreach(__arg ${ARGN})
-        if(NOT ${${__arg}} STREQUAL "")
+        if(DEFINED __arg)
             list(APPEND ${__out_var} -D${__arg}:LIST=${${__arg}})
         endif()
     endforeach()

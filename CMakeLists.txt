@@ -13,6 +13,8 @@ set(TARGET_SUFFIX _nwx)
 
 #Source our macros
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/macros")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/external/find_external")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/external/build_external")
 
 include(OptionMacros)
 include(Flags)
@@ -66,7 +68,7 @@ set(TEST_STAGE_DIR ${CMAKE_BINARY_DIR}/test_stage)
 ################################################################################
 include(DependencyMacros)
 include(ExternalProject)
-foreach(depend ${NWCHEMEX_LIBRARY_DEPENDS})
+foreach(depend ${${PROJECT_NAME}_LIBRARY_DEPENDS})
     find_or_build_dependency(${depend})
 endforeach()
 
@@ -99,19 +101,18 @@ endif()
 # Build the main library
 #
 ################################################################################
-
 foreach(__src_dir ${NWX_SRC_DIRS})
     ExternalProject_Add(${__src_dir}${TARGET_SUFFIX}
-        SOURCE_DIR ${SUPER_PROJECT_SRC}
+        SOURCE_DIR ${SUPER_PROJECT_ROOT}/${__src_dir}
         CMAKE_ARGS -DSUPER_PROJECT_ROOT=${SUPER_PROJECT_ROOT}
                    ${CORE_CMAKE_OPTIONS}
         BUILD_ALWAYS 1
         INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
         CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}
                          ${CORE_CMAKE_STRINGS}
-                         -DNWCHEMEX_LIBRARY_DEPENDS:STRING=${NWCHEMEX_LIBRARY_DEPENDS}
+                         -DNWCHEMEX_LIBRARY_DEPENDS:STRING=${${PROJECT_NAME}_LIBRARY_DEPENDS}
     )
-    foreach(depend ${NWCHEMEX_LIBRARY_DEPENDS})
+    foreach(depend ${${PROJECT_NAME}_LIBRARY_DEPENDS})
         add_dependencies(${__src_dir}${TARGET_SUFFIX} ${depend}${TARGET_SUFFIX})
     endforeach()
     add_dependencies(NWChemExBase${TARGET_SUFFIX} ${__src_dir}${TARGET_SUFFIX})
@@ -130,7 +131,7 @@ if(${BUILD_TESTS})
     list(APPEND CMAKE_MODULE_PATH "${STAGE_INSTALL_DIR}")
     foreach(__test_dir ${NWX_TEST_DIRS})
         ExternalProject_Add(${__test_dir}${TARGET_SUFFIX}
-            SOURCE_DIR ${SUPER_PROJECT_TEST}
+            SOURCE_DIR ${SUPER_PROJECT_ROOT}/${__test_dir}
             CMAKE_ARGS -DSUPER_PROJECT_ROOT=${SUPER_PROJECT_TEST}
                        ${CORE_CMAKE_OPTIONS}
             BUILD_ALWAYS 1

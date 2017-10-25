@@ -126,8 +126,14 @@ elseif(${value2})
   #Deref of value2 happens first, if then derefs "value1" obtaining FALSE
   message(STATUS "This will not be printed")
 endif()
+
+:memo: if(value2 AND ${value3}) will result in a cmake error if
+     no variable value3 is defined or if it is defined as empty/empty string.
+     #Deref of value2 gives a non-empty value as mentioned above,
+     while deref of value3 gives empty if not defined.
 ~~~
-Related, to check if a variable is defined it is: `if(DEFINED variable_name)`.
+
+To check if a variable is defined, use: `if(DEFINED variable_name)`.
 
 You can look for a particular dependency with:
 ~~~cmake
@@ -571,8 +577,23 @@ These are dependencies that NWChemExBase currently knows how to find:
 | :-------------: | :--------------------------------------------------------- |  
 | MPI             | MPI compilers, includes, and libraries                     | 
 | OpenMP          | Determines the flags for compiling/linking to OpenMP       |  
-| AntlrCppRuntime | The ANTLR grammar parsing library                          |
-| Eigen3          | The Eigen C++ matrix library                               |
-| GTest           | Google's testing framework                                 |
-| CatchEx         | Catch testing framework installed our way                  |
-| GlobalArrays    | The Global Arrays distributed matrix library               |
+
+Following are dependencies that NWChemExBase will build for you if it cannot find them:
+
+| Name            | Brief Description                                             |  
+| :-------------: | :------------------------------------------------------------ |  
+| Eigen3          | The Eigen C++ matrix library                                  |
+| GTest           | Google's testing framework                                    |
+| CatchEx         | Catch testing framework installed our way                     |
+| Libint          | library for computing Gaussian integrals in quantum mechanics |
+| GlobalArrays    | The Global Arrays distributed matrix library                  |
+| AntlrCppRuntime | The ANTLR grammar parsing library                             |
+
+The following dependencies have to be specified. Alternatively, an option can also
+be specified to NWChemExBase to build the Netlib versions for you. 
+
+| Name            | Brief Description                                          |  
+| :-------------: | :--------------------------------------------------------- |  
+| BLAS            | Basic Linear Algebra Subprograms
+| LAPACK          | Linear Algebra PACKage
+| SCALAPACK       | Scalable Linear Algebra PACKage
