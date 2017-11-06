@@ -44,7 +44,7 @@ bundle_cmake_strings(CORE_CMAKE_STRINGS CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG)
 
 option_w_default(BUILD_TESTS TRUE)
 option_w_default(NWX_SRC_DIRS ${PROJECT_NAME})
-option_w_default(NWX_TEST_DIRS "${PROJECT_NAME}_TEST")
+option_w_default(NWX_TEST_DIRS "${PROJECT_NAME}_Test")
 
 ################################################################################
 #
