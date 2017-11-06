@@ -5,8 +5,8 @@ The purpose of this repository is to store a crisp, clean version of the CMake
 build infrastructure common to the NWChemEx project in such a manner that it:
 
 1. avoids copy/pasting,
-2. facilitates uniform maintable builds for all dependencies,
-3. is cutomizable on a per dependency basis
+2. facilitates uniform maintainable builds for all dependencies,
+3. is customizable on a per dependency basis
 
 If you are building a library that is meant to provide core NWChemEx
 functionality it is strongly recommended you use this repository to save
@@ -31,7 +31,7 @@ What This Repository Provides
 -----------------------------
 
 By using this repository (and adhering to its standards) your library will have
-a robust build that ensures its compatability with other parts of the NWChemEx
+a robust build that ensures its compatibility with other parts of the NWChemEx
 ecosystem.  Additionally, this repository will ensure:
 
 1. A library named `MyRepo.so` is built (other extensions and the ability for

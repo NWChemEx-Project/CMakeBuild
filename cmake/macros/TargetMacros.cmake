@@ -54,7 +54,7 @@ function(nwchemex_add_library __name __srcs __headers __flags)
                                    REQUIRED
         )
     endforeach()
-    list(APPEND __all_flags ${__flags} ${__DEPEND_FLAGS})
+    list(APPEND __all_flags ${${__flags}} ${__DEPEND_FLAGS})
     if(NOT ${__srcs_copy} STREQUAL "")#Only add a library if we have sources
         add_library(${__name} ${__srcs_copy})
         nwchemex_set_up_target(${__name} "${__all_flags}"

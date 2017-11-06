@@ -30,7 +30,7 @@ function check_for_file () {
 check_for_file ${CMAKE_FILE}
 echo "cmake_minimum_required(VERSION 3.1)">${CMAKE_FILE}
 echo "project(${LIBRARY_NAME} VERSION 0.0.0 LANGUAGES CXX)">>${CMAKE_FILE}
-echo "set(NWCHEMEX_LIBRARY_DEPENDS )">>${CMAKE_FILE}
+echo "set(${LIBRARY_NAME}_DEPENDS )">>${CMAKE_FILE}
 echo "add_subdirectory(NWChemExBase)">>${CMAKE_FILE}
 
 #Make source-dir CMakeLists.txt
@@ -55,7 +55,7 @@ echo "include(TargetMacros)">>${TEST_LIST}
 
 #Make a .gitignore
 check_for_file .gitignore
-echo "#These are configuration files for QtCreator"
+echo "#These are configuration files for QtCreator">.gitignore
 echo "${LIBRARY_NAME}.config">>.gitignore
 echo "${LIBRARY_NAME}.files">>.gitignore
 echo "${LIBRARY_NAME}.includes">>.gitignore
@@ -78,4 +78,4 @@ echo "cmake-build-release/">>.gitignore
 
 #Make a .codedocs file
 check_for_file .codedocs
-echo "DOXYFILE = dox/Doxyfile"
+echo "DOXYFILE = dox/Doxyfile">.codedocs
