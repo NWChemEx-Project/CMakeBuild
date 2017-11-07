@@ -9,12 +9,13 @@ The basic tests are:
 1. SimpleRepo : Makes a basically empty library that does nothing
 2. DebugHonored : Ensures `CMAKE_BUILD_TYPE=Debug` propagates to project
 3. ReleaseHonored : Ensures `CMAKE_BUILD_TYPE=Release` propagates to project
+4. SkipTests : Ensures `BUILD_TESTS=False` skips building tests
 
 The following tests ensure we can build dependencies and that the project is 
 provided the proper includes/libraries for compiling.
 
-4. BuildLibInt
-5. BuildEigen3
+1. BuildLibInt
+2. BuildEigen3
 
 Testing NWChemExBase
 --------------------

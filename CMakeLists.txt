@@ -106,20 +106,7 @@ endforeach()
 #                                                                              #
 ################################################################################
 
-find_package(NWChemExBase QUIET)
-
-if(NOT NWCHEMEXLIBRARYBASE_FOUND)
-    ExternalProject_Add(NWChemExBase_External
-            SOURCE_DIR ${NWXBASE_ROOT}/NWChemExBase
-            CMAKE_ARGS -DNWXBASE_CMAKE=${NWXBASE_CMAKE}
-                       -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
-                       -DCMAKE_VERSION=${CMAKE_VERSION}
-            BUILD_ALWAYS 1
-            INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
-    )
-else() # Add a fake target so we don't need if statements
-    add_library(NWChemExBase_External INTERFACE)
-endif()
+find_or_build_dependency(NWChemExBase)
 
 ################################################################################
 #

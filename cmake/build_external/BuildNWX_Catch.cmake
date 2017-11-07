@@ -11,7 +11,7 @@ set(CATCH_PREFIX ${CMAKE_BINARY_DIR}/catch)
 set(CATCH_HEADER_FILE_INITIAL
     ${CATCH_PREFIX}/src/NWX_Catch${TARGET_SUFFIX}/single_include/catch.hpp)
 include(ExternalProject)
-ExternalProject_Add(NWX_Catch${TARGET_SUFFIX}
+ExternalProject_Add(NWX_Catch_External
                     PREFIX ${CATCH_PREFIX}
                     GIT_REPOSITORY
                     https://github.com/philsquared/Catch.git
@@ -20,5 +20,4 @@ ExternalProject_Add(NWX_Catch${TARGET_SUFFIX}
                     BUILD_COMMAND ""
                     INSTALL_COMMAND ""
                     )
-install(FILES ${CATCH_HEADER_FILE_INITIAL}
-        DESTINATION include/catch/)
+install(FILES ${CATCH_HEADER_FILE_INITIAL} DESTINATION include/catch/)
