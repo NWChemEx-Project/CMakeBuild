@@ -1,14 +1,17 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION ${CMAKE_VERSION})
 project(NWChemExBase VERSION 0.0.0 LANGUAGES NONE)
 
-file(GLOB __MACRO_FILES "${PLB_PREFIX}/cmake/macros/*.cmake")
-install(FILES ${__MACRO_FILES}
-        DESTINATION share/cmake/NWChemExBase/macros)
-file(GLOB __BUILD_FILES "${PLB_PREFIX}/cmake/external/find_external/*.cmake")
+set(NWXBASE_MACROS ${NWXBASE_CMAKE}/macros)
+set(MACRO_INSTALL share/cmake/NWChemExBase/macros)
+
+file(GLOB __MACRO_FILES "${NWXBASE_MACROS}/*.cmake")
+install(FILES ${__MACRO_FILES}  DESTINATION ${MACRO_INSTALL})
+
+file(GLOB __BUILD_FILES "${NWXBASE_CMAKE}/external/find_external/*.cmake")
 install(FILES ${__BUILD_FILES}
         DESTINATION share/cmake/NWChemExBase/external/find_external)
 
-configure_file("${PLB_PREFIX}/cmake/NWChemExBaseConfig.cmake.in"
+configure_file("${NWXBASE_CMAKE}/NWChemExBaseConfig.cmake.in"
                NWChemExBaseConfig.cmake @ONLY
 )
 install(FILES ${CMAKE_BINARY_DIR}/NWChemExBaseConfig.cmake

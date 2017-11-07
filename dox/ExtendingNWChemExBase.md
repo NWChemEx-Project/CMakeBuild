@@ -52,7 +52,7 @@ directory.  Each of these configuration files describes what is to be done with
 the contents of that directory during each of the four aforementioned 
 phases.  These files are written using the CMake language, the syntax of 
 which, is reminiscent of a Linux shell script.  The remainder of this section
-will aim to acquaint you with the CMAke language. 
+will aim to acquaint you with the CMake language. 
 
 
 You can define and print variables like:
@@ -116,6 +116,7 @@ endif()
 ~~~
 It should be noted that the rules of if statements are weird in that it will
 automatically dereference the value.  This is easier to grasp by example:
+
 ~~~cmake  
 set(value1 FALSE)
 set(value2 "value1")
@@ -126,12 +127,13 @@ elseif(${value2})
   #Deref of value2 happens first, if then derefs "value1" obtaining FALSE
   message(STATUS "This will not be printed")
 endif()
-
-:memo: if(value2 AND ${value3}) will result in a cmake error if
-     no variable value3 is defined or if it is defined as empty/empty string.
-     #Deref of value2 gives a non-empty value as mentioned above,
-     while deref of value3 gives empty if not defined.
 ~~~
+
+:memo: `if(value2 AND ${value3})` will result in a cmake error if no variable
+value3 is defined or if it is defined as empty/empty string.  Deref of value2 
+gives a non-empty value as mentioned above, while deref of value3 gives empty
+if not defined.
+
 
 To check if a variable is defined, use: `if(DEFINED variable_name)`.
 
@@ -208,14 +210,17 @@ Building on what we just described the superbuild process proceeds via:
    1.  Build dependencies
        1. Configure phase for dependency
        2. Build phase for dependency
+       3. Install dependency to staging area
    2.  Build main project
        1. Configure phase for main project
        2. Build phase for main project
+       3. Install main project to staging area
    3.  Build tests for main project
        1. Configure phase for tests  
        2. Build phase for tests
+       3. Install tests to test staging area
 3. Test the main project
-4. Install the main project
+4. Install the main project to real install location
 
 Looking only at the outermost bullets you can see to the outside world the
 build looks normal.  This is important as it allows CMake projects relying on a
@@ -274,6 +279,8 @@ that another target will be produced (to aid in you in linking).  This
 additional target will not be namespace protected and may collided with our 
 targets.  To avoid this we append a suffix that we expect to be unique. 
 
+:memo: The convention is to append `_External` to each target.
+
 
 NWChemExBase Model
 ------------------
@@ -324,8 +331,8 @@ directories.
 :memo: CMake is really written for your directory structure to match you 
 build structure.  This is largely an artifact of directory boundaries 
 defining scopes.  Although it is in theory possible to lay the project out in
- a different manner, doing so is an uphill battle and not particularly easy 
- to automate.
+a different manner, doing so is an uphill battle and not particularly easy to 
+automate.
 
 
 ### Superbuild Settings
@@ -364,8 +371,8 @@ The actual declaration of your library goes in
  linked to whatever dependencies you requested.
 
 ~~~cmake
-#Should be same as root `CMakeLists.txt`
-cmake_minimum_required(VERSION 3.1)
+#Set version off of top-level variable
+cmake_minimum_required(VERSION ${CMAKE_VERSION})
   
 #Should be same as root `CMakeLists.txt` aside from needing the "-SRC" postfix
 project(ProjectName-SRC VERSION 0.0.0 LANGUAGES CXX)
@@ -384,14 +391,14 @@ set(ProjectName_SRCS ...)
 set(ProjectName_INCLUDES ...)
   
 #...and a list of any compile flags/definitions to provide the library
-set(ProjectName_FLAGS ...)
+set(ProjectName_DEFINITIONS ...)
   
 #Finally we tell NWChemExBase to make a library ProjectName (the end name will
 #be postfix-ed properly according to library type) using the specified sources,
 #flags, and public API
 nwchemex_add_library(ProjectName ProjectName_SRCS 
                                  ProjectName_INCLUDES
-                                 ProjectName_FLAGS
+                                 ProjectName_DEFINITIONS
                                  )
 ~~~
 
@@ -404,8 +411,8 @@ your tests.  Simply include `#include catch/catch.hpp` in your test's source
 file to use it.
 
 ~~~cmake
-#Should be same as root `CMakeLists.txt`
-cmake_minimum_required(VERSION 3.1)
+#Set version based off top-level variable
+cmake_minimum_required(VERSION ${CMAKE_VERSION})
   
 #Should be same as root `CMakeLists.txt` aside from needing the "-Test" prefix
 project(ProjectName-Test VERSION 0.0.0 LANGUAGES CXX)
@@ -432,11 +439,10 @@ As you can imagine distilling a complex thing like a build down to a few
 customizable options incurs some limitations.  At the moment these are:
 
 - Can only specify one library.
-  - Could add another variable `ProjectName_LIBRARIES` (or the like) that
-    contains a list of the libraries.  Then NWChemExBase simply loops over them.
-    - Each library would get to set its own dependencies, sources, *etc.*
+  - Limitation can be avoided by nesting superbuilds for each library 
 - No support for restricting the version of a found library
   - Needs fixed, will happen before a 1.0 release
+
 
 Finding Dependencies
 --------------------
@@ -463,15 +469,15 @@ Optionally a package may set:
                            the REQUIRED keyword.                                        
 
 Of course, many packages do not adhere to these standards complicating
-automation.  Currently our solution is to write `Find<Name>Ex.cmake` files for
-packages not adhering to them and to prefer projects us the *Ex* versions
-instead of the normal ones.
+automation.  Currently our solution is to write `FindNWX_<Name>.cmake` files
+for packages not adhering to them and to prefer our projects us the *NWX* 
+versions instead of the normal ones.
 
 Enabling Additional Dependencies
 --------------------------------
 
 It is likely inevitable that additional dependencies will occur.  When this
-happens the primary responsibility of maintainers is to ensure that dependency
+happens the primary responsibility of maintainers is to ensure that a dependency
 can be found by `find_package`.  This can happen in two ways:
 
 1. If the dependency uses CMake (correctly) already it will generate a 
@@ -489,30 +495,29 @@ requires work on our end.
 First off let's discuss capitalization as it plays a key role here.  By default
 when you call `find_package(aBc)` it will look for a file `FindaBc.cmake` that 
 is the case is preserved.  Barring finding that it will look for 
-`aBcConfig.cmake` or `abc-config.cmake`; however, 
-we're assuming the config files do not exist.  Anyways, after calling 
-`FindaBc.cmake`, `find_package` will determine if `XXX` was found
-by considering the results of the variable `aBC_FOUND` (note the case
-always matches the case given to `find_package`).  Lastly, making matters worse,
-it is convention to always return variables (aside from the `XXX_FOUND` 
-variable) in all uppercase letters (it's a good idea to return `XXX_FOUND` both
-in the native case and in all caps).
+`aBcConfig.cmake` or `abc-config.cmake`; however, we're assuming the config 
+files do not exist.  Anyways, after calling `FindaBc.cmake`, `find_package` will
+determine if `aBC` was found by considering the results of the variable 
+`aBC_FOUND` (note the case always matches the case given to `find_package`). 
+Lastly, making matters worse, it is convention to always return variables 
+(aside from the `aBc_FOUND` variable) in all uppercase letters (it's a good idea
+to return `aBc_FOUND` both in the native case and in all caps).
 
 Case caveats aside, let's say we want to do this in a textbook manner, then the 
-resulting `FindXXX.cmake` file should look something like:
+resulting `FindaBc.cmake` file should look something like:
 
 ~~~cmake
-#File FindXXX.cmake
+#File FindaBc.cmake
 #
 # By convention this file will set the following:
 #
-# XXX_FOUND        to true if all parts of the XXX package are found
-# XXX_INCLUDE_DIR  to the path for includes part of XXX's public API
-# XXX_LIBRARY      to the libraries included with XXX
-# XXX_INCLUDE_DIRS will be the includes of XXX as well as any dependency it
+# aBc_FOUND        to true if all parts of the aBc package are found
+# ABC_INCLUDE_DIR  to the path for includes part of aBc's public API
+# ABC_LIBRARY      to the libraries included with aBc
+# ABC_INCLUDE_DIRS will be the includes of aBc as well as any dependency it
 #                  needs
-# XXX_LIBRARIES    will be the libraries of XXX and all its dependencies
-# XXX_DEFINITIONS  will be any compile-time flags to use in your project
+# ABC_LIBRARIES    will be the libraries of aBc and all its dependencies
+# ABC_DEFINITIONS  will be any compile-time flags to use in your project
                    
   
 #Call find_package for each dependency
@@ -520,35 +525,35 @@ find_package(Depend1)
   
 #Try to piggy-back of package-config 
 find_package(PkgConfig)
-pkg_check_modules(PC_XXX <libname_without_suffix>)
+pkg_check_modules(PC_ABC <libname_without_suffix>)
   
 #For each header file in the public API try to find it
-find_path(XXX_INCLUDE_DIR <path/you/put/in/cxx/source/file>
-          HINTS ${PC_XXX_INCLUDEDIR} ${PC_XXX_INCLUDE_DIRS}
+find_path(ABC_INCLUDE_DIR <path/you/put/in/cxx/source/file>
+          HINTS ${PC_ABC_INCLUDEDIR} ${PC_ABC_INCLUDE_DIRS}
 )
   
 #For each library try to find it
-find_path(XXX_LIBRARY <library/name/including/the/lib/and/the/extension>)
-          HINTS ${PC_XXX_LIBDIR} ${PC_XXX_LIBRARY_DIRS}
+find_path(ABC_LIBRARY <library/name/including/the/lib/and/the/extension>)
+          HINTS ${PC_ABC_LIBDIR} ${PC_ABC_LIBRARY_DIRS}
 )
   
 #Let CMake see see if the found values are sufficient
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(XXX DEFAULT_MSG XXX_INCLUDE_DIR XXX_LIBRARY)
+find_package_handle_standard_args(aBc DEFAULT_MSG ABC_INCLUDE_DIR ABC_LIBRARY)
   
 #In examples you'll see a marked_as_advanced line here a lot, but it's pretty
 #useless as barely anyone runs the cmake GUI...
   
-#Add dependencies and XXX's includes to XXX_INCLUDE_DIRS
-set(XXX_INCLUDE_DIRS ${XXX_INCLUDE_DIR} ...)
+#Add dependencies and aBc's includes to ABC_INCLUDE_DIRS
+set(ABC_INCLUDE_DIRS ${ABC_INCLUDE_DIR} ...)
   
 #Same for libraries to link to
-set(XXX_LIBRARIES ${XXX_LIBRARY} ...)
+set(ABC_LIBRARIES ${ABC_LIBRARY} ...)
   
-#Set the flags needed to compile against XXX
-set(XXX_DEFINITIONS ...)
+#Set the flags needed to compile against aBc
+set(ABC_DEFINITIONS ...)
 ~~~
-Once written your file goes in `NWChemBase/cmake/external/FindXXX.cmake`
+Once written your file goes in `NWChemBase/cmake/external_find/FindaBc.cmake`
 
 ### Enabling NWChemExBase to Build a Dependency
 
@@ -557,17 +562,22 @@ to build dependencies for the user.  That is, if we are unable to locate a
 required dependency on the system, we instead build it.  CMake doesn't have a
 particular convention for how this done so we have taken the liberty of defining
 a process for you.  We assume the following is in 
-`NWChemExBase/cmake/external/BuildXXX.cmake`.
+`NWChemExBase/cmake/external_build/BuildXXX.cmake`.
 
 ~~~cmake
-#You may assume include(ExternalProject) was called
+#include(ExternalProject) and include(DependancyMacros) are already sourced
 
-ExternalProject_Add(
-    XXX_External #Target name. Must match file name and have _External suffix
-
+ExternalProject_Add(XXX_External #Target name = file name plus _External suffix
+  <Rest of settings> 
 )
-~~~
 
+#For each dependency flag it as one
+foreach(__depend <list of dependencies>)
+    find_or_build_dependency(${__depend})
+    #The external target was made for you by find_or_build_dependency
+    set_dependencies(XXX_External ${__depend}_External)
+endforeach()    
+~~~
 
 ### Supported Dependencies
 
@@ -580,14 +590,14 @@ These are dependencies that NWChemExBase currently knows how to find:
 
 Following are dependencies that NWChemExBase will build for you if it cannot find them:
 
-| Name            | Brief Description                                             |  
-| :-------------: | :------------------------------------------------------------ |  
-| Eigen3          | The Eigen C++ matrix library                                  |
-| GTest           | Google's testing framework                                    |
-| CatchEx         | Catch testing framework installed our way                     |
-| Libint          | library for computing Gaussian integrals in quantum mechanics |
-| GlobalArrays    | The Global Arrays distributed matrix library                  |
-| AntlrCppRuntime | The ANTLR grammar parsing library                             |
+| Name            | Brief Description                                          |  
+| :-------------: | :--------------------------------------------------------- |  
+| Eigen3          | The Eigen C++ matrix library                               |
+| GTest           | Google's testing framework                                 |
+| NWX_Catch       | Catch testing framework installed our way                  |
+| LibInt          | Computes Gaussian integrals for quantum mechanics          |
+| GlobalArrays    | The Global Arrays distributed matrix library               |
+| AntlrCppRuntime | The ANTLR grammar parsing library                          |
 
 The following dependencies have to be specified. Alternatively, an option can also
 be specified to NWChemExBase to build the Netlib versions for you. 
