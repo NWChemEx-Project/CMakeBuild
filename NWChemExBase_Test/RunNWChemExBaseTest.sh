@@ -8,18 +8,6 @@ set -e
 #
 #   ./RunNWChemExBaseTest.sh <test_name>
 #
-#   Each test should define a series of files that live in a subdirectory
-#   of this directory called <test_name>_files.  It must define the following
-#   two files:
-#
-#   1. <test_name>.hpp
-#   2. <test_name>.cpp
-#
-#   The former must be the definition of a class <test_name> with a member
-#   function "run_test()".  So long as run_test() returns, the test will be
-#   taken as being successful.  The definition of "run_test()" goes in the .cpp
-#   file.
-#
 #   In the build directory, this script will perform the following steps:
 #   1. make a directory called <test_name> and change to it
 #   2. run BasicSetup.sh <test_name>
@@ -67,8 +55,15 @@ echo "add_cxx_unit_test(Test${test_name} ${test_name})" >> ${test_cmake}
 echo "#include<${test_name}/${test_name}.hpp>" > ${test_src}
 echo "int main(){ ${test_name} temp; temp.run_test(); return 0;}">> ${test_src}
 
+#Set the cache file
+cache_file=../${test_name}_files/CMakeVars.txt
+
 #Run CMake
-cmake -H. -Bbuild
+if [ -e ${cache_file} ]; then
+   cmake -Bbuild -C${cache_file} -H.
+else
+   cmake -H. -Bbuild
+fi
 
 #Build the files
 cd build

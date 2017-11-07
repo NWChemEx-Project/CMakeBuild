@@ -14,6 +14,7 @@ include(CTest)
 enable_testing()
 
 include(UtilityMacros)
+include(DependencyMacros)
 
 #Little trick so we always know this directory even when we are in a function
 set(DIR_OF_TARGET_MACROS ${CMAKE_CURRENT_LIST_DIR})
@@ -47,7 +48,7 @@ function(nwchemex_add_library __name __srcs __headers __flags)
     set(__headers_copy ${${__headers}})
     make_full_paths(__srcs_copy)
     make_full_paths(__headers_copy)
-    foreach(__depend ${NWCHEMEX_LIBRARY_DEPENDS})
+    foreach(__depend ${NWX_DEPENDENCIES})
         find_dependency(${_depend} __DEPEND_INCLUDES
                                    __DEPEND_LIBRARIES
                                    __DEPEND_FLAGS

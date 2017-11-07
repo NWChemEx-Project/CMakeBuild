@@ -68,4 +68,4 @@ How To Use
    `MyRepo/CMakeLists.txt`
 5. Add your tests to `MyRepo-Test/CMakeLists.txt`
 
-For detailed instructions can be found [here](dox/ExtendingNWChemExBase.md).
+More detailed instructions can be found [here](dox/ExtendingNWChemExBase.md).

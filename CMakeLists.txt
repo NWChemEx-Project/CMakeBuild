@@ -27,6 +27,12 @@ set(NWXBASE_CMAKE ${NWXBASE_ROOT}/cmake)
 #The location of the macros
 set(NWXBASE_MACROS ${NWXBASE_CMAKE}/macros)
 
+#The location of our find scripts
+set(NWXBASE_FIND_SCRIPTS ${NWXBASE_CMAKE}/find_external)
+
+#The location of our build scripts
+set(NWXBASE_BUILD_SCRIPTS ${NWXBASE_CMAKE}/build_external)
+
 #Effective root of the file system during the build
 set(STAGE_DIR ${CMAKE_BINARY_DIR}/stage)
 
@@ -37,10 +43,12 @@ set(STAGE_INSTALL_DIR ${STAGE_DIR}${CMAKE_INSTALL_PREFIX})
 set(TEST_STAGE_DIR ${CMAKE_BINARY_DIR}/test_stage)
 
 #Source and include our macros
-list(APPEND CMAKE_MODULE_PATH ${NWXBASE_MACROS})
+list(APPEND CMAKE_MODULE_PATH ${NWXBASE_MACROS} ${NWXBASE_FIND_SCRIPTS}
+                              ${NWXBASE_BUILD_SCRIPTS})
 include(OptionMacros)
 include(Flags)
 include(Debugging)
+include(DependencyMacros)
 
 ################################################################################
 #
@@ -65,7 +73,6 @@ bundle_cmake_strings(CORE_CMAKE_STRINGS CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG)
 # Handle NWChemEx's special options, report their values.
 #
 ################################################################################
-
 option_w_default(BUILD_TESTS TRUE)
 #Directory where your source is
 option_w_default(NWX_SRC_DIR ${SUPER_PROJECT_ROOT}/${PROJECT_NAME})
@@ -80,7 +87,7 @@ option_w_default(NWX_DEPENDENCIES "${${PROJECT_NAME}_DEPENDS}")
 # Find the dependencies of the project, queue them for building if not found   #
 #
 ################################################################################
-include(DependencyMacros)
+
 include(ExternalProject)
 foreach(depend ${NWX_DEPENDENCIES})
     find_or_build_dependency(${depend})

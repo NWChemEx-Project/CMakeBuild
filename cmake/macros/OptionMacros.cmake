@@ -14,8 +14,8 @@
 #            Debug build for the build type set value to Debug
 #
 function(option_w_default name value)
-    if(DEFINED ${name})
-        message(STATUS "Value of ${name} was set by user to : ${${name}}")
+    if(DEFINED ${name} AND (NOT ${name} STREQUAL ""))
+            message(STATUS "Value of ${name} was set by user to : ${${name}}")
     else()
         set(${name} ${value} PARENT_SCOPE)
         message(STATUS "Setting value of ${name} to default : ${value}")
