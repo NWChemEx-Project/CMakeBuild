@@ -17,7 +17,9 @@ set -e
 
 test_name=${1}
 cmake_command=${2}
-test_dir=${test_name}
+
+header_file=${test_name}.hpp
+source_file=${test_name}.cpp
 
 # Establish the testing directory by appending a number (will try up to 10)
 for ((i=1;i<10;i+=1));do
@@ -37,33 +39,35 @@ done
 cd ${test_dir}
 ../../../bin/BasicSetup.sh ${test_name}
 ln -s ../../../../NWChemExBase #Pretend NWChemExBase is a sub-folder
-cp ../${test_name}_files/${test_name}.hpp ${test_name} #Copy header
-cp ../${test_name}_files/${test_name}.cpp ${test_name} #Copy source
+
+#Make the header file
+echo "#pragma once">${test_name}/${header_file}
+echo "struct ${test_name} { void run_test();};">>${test_name}/${header_file}
+
+cp ../${test_name}_files/${source_file} ${test_name} #Copy source
 
 #Add the sources and headers to the CMakeLists.txt
 srcs_line="set(${test_name}_SRCS"
-srcs_replace="${srcs_line} ${test_name}.cpp"
+srcs_replace="${srcs_line} ${source_file}"
 sed -i "s/${srcs_line}/${srcs_replace}/g" ${test_name}/CMakeLists.txt
 incs_line="set(${test_name}_INCLUDES"
-incs_replace="${incs_line} ${test_name}.hpp"
+incs_replace="${incs_line} ${header_file}"
 sed -i "s/${incs_line}/${incs_replace}/g" ${test_name}/CMakeLists.txt
+
+
 
 #Add the tests
 test_cmake=${test_name}_Test/CMakeLists.txt
-test_src=${test_name}_Test/Test${test_name}.cpp
+test_src=${test_name}_Test/Test${source_file}
 echo "add_cxx_unit_test(Test${test_name} ${test_name})" >> ${test_cmake}
-echo "#include<${test_name}/${test_name}.hpp>" > ${test_src}
+echo "#include<${test_name}/${header_file}>" > ${test_src}
 echo "int main(){ ${test_name} temp; temp.run_test(); return 0;}">> ${test_src}
 
 #Set the cache file
 cache_file=../${test_name}_files/CMakeVars.txt
 
 #Run CMake
-if [ -e ${cache_file} ]; then
-   cmake -Bbuild -C${cache_file} -H.
-else
-   cmake -H. -Bbuild
-fi
+cmake -Bbuild -C${cache_file} -H.
 
 #Build the files
 cd build

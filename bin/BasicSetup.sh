@@ -35,7 +35,7 @@ echo "add_subdirectory(NWChemExBase)">>${CMAKE_FILE}
 
 #Make source-dir CMakeLists.txt
 check_for_file ${SRC_LIST}
-echo "cmake_minimum_required(VERSION 3.1)">${SRC_LIST}
+echo "cmake_minimum_required(VERSION \${CMAKE_VERSION})">${SRC_LIST}
 echo "project(${LIBRARY_NAME}-SRC VERSION 0.0.0 LANGUAGES CXX)">>${SRC_LIST}
 echo "include(TargetMacros)">>${SRC_LIST}
 echo "set(${LIBRARY_NAME}_SRCS )">>${SRC_LIST}
@@ -48,7 +48,7 @@ echo ")">>${SRC_LIST}
 
 #Make test-dir CMakeLists.txt
 check_for_file ${TEST_LIST}
-echo "cmake_minimum_required(VERSION 3.1)">${TEST_LIST}
+echo "cmake_minimum_required(VERSION \${CMAKE_VERSION})">${TEST_LIST}
 echo "project(${LIBRARY_NAME}-Test VERSION 0.0.0 LANGUAGES CXX)">>${TEST_LIST}
 echo "find_package(${LIBRARY_NAME} REQUIRED)">>${TEST_LIST}
 echo "include(TargetMacros)">>${TEST_LIST}

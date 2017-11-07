@@ -1,4 +1,5 @@
 #include "SimpleRepo/SimpleRepo.hpp"
 
-void SimpleRepo::run_test()const{}
+void SimpleRepo::run_test()
+{}
 

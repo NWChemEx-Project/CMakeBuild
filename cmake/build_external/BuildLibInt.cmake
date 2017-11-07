@@ -1,6 +1,18 @@
 set(LIBINT_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-set(LIBINT_TAR https://github.com/evaleev/libint/releases/download/)
-set(LIBINT_TAR ${LIBINT_TAR}v2.4.0-beta.4/libint-2.4.0-beta.4.tgz)
+set(LIBINT_MAJOR 2)
+set(LIBINT_MINOR 4)
+set(LIBINT_PATCH 1)
+set(LIBINT_VERSION "${LIBINT_MAJOR}.${LIBINT_MINOR}.${LIBINT_PATCH}")
+set(LIBINT_URL https://github.com/evaleev/libint)
+set(LIBINT_TAR ${LIBINT_URL}/releases/download/v${LIBINT_VERSION}/)
+set(LIBINT_TAR ${LIBINT_TAR}/libint-${LIBINT_VERSION})
+
+if(${PROJECT_NAME} STREQUAL "BuildLibInt")
+    #Grab the small version of libint for testing purposes
+    set(LIBINT_TAR ${LIBINT_TAR}-test-mpqc4.tgz)
+else()
+    set(LIBINT_TAR ${LIBINT_TAR}.tgz)
+endif()
 
 find_or_build_dependency(Eigen3)
 ExternalProject_Add(LibInt_External
