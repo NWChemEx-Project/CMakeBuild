@@ -45,9 +45,12 @@ set(TEST_STAGE_DIR ${CMAKE_BINARY_DIR}/test_stage)
 #Source and include our macros
 list(APPEND CMAKE_MODULE_PATH ${NWXBASE_MACROS} ${NWXBASE_FIND_SCRIPTS}
                               ${NWXBASE_BUILD_SCRIPTS})
+
+list(APPEND CMAKE_PREFIX_PATH "${STAGE_INSTALL_DIR}")
+list(APPEND CMAKE_MODULE_PATH "${STAGE_INSTALL_DIR}")
+
 include(OptionMacros)
 include(Flags)
-include(Debugging)
 include(DependencyMacros)
 
 ################################################################################
@@ -132,7 +135,7 @@ ExternalProject_Add(${PROJECT_NAME}_External
                          -DNWX_DEPENDENCIES:STRING=${NWX_DEPENDENCIES}
 )
 foreach(depend ${NWX_DEPENDENCIES})
-    add_compile_options(${PROJECT_NAME}_External ${depend}_External)
+    add_dependencies(${PROJECT_NAME}_External ${depend}_External)
 endforeach()
 add_dependencies(${PROJECT_NAME}_External NWChemExBase_External)
 
@@ -144,8 +147,6 @@ add_dependencies(${PROJECT_NAME}_External NWChemExBase_External)
 #                                                                              #
 ################################################################################
 if(${BUILD_TESTS})
-    list(APPEND CMAKE_PREFIX_PATH "${STAGE_INSTALL_DIR}")
-    list(APPEND CMAKE_MODULE_PATH "${STAGE_INSTALL_DIR}")
     ExternalProject_Add(${PROJECT_NAME}_Tests_External
             SOURCE_DIR ${NWX_TEST_DIR}
             CMAKE_ARGS -DSUPER_PROJECT_ROOT=${SUPER_PROJECT_TEST}
