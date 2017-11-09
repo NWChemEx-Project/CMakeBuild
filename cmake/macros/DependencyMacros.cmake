@@ -4,6 +4,8 @@
 #
 ################################################################################
 
+include(UtilityMacros)
+
 #
 # Macro for finding a dependency that is presumed built.  It is assumed that
 # whatever name is given
@@ -25,15 +27,18 @@ function(find_dependency __name __include __lib __flags __required)
     string(TOUPPER ${__name} __NAME)
     #Check that variable exists and is set to true
     if(${__NAME}_FOUND OR ${__name}_FOUND)
-        if(${__NAME}_INCLUDE_DIRS)
+        is_valid(has_includes ${__NAME}_INCLUDE_DIRS)
+        if(has_includes)
             list(APPEND ${__include} ${${__NAME}_INCLUDE_DIRS})
             message(STATUS "${__name} Includes: ${${__NAME}_INCLUDE_DIRS}")
         endif()
-        if(${__NAME}_LIBRARIES)
+        is_valid(has_libs ${__NAME}_LIBRARIES)
+        if(has_libs)
             list(APPEND ${__lib} ${${__NAME}_LIBRARIES})
             message(STATUS "${__name} Libs: ${${__NAME}_LIBRARIES}")
         endif()
-        if(${__NAME}_DEFINITIONS)
+        is_valid(has_defs ${__NAME}_DEFINITIONS)
+        if(has_defs)
             list(APPEND ${__flags} ${${__NAME}_DEFINITIONS})
             message(STATUS "${__name} Defines: ${${__NAME}_DEFINITIONS}")
         endif()

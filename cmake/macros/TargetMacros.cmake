@@ -15,7 +15,6 @@ enable_testing()
 
 include(UtilityMacros)
 include(DependencyMacros)
-include(Debugging)
 
 #Little trick so we always know this directory even when we are in a function
 set(DIR_OF_TARGET_MACROS ${CMAKE_CURRENT_LIST_DIR})
@@ -57,7 +56,8 @@ function(nwchemex_add_library __name __srcs __headers __flags)
         )
     endforeach()
     list(APPEND __all_flags ${${__flags}} ${__DEPEND_FLAGS})
-    if(NOT ${__srcs_copy} STREQUAL "")#Only add a library if we have sources
+    is_valid(have_sources __srcs_copy)
+    if(have_sources)
         add_library(${__name} ${__srcs_copy})
         nwchemex_set_up_target(${__name} "${__all_flags}"
                               "${__DEPEND_INCLUDES}"
