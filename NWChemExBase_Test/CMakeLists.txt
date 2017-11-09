@@ -19,7 +19,7 @@ file(COPY InstalledNWXBase_files DESTINATION ${CMAKE_BINARY_DIR})
 
 # Building Tests
 foreach(_test_name DebugHonored ReleaseHonored SimpleRepo SkipTests
-                   BuildEigen3 #BuildLibInt
+                   BuildEigen3 BuildLibInt
        )
     add_test(NAME    ${_test_name}
              COMMAND ${CMAKE_BINARY_DIR}/RunNWChemExBaseTest.sh
