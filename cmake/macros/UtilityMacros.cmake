@@ -22,3 +22,15 @@ function(make_full_paths __list)
     endforeach()
     set(${__list} ${__temp_list} PARENT_SCOPE)
 endfunction()
+
+#
+# Checking if a variable is valid (defined and not empty) in CMake is annoying
+# and error-prone.  This function does it for you.
+#
+# Syntax: is_valid(<variable_to_check> <result>)
+function(is_valid __variable __out)
+set(${__variable} FALSE PARENT_SCOPE)
+if(DEFINED ${__out} AND (NOT "${${__out}}" STREQUAL ""))
+    set(${__variable} TRUE PARENT_SCOPE)
+endif()
+endfunction()
