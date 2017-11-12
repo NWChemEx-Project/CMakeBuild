@@ -19,7 +19,7 @@ string(TOUPPER ${__name} __NAME)
 
 #Find the actual library (if there is one)
 if(@HAS_LIBRARY@)
-    find_library(${__NAME}_LIBRARY lib${__name}.so
+    find_library(${__NAME}_LIBRARY lib${__name}${CMAKE_SHARED_LIBRARY_SUFFIX}
                  PATHS ${INSTALL_ROOT}/lib/${__name})
     FIND_PACKAGE_HANDLE_STANDARD_ARGS(${__NAME} DEFAULT_MSG ${__NAME}_LIBRARY)
 endif()
