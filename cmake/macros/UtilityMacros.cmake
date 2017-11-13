@@ -29,8 +29,20 @@ endfunction()
 #
 # Syntax: is_valid(<variable_to_check> <result>)
 function(is_valid __variable __out)
-set(${__variable} FALSE PARENT_SCOPE)
-if(DEFINED ${__out} AND (NOT "${${__out}}" STREQUAL ""))
-    set(${__variable} TRUE PARENT_SCOPE)
+set(${__out} FALSE PARENT_SCOPE)
+if(DEFINED ${__variable} AND (NOT "${${__variable}}" STREQUAL ""))
+    set(${__out} TRUE PARENT_SCOPE)
 endif()
+endfunction()
+
+#
+# Checks if a variable is valid and not false
+#
+# Syntax: is_valid(<variable_to_check> <result>)
+function(is_valid_and_true __variable __out)
+    is_valid(${__variable} __temp)
+    set(${__out} FALSE PARENT_SCOPE)
+    if(__temp AND ${__variable})
+        set(${__out} TRUE PARENT_SCOPE)
+    endif()
 endfunction()
