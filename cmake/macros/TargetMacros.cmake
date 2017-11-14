@@ -52,11 +52,10 @@ function(nwchemex_add_library __name __srcs __headers __flags)
         find_dependency(${__depend} __DEPEND_INCLUDES
                                    __DEPEND_LIBRARIES
                                    __DEPEND_FLAGS
-                                   REQUIRED
         )
     endforeach()
     list(APPEND __all_flags ${${__flags}} ${__DEPEND_FLAGS})
-    is_valid(have_sources __srcs_copy)
+    is_valid(__srcs_copy have_sources)
     if(have_sources)
         add_library(${__name} ${__srcs_copy})
         nwchemex_set_up_target(${__name} "${__all_flags}"
@@ -97,7 +96,7 @@ function(nwchemex_add_test __name __test_file __target)
     add_executable(${__name} ${__file_copy})
     nwchemex_set_up_target(${__name} "" "${__target}" "${__target}" "tests")
     add_test(NAME ${__name} COMMAND ./${__name})
-    target_include_directories(${__name} PRIVATE ${NWX_Catch_INCLUDE_DIRS})
+    target_include_directories(${__name} PRIVATE ${NWX_CATCH_INCLUDE_DIRS})
     install(FILES ${CMAKE_BINARY_DIR}/CTestTestfile.cmake DESTINATION tests)
 endfunction()
 

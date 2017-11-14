@@ -61,6 +61,7 @@ test_cmake=${test_name}_Test/CMakeLists.txt
 test_src=${test_name}_Test/Test${source_file}
 echo "add_cxx_unit_test(Test${test_name} ${test_name})" >> ${test_cmake}
 echo "#include<${test_name}/${header_file}>" > ${test_src}
+echo "#include \"catch/catch.hpp\"">>${test_src}
 echo "int main(){ ${test_name} temp; temp.run_test(); return 0;}">> ${test_src}
 
 cmake_vars=${path_to_source}/CMakeVars.txt
