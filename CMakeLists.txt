@@ -164,8 +164,14 @@ message(STATUS
         "----------------------------------------------------------------------"
         "--------")
 message(STATUS "CXX Flags: ${CMAKE_CXX_FLAGS}")
-message(STATUS "Found the following dependencies: ${DEPENDS_WE_FOUND}")
-message(STATUS "Will build: ${DEPENDS_WERE_BUILDING}")
+message(STATUS "Found the following dependencies: ")
+foreach(__depend ${DEPENDS_WE_FOUND})
+    message(STATUS "    ${__depend}")
+endforeach()
+message(STATUS "Will build: ")
+foreach(__depend ${DEPENDS_WERE_BUILDING})
+    message(STATUS "    ${__depend}")
+endforeach()
 
 #####################
 # uninstall target

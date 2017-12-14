@@ -581,14 +581,16 @@ endforeach()
 
 ### Supported Dependencies
 
-These are dependencies that NWChemExBase currently knows how to find:
+These are dependencies that NWChemExBase currently knows how to find, but can't
+build:
 
 | Name            | Brief Description                                          |  
-| :-------------: | :--------------------------------------------------------- |  
-| MPI             | MPI compilers, includes, and libraries                     | 
-| OpenMP          | Determines the flags for compiling/linking to OpenMP       |  
+| :-------------: | :--------------------------------------------------------- |   
+| OpenMP          | Determines the flags for compiling/linking to OpenMP       |
+| NWX_MPI         | Wrapper around non-conforming standard CMake FindMPI.cmake |  
 
-Following are dependencies that NWChemExBase will build for you if it cannot find them:
+Following are dependencies that NWChemExBase will build for you if it cannot 
+find them:
 
 | Name            | Brief Description                                          |  
 | :-------------: | :--------------------------------------------------------- |  
@@ -599,6 +601,10 @@ Following are dependencies that NWChemExBase will build for you if it cannot fin
 | GlobalArrays    | The Global Arrays distributed matrix library               |
 | AntlrCppRuntime | The ANTLR grammar parsing library                          |
 
+By means of a disclaimer, dependencies prefixed with NWX differ from the 
+canonical versions by some NWChemEx specific machinery.  Probably without 
+exception you'll want to use the NWX version for specifying your dependencies.
+ 
 The following dependencies have to be specified. Alternatively, an option can also
 be specified to NWChemExBase to build the Netlib versions for you. 
 

@@ -15,6 +15,7 @@ enable_testing()
 
 include(UtilityMacros)
 include(DependencyMacros)
+include(AssertMacros)
 
 #Little trick so we always know this directory even when we are in a function
 set(DIR_OF_TARGET_MACROS ${CMAKE_CURRENT_LIST_DIR})
@@ -22,12 +23,14 @@ set(DIR_OF_TARGET_MACROS ${CMAKE_CURRENT_LIST_DIR})
 #
 # This is code factorization for the next few functions.
 #
-function(nwchemex_set_up_target __name __flags __includes __libraries __install)
+function(nwchemex_set_up_target __name __flags __lfags __includes __libraries
+                                __install)
     target_link_libraries(${__name} PRIVATE "${__libraries}")
     target_compile_options(${__name} PRIVATE "${__flags}")
     target_include_directories(${__name} PRIVATE ${SUPER_PROJECT_ROOT}
                                                  "${__includes}")
     set_property(TARGET ${__name} PROPERTY CXX_STANDARD ${CMAKE_CXX_STANDARD})
+    set_property(TARGET ${__name} PROPERTY LINK_FLAGS "${__lflags}")
     install(TARGETS ${__name} DESTINATION ${__install})
 endfunction()
 
@@ -42,8 +45,10 @@ endfunction()
 #                 API of the library.  Should be relative paths.
 #     - Flags   : These are flags needed to compile the library in addition to
 #                 those provided by this library's dependencies.
+#     - LFlags  " These are the flags needed to link this library in addition
+#                 to those provided by the dependencies
 #
-function(nwchemex_add_library __name __srcs __headers __flags)
+function(nwchemex_add_library __name __srcs __headers __flags __lflags)
     set(__srcs_copy ${${__srcs}})
     set(__headers_copy ${${__headers}})
     make_full_paths(__srcs_copy)
@@ -51,16 +56,23 @@ function(nwchemex_add_library __name __srcs __headers __flags)
     foreach(__depend ${NWX_DEPENDENCIES})
         find_dependency(${__depend} __DEPEND_INCLUDES
                                    __DEPEND_LIBRARIES
-                                   __DEPEND_FLAGS
+                                   __DEPEND_FLAG
+                                   __DEPEND_LFLAG
+                                   __was_found
         )
+        assert(__was_found)
     endforeach()
     list(APPEND __all_flags ${${__flags}} ${__DEPEND_FLAGS})
+    list(APPEND __all_lflags ${${__lflags}} ${__DEPEND_LFLAGS})
     is_valid(__srcs_copy have_sources)
     if(have_sources)
         add_library(${__name} ${__srcs_copy})
-        nwchemex_set_up_target(${__name} "${__all_flags}"
+        nwchemex_set_up_target(${__name}
+                              "${__all_flags}"
+                              "${__all_lflags}"
                               "${__DEPEND_INCLUDES}"
-                              "${__DEPEND_LIBRARIES}" lib/${__name})
+                              "${__DEPEND_LIBRARIES}"
+                              lib/${__name})
         set(HAS_LIBRARY TRUE)
     else()
         set(HAS_LIBRARY FALSE)
@@ -94,7 +106,7 @@ function(nwchemex_add_test __name __test_file __target)
     set(__file_copy ${__test_file})
     make_full_paths(__file_copy)
     add_executable(${__name} ${__file_copy})
-    nwchemex_set_up_target(${__name} "" "${__target}" "${__target}" "tests")
+    nwchemex_set_up_target(${__name} "" "" "${__target}" "${__target}" "tests")
     add_test(NAME ${__name} COMMAND ./${__name})
     target_include_directories(${__name} PRIVATE ${NWX_CATCH_INCLUDE_DIRS})
     install(FILES ${CMAKE_BINARY_DIR}/CTestTestfile.cmake DESTINATION tests)
