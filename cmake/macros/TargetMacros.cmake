@@ -23,7 +23,7 @@ set(DIR_OF_TARGET_MACROS ${CMAKE_CURRENT_LIST_DIR})
 #
 # This is code factorization for the next few functions.
 #
-function(nwchemex_set_up_target __name __flags __lfags __includes __libraries
+function(nwchemex_set_up_target __name __flags __lflags __includes __libraries
                                 __install)
     target_link_libraries(${__name} PRIVATE "${__libraries}")
     target_compile_options(${__name} PRIVATE "${__flags}")

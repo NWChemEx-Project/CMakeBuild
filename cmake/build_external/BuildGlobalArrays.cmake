@@ -65,8 +65,8 @@ ExternalProject_Add(GlobalArrays_External
 )
 
 # Establish the dependencies
-add_dependencies(GlobalArrays_External NWX_BLAS_External
-                                       NWX_LAPACK_External
+add_dependencies(GlobalArrays_External NWX_CBLAS_External
+                                       NWX_LAPACKE_External
                                        NWX_MPI_External)
 
 

@@ -3,7 +3,7 @@ project(GlobalArrays VERSION 0.0.0 LANGUAGES C Fortran)
 
 include(DependencyMacros)
 include(ExternalProject)
-foreach(depend MPI BLAS LAPACK)
+foreach(depend MPI CBLAS LAPACKE)
     find_dependency(NWX_${depend} NWX_${depend}_INCLUDE_DIRS
                                   NWX_${depend}_LIBRARIES
                                   NWX_${depend}_DEFINITIONS
@@ -11,9 +11,9 @@ foreach(depend MPI BLAS LAPACK)
                                   _${depend}_FOUND)
     assert(_${depend}_FOUND)
 endforeach()
-string (REPLACE ";" " " BLAS_LIBRARIES "${NWX_BLAS_LIBRARIES}")
+string (REPLACE ";" " " BLAS_LIBRARIES "${NWX_CBLAS_LIBRARIES}")
 set(GA_BLAS "--with-blas8=${BLAS_LIBRARIES}")
-string(REPLACE ";" " " LAPACK_LIBRARIES "${NWX_LAPACK_LIBRARIES}")
+string(REPLACE ";" " " LAPACK_LIBRARIES "${NWX_LAPACKE_LIBRARIES}")
 set(GA_LAPACK "--with-lapack=${LAPACK_LIBRARIES}")
 
 # GA has to be difficult when it comes to MPI...
@@ -38,8 +38,14 @@ endif()
 
 set(GA_SCALAPACK "--without-scalapack")
 
+if(BUILD_SHARED_LIBS)
+    set(GA_CXXFLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+    set(GA_CFLAGS "${CMAKE_C_FLAGS} -fPIC")
+    set(GA_FFLAGS "${CMAKE_Fortran_Flags} -fPIC")
+endif()
 
 # Build GA
+set(GA_INSTALL_DIR ${STAGE_DIR}${CMAKE_INSTALL_PREFIX})
 ExternalProject_Add(GlobalArrays_External
         URL https://github.com/GlobalArrays/ga/releases/download/v5.6.2/ga-5.6.2.tar.gz
         #Pass location where autotools needs to be built
@@ -48,6 +54,7 @@ ExternalProject_Add(GlobalArrays_External
                                       ${GA_MPI}
                                       --enable-underscoring
                                       --disable-mpi-tests
+                                      --prefix=${GA_INSTALL_DIR}
                                       ${GA_SCALAPACK}
                                       ${GA_BLAS}
                                       ${GA_LAPACK}
@@ -55,10 +62,11 @@ ExternalProject_Add(GlobalArrays_External
                                       ${GA_OFFLOAD}
                                       ${GA_SYSVSHMEM}
                                       CC=${CMAKE_C_COMPILER}
+                                      CFLAGS=${GA_CFLAGS}
                                       CXX=${CMAKE_CXX_COMPILER}
+                                      CXXFLAGS=${GA_CXXFLAGS}
                                       F77=${CMAKE_Fortran_COMPILER}
-        BUILD_COMMAND $(MAKE)
-        INSTALL_COMMAND $(MAKE) install DESTDIR=${STAGE_DIR}
+                                      FFLAGS=${GA_FFLAGS}
         BUILD_IN_SOURCE 1
         #LOG_CONFIGURE 1
         #LOG_BUILD 1
