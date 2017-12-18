@@ -1,6 +1,6 @@
 find_or_build_dependency(NWX_CBLAS _was_found)
 
-ExternalProject_Add(NWX_LAPACK_External
+ExternalProject_Add(NWX_LAPACKE_External
     URL http://www.netlib.org/lapack/lapack-3.7.1.tgz
     CMAKE_ARGS -DCMAKE_BUILD_TYPE=RELEASE
                -DUSE_OPTIMIZED_BLAS=ON
@@ -12,4 +12,4 @@ ExternalProject_Add(NWX_LAPACK_External
     MAKE_COMMAND $(MAKE)
     INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
     )
-add_dependencies(NWX_LAPACK_External NWX_CBLAS_External)
+add_dependencies(NWX_LAPACKE_External NWX_CBLAS_External)

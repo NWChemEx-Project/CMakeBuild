@@ -10,7 +10,7 @@ ExternalProject_Add(NWX_CBLAS_External
                    -DSTAGE_DIR=${STAGE_DIR}
                    ${CORE_CMAKE_OPTIONS}
         BUILD_ALWAYS 1
-        INSTALL_COMMAND $(MAKE)
+        INSTALL_COMMAND $(MAKE) DESTDIR=${STAGE_DIR}
         CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}
                          ${CORE_CMAKE_STRINGS}
         )

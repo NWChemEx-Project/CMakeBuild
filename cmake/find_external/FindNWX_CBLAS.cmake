@@ -1,4 +1,4 @@
-# Find NWX_BLAS
+# Find NWX_CBLAS
 #
 # At the moment this is a relatively thin wrapper and lacks real sophistication.
 #
@@ -25,26 +25,26 @@ include(FindPackageHandleStandardArgs)
 find_package(BLAS QUIET REQUIRED)
 is_valid_and_true(BLAS_FOUND FINDNWXBLAS_was_found)
 if(FINDNWXBLAS_was_found)
-    set(NWX_BLAS_LIBRARIES ${BLAS_LIBRARIES})
-    set(NWX_BLAS_LINK_FLAGS ${BLAS_LINK_FLAGS})
+    set(NWX_CBLAS_LIBRARIES ${BLAS_LIBRARIES})
+    set(NWX_CBLAS_LINK_FLAGS ${BLAS_LINK_FLAGS})
 endif()
 
-find_path(NWX_BLAS_INCLUDE_DIR mkl.h)
-is_valid_and_true(NWX_BLAS_INCLUDE_DIR __found_mkl)
+find_path(NWX_CBLAS_INCLUDE_DIR mkl.h)
+is_valid_and_true(NWX_CBLAS_INCLUDE_DIR __found_mkl)
 if(NOT __found_mkl)
-    find_path(NWX_BLAS_INCLUDE_DIR cblas.h)
+    find_path(NWX_CBLAS_INCLUDE_DIR cblas.h)
 endif()
 
 # Avoid overwriting the user's decision
-is_valid_and_true(NWX_BLAS_DEFINITIONS __defs_set)
+is_valid_and_true(NWX_CBLAS_DEFINITIONS __defs_set)
 if(NOT __defs_set)
     if(__found_mkl)
-        set(NWX_BLAS_DEFINITIONS "-DCBLAS_HEADER=\"mkl.h\"")
+        set(NWX_CBLAS_DEFINITIONS "-DCBLAS_HEADER=\"mkl.h\"")
     else()
-        set(NWX_BLAS_DEFINITIONS "-DCBLAS_HEADER=\"cblas.h\"")
+        set(NWX_CBLAS_DEFINITIONS "-DCBLAS_HEADER=\"cblas.h\"")
     endif()
 endif()
-set(NWX_BLAS_INCLUDE_DIRS ${NWX_BLAS_INCLUDE_DIR})
-find_package_handle_standard_args(NWX_BLAS DEFAULT_MSG NWX_BLAS_INCLUDE_DIRS
-                                                       NWX_BLAS_LIBRARIES)
+set(NWX_CBLAS_INCLUDE_DIRS ${NWX_CBLAS_INCLUDE_DIR})
+find_package_handle_standard_args(NWX_CBLAS DEFAULT_MSG NWX_CBLAS_INCLUDE_DIRS
+                                                        NWX_CBLAS_LIBRARIES)
 

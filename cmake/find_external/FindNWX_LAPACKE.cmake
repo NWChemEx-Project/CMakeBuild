@@ -1,4 +1,4 @@
-# Find NWX_LAPACK
+# Find NWX_LAPACKE
 #
 # At the moment this is a relatively thin wrapper and lacks real sophistication.
 #
@@ -25,25 +25,26 @@ include(FindPackageHandleStandardArgs)
 find_package(LAPACK QUIET REQUIRED)
 is_valid_and_true(LAPACK_FOUND FINDNWXLAPACK_was_found)
 if(FINDNWXLAPACK_was_found)
-    set(NWX_LAPACK_LIBRARIES ${LAPACK_LIBRARIES})
-    set(NWX_LAPACK_LINK_FLAGS ${LAPACK_LINK_FLAGS})
+    set(NWX_LAPACKE_LIBRARIES ${LAPACK_LIBRARIES})
+    set(NWX_LAPACKE_LINK_FLAGS ${LAPACK_LINK_FLAGS})
 endif()
 
-find_path(NWX_LAPACK_INCLUDE_DIR mkl.h)
-is_valid_and_true(NWX_LAPACK_INCLUDE_DIR __found_mkl)
+find_path(NWX_LAPACKE_INCLUDE_DIR mkl.h)
+is_valid_and_true(NWX_LAPACKE_INCLUDE_DIR __found_mkl)
 if(NOT __found_mkl)
-    find_path(NWX_LAPACK_INCLUDE_DIR lapacke.h)
+    find_path(NWX_LAPACKE_INCLUDE_DIR lapacke.h)
 endif()
 
 # Avoid overwriting the user's decision
-is_valid_and_true(NWX_LAPACK_DEFINITIONS __defs_set)
+is_valid_and_true(NWX_LAPACKE_DEFINITIONS __defs_set)
 if(NOT __defs_set)
     if(__found_mkl)
-        set(NWX_LAPACK_DEFINITIONS "-DLAPACKE_HEADER=\"mkl.h\"")
+        set(NWX_LAPACKE_DEFINITIONS "-DLAPACKE_HEADER=\"mkl.h\"")
     else()
-        set(NWX_LAPACK_DEFINITIONS "-DLAPACKE_HEADER=\"lapacke.h\"")
+        set(NWX_LAPACKE_DEFINITIONS "-DLAPACKE_HEADER=\"lapacke.h\"")
     endif()
 endif()
-set(NWX_LAPACK_INCLUDE_DIRS ${NWX_LAPACK_INCLUDE_DIR})
-find_package_handle_standard_args(NWX_LAPACK DEFAULT_MSG NWX_LAPACK_INCLUDE_DIRS
-        NWX_LAPACK_LIBRARIES)
+set(NWX_LAPACKE_INCLUDE_DIRS ${NWX_LAPACKE_INCLUDE_DIR})
+find_package_handle_standard_args(NWX_LAPACKE DEFAULT_MSG
+        NWX_LAPACKE_INCLUDE_DIRS
+        NWX_LAPACKE_LIBRARIES)
