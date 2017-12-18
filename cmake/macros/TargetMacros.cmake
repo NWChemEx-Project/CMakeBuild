@@ -27,7 +27,7 @@ function(nwchemex_set_up_target __name __flags __lfags __includes __libraries
                                 __install)
     target_link_libraries(${__name} PRIVATE "${__libraries}")
     target_compile_options(${__name} PRIVATE "${__flags}")
-    target_include_directories(${__name} PRIVATE ${SUPER_PROJECT_ROOT}
+    target_include_directories(${__name} PRIVATE ${NWX_INCLUDE_DIR}
                                                  "${__includes}")
     set_property(TARGET ${__name} PROPERTY CXX_STANDARD ${CMAKE_CXX_STANDARD})
     set_property(TARGET ${__name} PROPERTY LINK_FLAGS "${__lflags}")

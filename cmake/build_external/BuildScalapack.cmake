@@ -1,10 +1,4 @@
-
-include(ExternalProject)
-
-if (SCALAPACK_LIBRARIES)
-    add_library(Scalapack${TARGET_SUFFIX} INTERFACE)
-elseif(BUILD_NETLIB_BLAS_LAPACK)
-    ExternalProject_Add(scalapack${TARGET_SUFFIX}
+ExternalProject_Add(scalapack${TARGET_SUFFIX}
         URL ${CMAKE_CURRENT_SOURCE_DIR}/cmake/external/misc/scalapack.tar.gz
         CMAKE_ARGS -DCMAKE_BUILD_TYPE=RELEASE -DBUILD_TESTING=OFF 
         -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER} -DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}

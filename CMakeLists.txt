@@ -80,6 +80,8 @@ bundle_cmake_strings(CORE_CMAKE_STRINGS CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG)
 option_w_default(BUILD_TESTS TRUE)
 #Directory where your source is
 option_w_default(NWX_SRC_DIR ${SUPER_PROJECT_ROOT}/${PROJECT_NAME})
+#Includes should be relative to NWX_SRC_DIR without last directory
+get_filename_component(NWX_INCLUDE_DIR "${NWX_SRC_DIR}" DIRECTORY)
 #Directory where your tests are
 option_w_default(NWX_TEST_DIR ${SUPER_PROJECT_ROOT}/${PROJECT_NAME}_Test)
 #Name of variable containing your project's dependencies
@@ -95,7 +97,7 @@ option_w_default(NWX_DEBUG_CMAKE TRUE)
 include(ExternalProject)
 ExternalProject_Add(${PROJECT_NAME}_External
         SOURCE_DIR ${NWX_SRC_DIR}
-        CMAKE_ARGS -DSUPER_PROJECT_ROOT=${SUPER_PROJECT_ROOT}
+        CMAKE_ARGS -DNWX_INCLUDE_DIR=${NWX_INCLUDE_DIR}
                    -DNWX_DEBUG_CMAKE=${NWX_DEBUG_CMAKE}
                    ${CORE_CMAKE_OPTIONS}
         BUILD_ALWAYS 1
