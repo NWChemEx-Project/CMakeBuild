@@ -1,1 +1,1 @@
-set(NWX_DEPENDENCIES "Eigen3" CACHE STRING "")
+set(BuildEigen3_DEPENDENCIES "Eigen3" CACHE STRING "")

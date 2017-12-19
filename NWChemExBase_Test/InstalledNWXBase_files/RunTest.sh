@@ -9,7 +9,7 @@ dummy_repo=$(pwd)/DummyRepo_files
 #Build and install dummy repo
 ${binary_dir}/RunNWChemExBaseTest.sh DummyRepo ${nwx_path} ${dummy_repo}
 cd DummyRepo_repo_test/build
-make install
+VERBOSE=1 make install
 
 #Try building the test
 my_files=${binary_dir}/InstalledNWXBase_files

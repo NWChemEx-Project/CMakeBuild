@@ -68,4 +68,4 @@ cmake_vars=${path_to_source}/CMakeVars.txt
 
 cmake -C ${cmake_vars} -H. -Bbuild
 cd build
-make
+VERBOSE=1 make

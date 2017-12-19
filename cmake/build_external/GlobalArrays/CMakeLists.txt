@@ -38,11 +38,10 @@ endif()
 
 set(GA_SCALAPACK "--without-scalapack")
 
-if(BUILD_SHARED_LIBS)
-    set(GA_CXXFLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-    set(GA_CFLAGS "${CMAKE_C_FLAGS} -fPIC")
-    set(GA_FFLAGS "${CMAKE_Fortran_Flags} -fPIC")
-endif()
+set(GA_CXXFLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+set(GA_CFLAGS "${CMAKE_C_FLAGS} -fPIC")
+set(GA_FFLAGS "${CMAKE_Fortran_Flags} -fPIC")
+
 
 # Build GA
 set(GA_INSTALL_DIR ${STAGE_DIR}${CMAKE_INSTALL_PREFIX})
