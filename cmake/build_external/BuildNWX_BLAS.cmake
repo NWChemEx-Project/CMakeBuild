@@ -42,7 +42,7 @@ ExternalProject_Add(NWX_BLAS_External
         DOWNLOAD_DIR ${BLAS_DOWNLOAD}
         URL ${BLAS_URL}
         URL_HASH MD5=${BLAS_MD5}
-        SOURCE_DIR ${BLAS_SRC_DIR}
+        SOURCE_DIR ${BLAS_DOWNLOAD}
         BINARY_DIR ${BLAS_SRC_DIR}
         CONFIGURE_COMMAND ${CMAKE_COMMAND} -E copy ${BLAS_MAKEFILE}
                                                    ${MAKEFILE_DEST}
