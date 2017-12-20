@@ -1,20 +1,22 @@
 cmake_minimum_required(VERSION ${CMAKE_VERSION})
-project(GlobalArrays VERSION 0.0.0 LANGUAGES C Fortran)
+project(GlobalArrays VERSION 5.6.2 LANGUAGES C Fortran)
 
 include(DependencyMacros)
 include(ExternalProject)
-foreach(depend MPI CBLAS LAPACKE)
-    find_dependency(NWX_${depend} NWX_${depend}_INCLUDE_DIRS
-                                  NWX_${depend}_LIBRARIES
-                                  NWX_${depend}_DEFINITIONS
-                                  NWX_${depend}_LINK_FLAGS
+foreach(depend NWX_MPI NWX_CBLAS LAPACKE )#ScaLAPACK)
+    find_dependency(${depend} ${depend}_INCLUDE_DIRS
+                                  ${depend}_LIBRARIES
+                                  ${depend}_DEFINITIONS
+                                  ${depend}_LINK_FLAGS
                                   _${depend}_FOUND)
     assert(_${depend}_FOUND)
 endforeach()
 string (REPLACE ";" " " BLAS_LIBRARIES "${NWX_CBLAS_LIBRARIES}")
 set(GA_BLAS "--with-blas8=${BLAS_LIBRARIES}")
-string(REPLACE ";" " " LAPACK_LIBRARIES "${NWX_LAPACKE_LIBRARIES}")
+string(REPLACE ";" " " LAPACK_LIBRARIES "${LAPACKE_LIBRARIES}")
 set(GA_LAPACK "--with-lapack=${LAPACK_LIBRARIES}")
+#string(REPLACE ";" " " GA_ScaLAPACK_LIBRARIES "${ScaLAPACK_LIBRARIES}")
+#set(GA_SCALAPACK "--with-scalapack8=${GA_ScaLAPACK_LIBRARIES}")
 
 # GA has to be difficult when it comes to MPI...
 string(REPLACE ";" " -I" GA_MPI_INCLUDES "${NWX_MPI_INCLUDE_DIRS}")
@@ -35,8 +37,6 @@ set(GA_SYSVSHMEM "ARMCI_DEFAULT_SHMMAX_UBOUND=131072")
 if (USE_OFFLOAD)
     set(GA_OFFLOAD "INTEL_64ALIGN=1")
 endif()
-
-set(GA_SCALAPACK "--without-scalapack")
 
 set(GA_CXXFLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 set(GA_CFLAGS "${CMAKE_C_FLAGS} -fPIC")

@@ -1,10 +1,23 @@
+#
+# This file will build Netlib's ScaLAPACK distribution over an existing CBLAS
+# and LAPACKE installation. To do this we use a mock superbuild in case we need
+# to build CBLAS or LAPACKE for the user.
+#
+find_or_build_dependency(NWX_CBLAS _was_Found)
+find_or_build_dependency(LAPACKE _was_Found)
 enable_language(C Fortran)
+
 ExternalProject_Add(ScaLAPACK_External
-        URL http://www.netlib.org/scalapack/scalapack-2.0.2.tgz
-        CMAKE_ARGS -DCMAKE_BUILD_TYPE=RELEASE
-                   -DBUILD_TESTING=OFF
-                   -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-                   -DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}
-                   -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
-        INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}        
-    )
+        SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/ScaLAPACK
+        CMAKE_ARGS -DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}
+                   -DCMAKE_C_COMILER=${CMAKE_C_COMPILER}
+                   -DSTAGE_DIR=${STAGE_DIR}
+                   ${CORE_CMAKE_OPTIONS}
+        BUILD_ALWAYS 1
+        INSTALL_COMMAND $(MAKE) DESTDIR=${STAGE_DIR}
+        CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}
+                         ${CORE_CMAKE_STRINGS}
+        )
+add_dependencies(ScaLAPACK_External LAPACKE_External NWX_CBLAS_External)
+
+

@@ -579,37 +579,4 @@ foreach(__depend <list of dependencies>)
 endforeach()    
 ~~~
 
-### Supported Dependencies
 
-These are dependencies that NWChemExBase currently knows how to find, but can't
-build:
-
-| Name            | Brief Description                                          |  
-| :-------------: | :--------------------------------------------------------- |   
-| OpenMP          | Determines the flags for compiling/linking to OpenMP       |
-| NWX_MPI         | Wrapper around non-conforming standard CMake FindMPI.cmake |  
-
-Following are dependencies that NWChemExBase will build for you if it cannot 
-find them:
-
-| Name            | Brief Description                                          |  
-| :-------------: | :--------------------------------------------------------- |  
-| Eigen3          | The Eigen C++ matrix library                               |
-| GTest           | Google's testing framework                                 |
-| NWX_Catch       | Catch testing framework installed our way                  |
-| LibInt          | Computes Gaussian integrals for quantum mechanics          |
-| GlobalArrays    | The Global Arrays distributed matrix library               |
-| AntlrCppRuntime | The ANTLR grammar parsing library                          |
-
-By means of a disclaimer, dependencies prefixed with NWX differ from the 
-canonical versions by some NWChemEx specific machinery.  Probably without 
-exception you'll want to use the NWX version for specifying your dependencies.
- 
-The following dependencies have to be specified. Alternatively, an option can also
-be specified to NWChemExBase to build the Netlib versions for you. 
-
-| Name            | Brief Description                                          |  
-| :-------------: | :--------------------------------------------------------- |  
-| BLAS            | Basic Linear Algebra Subprograms
-| LAPACK          | Linear Algebra PACKage
-| SCALAPACK       | Scalable Linear Algebra PACKage

@@ -1,27 +1,31 @@
+#The actual file that builds CBLAS
 cmake_minimum_required(VERSION ${CMAKE_VERSION})
 project(NWX_CBLAS VERSION 0.0.0 LANGUAGES C Fortran)
 
 include(DependencyMacros)
 include(ExternalProject)
-find_dependency(NWX_BLAS NWX_BLAS_INCLUDE_DIRS
-                         NWX_BLAS_LIBRARIES
-                         NWX_BLAS_DEFINITIONS
-                         NWX_BLAS_LINK_FLAGS
-                         _BLAS_FOUND)
+find_dependency(BLAS NWX_BLAS_INCLUDE_DIRS
+                     NWX_BLAS_LIBRARIES
+                     NWX_BLAS_DEFINITIONS
+                     NWX_BLAS_LINK_FLAGS
+                     _BLAS_FOUND)
+
+set(CBLAS_URL http://www.netlib.org/blas/blast-forum/cblas.tgz)
+set(CBLAS_MD5 1E8830F622D2112239A4A8A83B84209A)
 
 #CBLAS want's it's options in Makefile.in
 set(CBLAS_MAKEFILE "${CMAKE_BINARY_DIR}/Makefile.in")
 set(CBLAS_BUILD_DIR "${CMAKE_BINARY_DIR}/NWX_CBLAS-prefix/src/NWX_CBLAS")
 set(MAKEFILE_DEST "${CBLAS_BUILD_DIR}/Makefile.in")
 
-set(CBLAS_LIB "libcblas.${CMAKE_STATIC_LIBRARY_SUFFIX}")
+set(CBLAS_LIB "libcblas${CMAKE_STATIC_LIBRARY_SUFFIX}")
 file(WRITE  ${CBLAS_MAKEFILE} "SHELL = /bin/sh\n")
-file(APPEND ${CBLAS_MAKEFILE} "PLAT = LINUX\n")
+file(APPEND ${CBLAS_MAKEFILE} "PLAT = ${CMAKE_SYSTEM_NAME}\n")
 file(APPEND ${CBLAS_MAKEFILE} "BLLIB = ${NWX_BLAS_LIBRARIES}\n")
 file(APPEND ${CBLAS_MAKEFILE} "CBLIB = ../lib/${CBLAS_LIB}\n")
 file(APPEND ${CBLAS_MAKEFILE} "CC = ${CMAKE_C_COMPILER}\n")
 file(APPEND ${CBLAS_MAKEFILE} "FC = ${CMAKE_Fortran_COMPILER}\n")
-file(APPEND ${CBLAS_MAKEFILE} "LOADER = $(FC)\n")
+file(APPEND ${CBLAS_MAKEFILE} "LOADER = \$(FC)\n")
 file(APPEND ${CBLAS_MAKEFILE} "CFLAGS = -O3 -DADD_ -fPIC\n")
 file(APPEND ${CBLAS_MAKEFILE} "FFLAGS = -fPIC\n")
 file(APPEND ${CBLAS_MAKEFILE} "ARCH = ${CMAKE_AR}\n")
@@ -30,7 +34,9 @@ file(APPEND ${CBLAS_MAKEFILE} "RANLIB = echo\n")
 
 set(CBLAS_INSTALL_DIR ${STAGE_DIR}${CMAKE_INSTALL_PREFIX})
 ExternalProject_Add(NWX_CBLAS
-        URL http://www.netlib.org/blas/blast-forum/cblas.tgz
+        DOWNLOAD_NO_PROGRESS TRUE
+        URL ${CBLAS_URL}
+        URL_MD5 ${CBLAS_MD5}
         CONFIGURE_COMMAND ${CMAKE_COMMAND} -E copy ${CBLAS_MAKEFILE}
                                                    ${MAKEFILE_DEST}
         BUILD_COMMAND $(MAKE) alllib

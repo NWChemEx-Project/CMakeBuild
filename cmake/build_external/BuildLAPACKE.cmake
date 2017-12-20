@@ -1,14 +1,13 @@
 #
-# This file will build Netlib's CBLAS distribution over an existing BLAS
+# This file will build Netlib's LAPACKE distribution over an existing CBLAS
 # installation. To do this we use a mock superbuild in case we need to build
-# BLAS for the user.
+# CBLAS for the user.
 #
-find_or_build_dependency(BLAS _was_Found)
+find_or_build_dependency(NWX_CBLAS _was_Found)
 enable_language(C Fortran)
 
-
-ExternalProject_Add(NWX_CBLAS_External
-        SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/NWX_CBLAS
+ExternalProject_Add(LAPACKE_External
+        SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/LAPACKE
         CMAKE_ARGS -DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}
                    -DCMAKE_C_COMILER=${CMAKE_C_COMPILER}
                    -DSTAGE_DIR=${STAGE_DIR}
@@ -18,4 +17,4 @@ ExternalProject_Add(NWX_CBLAS_External
         CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}
                          ${CORE_CMAKE_STRINGS}
         )
-add_dependencies(NWX_CBLAS_External BLAS_External)
+add_dependencies(LAPACKE_External NWX_CBLAS_External)
