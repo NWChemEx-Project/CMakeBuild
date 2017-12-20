@@ -10,6 +10,7 @@ pipeline {
 	            source /etc/profile
   	            module load gcc/7.1.0-4bgguyp
      	        module load cmake
+     	        cd NWChemExBase_Test
 	            cmake -H. -Bbuild
 	            cd build
 	            make
@@ -23,6 +24,7 @@ pipeline {
 		        set +x
      	        source /etc/profile
 	            module load cmake
+	            cd NWChemExBase_Test
 	            cd build
 	            ctest
 	            '''
