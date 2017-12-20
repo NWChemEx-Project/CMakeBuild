@@ -19,7 +19,7 @@ pipeline {
         }
         stage('Test') {
             steps {
-                echo 'Testing..'
+                echo 'Testing..'module
 	  	        sh'''
 		        set +x
      	        source /etc/profile
@@ -27,7 +27,11 @@ pipeline {
 	            cd NWChemExBase_Test
 	            cd build
 	            ctest
-	            cat Testing/Temporary/LastTest.log
+	            '''
+	            sh'''
+	            set +x
+	            source /etc/profile
+	            cat NWChemExBase_Test/build/Testing/Temporary/LastTest.log
 	            '''
             }
         }
