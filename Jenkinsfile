@@ -27,6 +27,7 @@ pipeline {
 	            cd NWChemExBase_Test
 	            cd build
 	            ctest
+	            cat Testing/Temporary/LastTest.log
 	            '''
             }
         }
