@@ -4,7 +4,7 @@ enable_language(C Fortran)
 #BLAS wants it's options in Makefile.inc
 set(BLAS_MAKEFILE "${CMAKE_BINARY_DIR}/make.inc")
 set(BLAS_BUILD_DIR "${CMAKE_BINARY_DIR}/NWChemExBase/NWX_BLAS_External-prefix")
-set(BLAS_BUILD_DIR "${BLAS_BUILD_DIR}/src/NWX_BLAS_External/BLAS-3.8.0/")
+set(BLAS_BUILD_DIR "${BLAS_BUILD_DIR}/src/NWX_BLAS_External/")
 set(MAKEFILE_DEST "${BLAS_BUILD_DIR}/make.inc")
 set(BLAS_LIBRARY "libblas.${CMAKE_STATIC_LIBRARY_SUFFIX}")
 file(WRITE ${BLAS_MAKEFILE} "SHELL = /bin/sh\n")
@@ -25,7 +25,6 @@ ExternalProject_Add(NWX_BLAS_External
         URL http://www.netlib.org/blas/blas-3.8.0.tgz
         CONFIGURE_COMMAND ${CMAKE_COMMAND} -E copy ${BLAS_MAKEFILE}
                                                    ${MAKEFILE_DEST}
-        BUILD_COMMAND cd BLAS-3.8.0 && $(MAKE)
         BUILD_IN_SOURCE TRUE
         INSTALL_COMMAND ${CMAKE_COMMAND} -E copy
                                          ${BLAS_BUILD_DIR}/${BLAS_LIBRARY}
