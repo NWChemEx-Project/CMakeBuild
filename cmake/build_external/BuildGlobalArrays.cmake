@@ -15,7 +15,7 @@ include(DependencyMacros)
 enable_language(Fortran)
 
 # Now find or build GA's dependencies
-find_or_build_dependency(NWX_CBLAS __found_blas)
+find_or_build_dependency(CBLAS __found_blas)
 find_or_build_dependency(LAPACKE __found_lapack)
 find_or_build_dependency(NWX_MPI __found_mpi)
 #find_or_build_dependency(ScaLAPACK __found_scalapack)
@@ -66,7 +66,7 @@ ExternalProject_Add(GlobalArrays_External
 )
 
 # Establish the dependencies
-add_dependencies(GlobalArrays_External NWX_CBLAS_External
+add_dependencies(GlobalArrays_External CBLAS_External
                                        LAPACKE_External
                                        NWX_MPI_External
 #                                       ScaLAPACK_External

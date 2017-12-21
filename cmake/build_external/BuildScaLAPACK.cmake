@@ -3,7 +3,7 @@
 # and LAPACKE installation. To do this we use a mock superbuild in case we need
 # to build CBLAS or LAPACKE for the user.
 #
-find_or_build_dependency(NWX_CBLAS _was_Found)
+find_or_build_dependency(CBLAS _was_Found)
 find_or_build_dependency(LAPACKE _was_Found)
 enable_language(C Fortran)
 
@@ -18,6 +18,6 @@ ExternalProject_Add(ScaLAPACK_External
         CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}
                          ${CORE_CMAKE_STRINGS}
         )
-add_dependencies(ScaLAPACK_External LAPACKE_External NWX_CBLAS_External)
+add_dependencies(ScaLAPACK_External LAPACKE_External CBLAS_External)
 
 

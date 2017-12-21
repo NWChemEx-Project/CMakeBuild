@@ -1,18 +1,18 @@
-# Find NWX_CBLAS
+# Find CBLAS
 #
 # At the moment this is a relatively thin wrapper.  Given the variability in
 # BLAS distributions *cough* mkl *cough* find module attempts to provide the
 # user a unified API to the returned CBLAS implementation by defining a C macro
 # CBLAS_HEADER, which can be used in your source files like:
 # `#include CBLAS_HEADER`, it's passed to your library via the
-# `NWX_CBLAS_DEFINITIONS` cmake variable
+# `CBLAS_DEFINITIONS` cmake variable
 #
 # This module defines
-#  NWX_CBLAS_INCLUDE_DIRS, where to find cblas.h or mkl.h
-#  NWX_CBLAS_LIBRARIES, the libraries to link against for BLAS support
-#  NWX_CBLAS_DEFINITIONS, flags to include when compiling against BLAS
-#  NWX_CBLAS_LINK_FLAGS, flags to include when linking against BLAS
-#  NWX_CBLAS_FOUND, True if we found NWX_BLAS
+#  CBLAS_INCLUDE_DIRS, where to find cblas.h or mkl.h
+#  CBLAS_LIBRARIES, the libraries to link against for CBLAS support
+#  CBLAS_DEFINITIONS, flags to include when compiling against CBLAS
+#  CBLAS_LINK_FLAGS, flags to include when linking against CBLAS
+#  CBLAS_FOUND, True if we found CBLAS
 #
 # Implementation notes:
 #
@@ -39,45 +39,44 @@ include(UtilityMacros)
 include(FindPackageHandleStandardArgs)
 include(CheckCXXSourceCompiles)
 
-set(FINDNWXCBLAS_is_mkl FALSE)
+set(FINDCBLAS_is_mkl FALSE)
 find_package(BLAS QUIET REQUIRED)
-is_valid_and_true(BLAS_FOUND FINDNWXCBLAS_was_found)
+is_valid_and_true(BLAS_FOUND FINDCBLAS_was_found)
 
 if(FINDNWXCBLAS_was_found)
     #Great FindBLAS found us something, it's probably junk
     #Best case scenario, it's MKL. Intel likes their branding, which we can use
     #to our advantage by looking if the string "mkl" appears in any of the
     #library names
-    string(FIND "${BLAS_LIBRARIES}" "mkl" FINDNWXCBLAS_substring_found)
-    is_valid_and_true(FINDNWXCBLAS_substring_found FINDNWXCBLAS_is_mkl)
+    string(FIND "${BLAS_LIBRARIES}" "mkl" FINDCBLAS_substring_found)
+    is_valid_and_true(FINDNWXCBLAS_substring_found FINDCBLAS_is_mkl)
 else()
     find_library(BLAS_LIBRARIES libcblas${CMAKE_STATIC_LIBRARY_SUFFIX})
 endif()
 
 #Now let's worry about header files
-if(FINDNWXCBLAS_is_mkl)
+if(FINDCBLAS_is_mkl)
     #Let's get a good guess for mkl, grab substring up to "/lib"
-    string(FIND "${BLAS_LIBRARIES}" "/lib" FINDNWXCBLAS_PATH_END)
-    string(SUBSTRING "${BLAS_LIBRARIES}" 0 ${FINDNWXCBLAS_PATH_END}
-            FINDNWXCBLAS_MKL_HINT)
-    find_path(NWX_CBLAS_INCLUDE_DIR mkl.h
-              HINTS ${FINDNWXCBLAS_MKL_HINT}/include
+    string(FIND "${BLAS_LIBRARIES}" "/lib" FINDCBLAS_PATH_END)
+    string(SUBSTRING "${BLAS_LIBRARIES}" 0 ${FINDCBLAS_PATH_END}
+            FINDCBLAS_MKL_HINT)
+    find_path(CBLAS_INCLUDE_DIR mkl.h
+              HINTS ${FINDCBLAS_MKL_HINT}/include
             )
-    list(APPEND NWX_CBLAS_DEFINITIONS "-DCBLAS_HEADER=\"mkl.h\"")
+    list(APPEND CBLAS_DEFINITIONS "-DCBLAS_HEADER=\"mkl.h\"")
 else()
-    find_path(NWX_CBLAS_INCLUDE_DIR cblas.h)
-    list(APPEND NWX_CBLAS_DEFINITIONS "-DCBLAS_HEADER=\"cblas.h\"")
+    find_path(CBLAS_INCLUDE_DIR cblas.h)
+    list(APPEND CBLAS_DEFINITIONS "-DCBLAS_HEADER=\"cblas.h\"")
 endif()
 
 #Check that we've actually got stuff to try
-find_package_handle_standard_args(NWX_CBLAS_files DEFAULT_MSG
-                                    NWX_CBLAS_INCLUDE_DIR
-                                    BLAS_LIBRARIES)
+find_package_handle_standard_args(CBLAS_files DEFAULT_MSG CBLAS_INCLUDE_DIR
+                                                          BLAS_LIBRARIES)
 
-is_valid_and_true(NWX_CBLAS_files_FOUND FINDNWXCBLAS_have_files)
-if(FINDNWXCBLAS_have_files)
-    set(CMAKE_REQUIRED_DEFINITIONS ${NWX_CBLAS_DEFINITIONS})
-    set(CMAKE_REQUIRED_INCLUDES ${NWX_CBLAS_INCLUDE_DIR})
+is_valid_and_true(CBLAS_files_FOUND FINDCBLAS_have_files)
+if(FINDCBLAS_have_files)
+    set(CMAKE_REQUIRED_DEFINITIONS ${CBLAS_DEFINITIONS})
+    set(CMAKE_REQUIRED_INCLUDES ${CBLAS_INCLUDE_DIR})
     set(CMAKE_REQUIRED_LIBRARIES ${BLAS_LIBRARIES})
     check_cxx_source_compiles(
         "#include CBLAS_HEADER
@@ -95,16 +94,13 @@ if(FINDNWXCBLAS_have_files)
     IS_ACTUALLY_CBLAS
     )
     if(NOT IS_ACTUALLY_CBLAS)#Guess it's only BLAS after all...
-        message(WARNING "BLAS found by traditional FindBLAS, ${BLAS_LIBRARY},
-                         does not appear to support a CBLAS API")
-        find_path(NWX_CBLAS_LIBRARIES libcblas${CMAKE_STATIC_LIBRARY_SUFFIX})
+        message(WARNING "BLAS found by traditional FindBLAS, ${BLAS_LIBRARY}, "
+                        "does not appear to support a CBLAS API")
+        find_path(CBLAS_LIBRARIES libcblas${CMAKE_STATIC_LIBRARY_SUFFIX})
     else()#Wow it actually is CBLAS...
-        set(NWX_CBLAS_LIBRARIES ${BLAS_LIBRARIES})
+        set(CBLAS_LIBRARIES ${BLAS_LIBRARIES})
     endif()
 endif()
-set(NWX_CBLAS_INCLUDE_DIRS ${NWX_CBLAS_INCLUDE_DIR})
-find_package_handle_standard_args(NWX_CBLAS DEFAULT_MSG NWX_CBLAS_INCLUDE_DIRS
-                                                        NWX_CBLAS_LIBRARIES)
-
-
-
+set(CBLAS_INCLUDE_DIRS ${CBLAS_INCLUDE_DIR})
+find_package_handle_standard_args(CBLAS DEFAULT_MSG CBLAS_INCLUDE_DIRS
+                                                    CBLAS_LIBRARIES)

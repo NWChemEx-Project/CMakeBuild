@@ -1,6 +1,6 @@
 #The actual file that builds CBLAS
 cmake_minimum_required(VERSION ${CMAKE_VERSION})
-project(NWX_CBLAS VERSION 0.0.0 LANGUAGES C Fortran)
+project(CBLAS VERSION 0.0.0 LANGUAGES C Fortran)
 
 include(DependencyMacros)
 include(ExternalProject)

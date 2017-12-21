@@ -48,4 +48,8 @@ The following provides more details about the `NWX_` prefixed dependencies.
 - NWX_Catch : The Catch testing library for C++ is a single header-only testing 
   library.  Given it's simple form, Catch doesn't provide a means of 
   installing itself.  We have thus made up an installation convention and 
-  that's what this dependency will look for.    
+  that's what this dependency will look for.  Furthermore, Catch recommends 
+  compiling its main function into one file and linking against it.  NWX_Catch
+  requires that a library exist that does this.
+ 
+    

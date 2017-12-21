@@ -1,7 +1,7 @@
-#include "BuildNWX_CBLAS/BuildNWX_CBLAS.hpp"
+#include "BuildCBLAS/BuildCBLAS.hpp"
 #include CBLAS_HEADER
 
-void BuildNWX_CBLAS::run_test()
+void BuildCBLAS::run_test()
 {
     int N=10;
     float alpha=3.4;
