@@ -28,11 +28,6 @@ pipeline {
 	            cd build
 	            ctest
 	            '''
-	            sh'''
-	            set +x
-	            source /etc/profile
-	            cat NWChemExBase_Test/build/Testing/Temporary/LastTest.log
-	            '''
             }
         }
     }
