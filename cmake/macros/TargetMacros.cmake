@@ -47,8 +47,8 @@ function(nwchemex_set_up_target __name __flags __lflags __install)
                                     __DEPEND_LIBRARIES
                                     __DEPEND_FLAG
                                     __DEPEND_LFLAG
-                                    __was_found)
-        assert(__was_found)
+                                    __${__depend}_found)
+        assert(__${__depend}_found)
     endforeach()
     list(APPEND __all_flags ${__flags} ${__DEPEND_FLAG})
     list(APPEND __all_lflags ${__lflags} ${__DEPEND_LFLAG})

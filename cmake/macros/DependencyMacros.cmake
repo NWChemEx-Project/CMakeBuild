@@ -27,7 +27,7 @@ include(AssertMacros)
 #
 function(find_dependency __name _include_dirs _libraries _definitions
                                 _link_flags _found)
-    find_package(${__name} QUIET)
+    find_package(${__name})
     string(TOUPPER ${__name} __NAME)
     if(${__name}_FOUND OR ${__NAME}_FOUND)
         debug_message("Found ${__name}:")
