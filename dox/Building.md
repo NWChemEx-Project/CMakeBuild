@@ -88,22 +88,18 @@ build settings.  We have striven to honor these variables throughout the build
 infrastructure.  A list of the more commonly used CMake variables is included in
 the following table along with brief descriptions.  Obviously not every variable
 is used by every project using NWChemExBase (if you set a variable and it is 
-not used by that project CMake will warn you in the configuration logs).
+not used by that project CMake will warn you in the configuration logs). Note
+ `Lang` is a placeholder for language, valid choices are `CXX` (for C++),
+`C`, or  `Fortran`.
 
 --------------------------------------------------------------------------------
 | CMake Variable | Description                                                 |
-| :------------: | :-----------------------------------------------------------|
-| CMAKE_CXX_COMPILER | The C++ compiler that will be used                      |
-| CMAKE_CXX_FLAGS | Flags that will be passed to C++ compiler                  |
-| MPI_CXX_COMPILER | MPI C++ wrapper compiler (should wrap CMAKE_CXX_COMPILER) |
-| CMAKE_C_COMPILER | The C compiler that will be used                          |
-| CMAKE_C_FLAGS | Flags that will be passed to C compiler                      |
-| MPI_C_COMPILER | MPI C wrapper compiler (should wrap CMAKE_C_COMPILER)       |
-| CMAKE_Fortran_COMPILER | The Fortran compiler that will be used              |
-| CMAKE_Fortran_FLAGS | Flags that will be passed to the Fortran compiler      |
-| MPI_Fortran_COMPILER | MPI Fortran wrapper compiler (should wrap CMAKE_Fortran_COMPILER) |
-| CMAKE_BUILD_TYPE | Debug, Release, or RelWithDebInfo                         |
-| CMAKE_PREFIX_PATH | A list of places CMake will look for dependencies        |
+| :------------:      | :----------------------------------------------------- |
+| CMAKE_Lang_COMPILER | The `Lang` compiler that will be used                  |
+| CMAKE_Lang_FLAGS    | Flags that will be passed to `Lang` compiler           |
+| MPI_Lang_COMPILER   | MPI wrapper compiler (should wrap CMAKE_Lang_COMPILER) |
+| CMAKE_BUILD_TYPE    | Debug, Release, or RelWithDebInfo                      |
+| CMAKE_PREFIX_PATH   | A list of places CMake will look for dependencies      |
 | CMAKE_INSTALL_PREFIX | The install directory                                 |
 | BUILD_SHARED_LIBRARIES | If false static libraries will be built             |
 --------------------------------------------------------------------------------
@@ -114,12 +110,15 @@ NWChemExBase Specific Options
 -----------------------------
 
 In addition to the above standard CMake options NWChemExBase's CMake 
-infrastructure also recognizes the following options:
+infrastructure also recognizes the following options (Note `XXX` in the 
+following table can be any dependency in [this list](SupportedDependencies.md)):
 
 --------------------------------------------------------------------------------
-| Variable Name | Description                                                  |
-| :-----------: | :----------------------------------------------------------- |
-| BUILD_TESTS   | If true tests                                                |
+| Variable Name  | Description                                                 |
+| :------------: | :---------------------------------------------------------- |
+| BUILD_TESTS    | If true tests for the project will be built (default: true) |
+| BUILD_XXX      | TRUE forces building XXX, FALSE errs if XXX not found       |
+| NWX_CMAKE_DEBUG | TRUE turns on (lots) of extra CMake printing               | 
 --------------------------------------------------------------------------------
 
 Troubleshooting
