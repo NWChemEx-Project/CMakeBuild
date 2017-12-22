@@ -48,6 +48,5 @@ add_library(catch ${CATCH_MAIN})
 target_include_directories(catch PRIVATE ${CATCH_STAGE_INCLUDE})
 install(TARGETS catch DESTINATION lib)
 add_dependencies(catch Catch_Headers)
-message(STATUS "${CATCH_STAGE_INSTALL} installed to ${CMAKE_INSTALL_PREFIX}")
 install(DIRECTORY ${CATCH_STAGE_INSTALL}/
         DESTINATION ${CMAKE_INSTALL_PREFIX} USE_SOURCE_PERMISSIONS)

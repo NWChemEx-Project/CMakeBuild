@@ -28,7 +28,8 @@ function check_for_file () {
 
 #Make top-level CMakeLists.txt
 check_for_file ${CMAKE_FILE}
-echo "cmake_minimum_required(VERSION 3.1)">${CMAKE_FILE}
+#3.5 has weird un-tarring features that differ from 3.9 (unsure if 3.6 fixes)
+echo "cmake_minimum_required(VERSION 3.6)">${CMAKE_FILE}
 echo "project(${LIBRARY_NAME} VERSION 0.0.0 LANGUAGES CXX)">>${CMAKE_FILE}
 echo "set(${LIBRARY_NAME}_DEPENDENCIES )">>${CMAKE_FILE}
 echo "add_subdirectory(NWChemExBase)">>${CMAKE_FILE}

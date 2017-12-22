@@ -1,3 +1,9 @@
+#
+# I got tired of scrolling through all of these definitions and factored them
+# out.  Note the use of macro (versuses function, which in turn does not create
+# a new scope)
+#
+
 macro(set_paths)
     #The root of the NWChemExBase build system
     set(NWXBASE_ROOT ${CMAKE_CURRENT_SOURCE_DIR})

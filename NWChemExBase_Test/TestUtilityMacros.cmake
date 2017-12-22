@@ -36,3 +36,8 @@ list(GET A_LIST 0 value)
 assert_strings_are_equal(${value} "/home//home/file1.h")
 list(GET A_LIST 1 value)
 assert_strings_are_equal(${value} "/home//home/file2.cc")
+
+set(SOME_FLAGS "-O3")
+list(APPEND SOME_FLAGS "-fPIC" "-O3")
+clean_flags(SOME_FLAGS CLEAN_FLAGS)
+assert_strings_are_equal(${CLEAN_FLAGS} "-O3 -fPIC")

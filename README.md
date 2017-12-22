@@ -29,6 +29,8 @@ much of the comments into a developer manual and to break the following
 monolithic document up.
 
 - [Extending NWChemExBase](dox/ExtendingNWChemExBase.md)
+- [Understanding CMake Superbuilds](dox/CMakeSuperBuild.md)
+- [NWChemExBase Macros and Functions](dox/MacroDocumentation.md)
 
 Contributing
 ------------
