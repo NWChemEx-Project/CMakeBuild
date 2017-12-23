@@ -6,6 +6,14 @@ using CMake.  It is targeted at users who want to understand how CMake works in
 order to contribute to NWChemExBase (or simply because there's a lack of good
 tutorials on the internets).
 
+Contents
+--------
+
+1. [Building a C++ Project](#building-a-c++-project)
+2. [CMake Workflow](#cmake-workflow)
+3. [Setting Up a CMake Project](#setting-up-a-cmake-project)
+4. [CMake Syntax](#cmake-syntax)
+
 Building a C++ Project
 ----------------------
 
@@ -63,9 +71,118 @@ compile your code.
    everything built correctly.
 5. Install project.  With the knowledge that the resulting project works right,
    the user installs it to a place will it will reside.
-   
-   
-    
-    
 
+Note CMake is only directly called in step 2.  Despite this, we expect it to 
+largely set-up everything from that point forward for us.  It does this via the 
+build files it generates for the remaining 3 steps.  This is worth noting 
+because it means you can't use CMake commands from steps 3 forward as those 
+commands are being powered off build files and not CMake.
+
+Setting Up A CMake Project
+--------------------------
+
+Talk about `CMakeLists.txt` here.
+    
+    
+CMake Syntax
+------------
+
+This section is designed to get you to understand how to write `CMakeLists.txt` 
+files.
+
+~~~cmake
+#Comments start with #'s
+#This sets a variable name use_library to true
+set(use_library TRUE)
+  
+message(STATUS "The value of use_library is: ${use_library}")
+  
+#Note that CMake's variables are case-sensitive, so this
+message(STATUS "The value of use_library is: ${USE_LIBRARY}")
+#will print "The value of use_library is: "
+~~~
+
+Admittedly CMake's variables are more complex then they first seem.
+~~~cmake
+#Sets the variable a_value to /some/path
+set(a_value /some/path)
+  
+#Sets the variable a_value to the string /some/path
+set(a_value "/some/path")
+
+#Sets the variable many_values to the list [/some/path,/another/path]
+set(many_values /some/path /another/path)
+
+#Sets the variable many_values to the list[/some/path,/another/path]
+set(many_values "/some/path;/another/path")
+
+#Sets the variable many_values the string "/some/path /another/path"
+set(many_values "/some/path /another/path")
+~~~
+So why does the string vs. list thing matter?
+~~~cmake
+set(my_list arg1 arg2)
+set(my_string "arg1 arg2")
+some_fxn(${my_list}) # Same as some_fxn(arg1 arg2) i.e. passing two args
+some_fxn(${my_string}) #Same as some_fxn("arg1 arg2") i.e. passing a single arg
+~~~
+Thus the difference is important for grouping.  Consequently, one common mistake
+is to forward a list to a function when you really want to pass all the 
+arguments as one argument (particularly relevant when passing compiler flags and
+paths).
+
+CMake supports basic control flow options like loops:
+~~~cmake
+foreach(x ${SOME_LIST})
+   message(STATUS "Current element of list is: ${x}")
+endforeach()
+~~~
+and if-statements:
+~~~cmake
+if(use_library)
+   #Do something that requires the library
+elseif(NOT use_library)
+   #Do something in the event we aren't using that library
+else()
+   #Not sure how we get here...
+endif()
+~~~
+It should be noted that the rules of if statements are weird in that it will
+automatically dereference the value.  This is easier to grasp by example:
+
+~~~cmake  
+set(value1 FALSE)
+set(value2 "value1")
+if(value2)
+  #Auto deref value2 gives string  "value1" which is not false
+  message(STATUS "This will be printed")
+elseif(${value2})
+  #Deref of value2 happens first, if then derefs "value1" obtaining FALSE
+  message(STATUS "This will not be printed")
+endif()
+~~~
+
+:memo: `if(value2 AND ${value3})` will result in a cmake error if no variable
+value3 is defined or if it is defined as empty/empty string.  Deref of value2 
+gives a non-empty value as mentioned above, while deref of value3 gives empty
+if not defined.
+
+
+To check if a variable is defined, use: `if(DEFINED variable_name)`.
+
+You can look for a particular dependency with:
+~~~cmake
+#CMake will crash if it doesn't find blas
+find_package(BLAS REQUIRED)
+  
+#This is an error because find_package is case-sensitive
+find_package(blas REQUIRED)
+  
+#This will find LAPACK, but not note that it did
+find_package(LAPACK QUIET)
+~~~
+
+There are many more CMake commands, options, (and pitfalls) but for the most 
+part you'll be interacting with them via the NWChemExBase API, which modifies 
+those commands.
 

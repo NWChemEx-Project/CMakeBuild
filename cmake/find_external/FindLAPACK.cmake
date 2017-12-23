@@ -7,4 +7,11 @@
 #
 include(FindPackageHandleStandardArgs)
 find_library(LAPACK_LIBRARIES liblapack${CMAKE_STATIC_LIBRARY_SUFFIX})
+
+#Now we need to find a BLAS library that hopefully is compatible with our LAPACK
+find_package(BLAS)
+
+#Here we test that it is, which as you can see we actually don't...
+list(APPEND LAPACK_LIBRARIES ${BLAS_LIBRARIES})
+
 find_package_handle_standard_args(LAPACK DEFAULT_MSG LAPACK_LIBRARIES)

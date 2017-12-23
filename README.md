@@ -23,14 +23,15 @@ leverage NWChemExBase for their projects.
 
 ### Developer-centric
 
-At the moment most developer notes are contained in the following page or 
-scattered around the various files in comments.  It is my goal to migrate 
-much of the comments into a developer manual and to break the following 
-monolithic document up.
+The following topics are aimed at people wanting to extend or 
+contribute to NWChemExBase:
 
 - [Extending NWChemExBase](dox/ExtendingNWChemExBase.md)
+- [Building Basic CMake Projects](dox/BuildBasics.md)
 - [Understanding CMake Superbuilds](dox/CMakeSuperBuild.md)
+- [Finding BLAS/LAPACK](dox/SoYouWannaFindBLAS.md)
 - [NWChemExBase Macros and Functions](dox/MacroDocumentation.md)
+
 
 Contributing
 ------------

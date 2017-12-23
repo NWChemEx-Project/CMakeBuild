@@ -23,7 +23,7 @@ set(BLAS_LIBRARY "libblas${CMAKE_STATIC_LIBRARY_SUFFIX}")
 #This is the full set of compiler flags
 set(BLAS_FLAGS ${CMAKE_Fortran_FLAGS_RELEASE})
 if(CMAKE_POSITION_INDEPENDENT_CODE)
-    list(APPEND -fPIC)
+    list(APPEND BLAS_FLAGS -fPIC)
 endif()
 clean_flags(BLAS_FLAGS BLAS_FLAGS)
 
