@@ -42,5 +42,17 @@ else()
 endif()
 list(APPEND LAPACKE_DEFINITIONS "-DLAPACKE_HEADER=\"${FINDLAPACKE_HEADER}\"")
 
+#Now we have to find a LAPACK library compatible with our CBLAS implementation
+find_package(LAPACK)
+
+#This is where'd we check that it's compatible, but as you can see we don't
+
+#Now we have to find a BLAS library compatible with our LAPACK implementation
+find_package(BLAS)
+
+#This is where'd we check that it's compatible, but as you can see we don't
+
+list(APPEND LAPACKE_LIBRARIES ${LAPACK_LIBRARIES} ${BLAS_LIBRARIES})
+
 find_package_handle_standard_args(LAPACKE DEFAULT_MSG LAPACKE_INCLUDE_DIRS
-        LAPACKE_LIBRARIES)
+                                                      LAPACKE_LIBRARIES)

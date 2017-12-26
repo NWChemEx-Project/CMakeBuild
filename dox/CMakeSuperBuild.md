@@ -6,58 +6,47 @@ This page contains details regarding the CMake pattern known as a "superbuild".
 Contents
 --------
 
-1. [Why Do We Need a Superbuild?](#why-do-we-need-a-superbuild?)
+1. [Why Do We Need a Superbuild?](#why-do-we-need-a-superbuild?)  
+2. [Anatomy of a Superbuild](#anatomy-of-a-superbuild)  
+3. [Superbuild Technical Details](#superbuild-technical-details)
+   a. [Staging the Build](#staging-the-build)
+   b. [RPATHs](#rpaths)
+   c. [Target Names](#target-names)
 
 Why Do We Need a Superbuild?
 ----------------------------
 
-Given some source files CMake is very good at creating a build for those files.
-
-Let us assume that our main project has dependencies.  Furthermore, let us also
-assume that we are good software scientists and do not simply always build 
-said dependencies without giving the user a chance to provide them to us. It 
-then follows that we need a mechanism for finding, and then possibly building
-these dependencies.  As mentioned CMake provides `find_package` specifically 
-for this purpose.  Our last assumption is that in an effort to strive for 
-uniformity we will only use `find_package` to locate dependencies.  Although we
-took quite some time to lay out these assumptions they are quite basic from a
-build perspective.  Somewhat surprising these innocent enough assumptions are
-quite problematic for CMake owing to the separation between configure and 
-build.   Given that these are common assumptions, its perhaps unsurprising 
-that a CMake pattern has emerged for working within them.  The pattern is 
-termed the superbuild pattern. The hallmark of which is that the build is 
-driven by an additional build on top of it.  Practically speaking this amounts
-to ensuring all CMake projects and dependencies are brought into the build via
-the `ExternalProject_Add` mechanism. 
-
-### Why a Superbuild?
+As detailed in [CMake Build Basics](BuildBasics.md) CMake assumes a very 
+specific workflow.  Unfortunately for most modern C++ projects that workflow is
+too simplistic, particularly when it comes to handling the dependencies.  To 
+that end, let us assume that our main project has dependencies.  Furthermore,
+let us also assume that we are good software scientists and do not simply 
+always build said dependencies without giving the user a chance to provide 
+them to us. It then follows that we need a mechanism for finding, and then 
+possibly building these dependencies.
 
 To better understand why we need a superbuild consider a simple example.  Assume
 you are building library B, which depends on some external library A.  You 
-start off by looking for A.  As mentioned, CMake provides a function 
-`find_package` specifically for this reason.  Let's say `find_package` 
-finds A. Great, you simply compile B against the A found by CMake.  What if 
-CMake doesn't find it? There's two options:
+start off by looking for A.  CMake provides a function `find_package` 
+specifically for this reason.  Let's say `find_package` finds A. Great, you
+simply compile B against the A found by CMake.  What if CMake doesn't find it? 
+There's two options:
 1. Crash, tell the user to build A, have user rerun CMake.
    - Basically the same as the prior scenario at this point
 2. You can attempt to build A yourself.  
 Wanting to be user friendly, you add an optional target that will build A if 
-it's not found.  As alluded to, CMake provides a command 
-`ExternalProject_Add` specifically for this purpose.  `ExternalProject_Add` 
-will add some steps to the build phase that will build A.  The problem is 
-that this means A won't be built (and therefore findable) until the build 
-phase.  Thus all `find_package` calls in B will still fail as `find_package` 
-happens during B's configuration phase (and A hasn't been built yet).  
+it's not found.  CMake provides a command `ExternalProject_Add` specifically for
+this purpose.  `ExternalProject_Add` will add some steps to the build phase that
+will build A.  The problem is that this means A won't be built (and therefore 
+findable) until the build phase.  Thus all `find_package` calls looking for A
+during the configuration phase will still fail (A hasn't been built yet).  
  
-As mentioned the solution is to tell CMake about B via `ExternalProject_Add`.
-This is because, like it did for A, this command will add steps to the build
-phase that will configure, build, test, and install A.  Furthermore, because of
-the dependency between A and B, CMake will ensure that A is built first.  
-Thus when B's configure step runs `find_package` will be able to find A. 
-
 ### Anatomy of a Superbuild
 
-Building on what we just described the superbuild process proceeds via:  
+Ultimately a superbuild requires each target to be built via the 
+`ExternalProject_Add` command.  This is because `ExternalProject_Add` 
+establishes a new set of "phases" per target.  Within a superbuild our 
+overall process looks like:
 
 1. The "configure" phase so far as CMake knows  
    a. Establish dependencies among projects  
@@ -134,5 +123,4 @@ in preparing another dependency).  In this scenario, particularly if
 that another target will be produced (to aid in you in linking).  This 
 additional target will not be namespace protected and may collided with our 
 targets.  To avoid this we append a suffix that we expect to be unique. 
-
-:memo: The convention is to append `_External` to each target.
+Note that our convention is to append `_External` to each target.

@@ -162,7 +162,7 @@ elseif(${value2})
 endif()
 ~~~
 
-:memo: `if(value2 AND ${value3})` will result in a cmake error if no variable
+Note `if(value2 AND ${value3})` will result in a cmake error if no variable
 value3 is defined or if it is defined as empty/empty string.  Deref of value2 
 gives a non-empty value as mentioned above, while deref of value3 gives empty
 if not defined.

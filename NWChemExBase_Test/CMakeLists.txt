@@ -19,8 +19,8 @@ file(COPY InstalledNWXBase_files DESTINATION ${CMAKE_BINARY_DIR})
 
 # Building Tests
 foreach(_test_name DebugHonored ReleaseHonored SimpleRepo SkipTests
-                   BuildEigen3 BuildLibInt BuildCBLAS #BuildLAPACKE
-                   BuildBLAS BuildLAPACK
+                   BuildEigen3 BuildLibInt BuildCBLAS BuildLAPACK
+                   BuildBLAS
        )
     add_test(NAME    ${_test_name}
              COMMAND ${CMAKE_BINARY_DIR}/RunNWChemExBaseTest.sh

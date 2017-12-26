@@ -51,6 +51,16 @@ all have Fortran linkage.  What this means is once you've figured out what
 libraries you need to link against, it's easy to call any BLAS/LAPACK 
 implementation from Fortran and a royal pain to call it from any other language.
 
+Now the next fun part.  Just because the libraries have Fortran linkage doesn't
+mean they're written in Fortran.  Particularly if we're building them 
+BLAS/LAPACK will be written in Fortran.  The result is we also need to 
+link against the standard Fortran libraries (`libgfortran.a`, `libm.a`,...).  
+Normally these libraries are taken care of for us by the compiler, but 
+because we're now mixing languages they're not.  CMake will take care of BLAS
+for us, but LAPACK's usage of CMake (and arguably a poor use) means that 
+LAPACK will have a dependency on the standard Fortran libraries that isn't taken
+care of for us.
+
 Calling BLAS/LAPACK from languages derived from C is typically facilitated by
 going through CBLAS/LAPACKE.  CBLAS/LAPACKE are thin wrapper libraries over a 
 standard BLAS/LAPACK implementation designed to give it C-like linkage.  

@@ -13,6 +13,13 @@ find_dependency(BLAS NWX_BLAS_INCLUDE_DIRS
 set(CBLAS_URL http://www.netlib.org/blas/blast-forum/cblas.tgz)
 set(CBLAS_MD5 1E8830F622D2112239A4A8A83B84209A)
 
+if(CMAKE_POSITION_INDEPENDENT_CODE)
+    set(CBLAS_C_FLAGS "-fPIC")
+    set(CBLAS_Fortran_FLAGS "-fPIC")
+endif()
+set(CBLAS_C_FLAGS "${CBLAS_C_FLAGS} -O3 -DADD_")
+
+
 #CBLAS want's it's options in Makefile.in
 set(CBLAS_MAKEFILE "${CMAKE_BINARY_DIR}/Makefile.in")
 set(CBLAS_BUILD_DIR "${CMAKE_BINARY_DIR}/NWX_CBLAS-prefix/src/NWX_CBLAS")
@@ -26,8 +33,8 @@ file(APPEND ${CBLAS_MAKEFILE} "CBLIB = ../lib/${CBLAS_LIB}\n")
 file(APPEND ${CBLAS_MAKEFILE} "CC = ${CMAKE_C_COMPILER}\n")
 file(APPEND ${CBLAS_MAKEFILE} "FC = ${CMAKE_Fortran_COMPILER}\n")
 file(APPEND ${CBLAS_MAKEFILE} "LOADER = \$(FC)\n")
-file(APPEND ${CBLAS_MAKEFILE} "CFLAGS = -O3 -DADD_ -fPIC\n")
-file(APPEND ${CBLAS_MAKEFILE} "FFLAGS = -fPIC\n")
+file(APPEND ${CBLAS_MAKEFILE} "CFLAGS = ${CBLAS_C_FLAGS}\n")
+file(APPEND ${CBLAS_MAKEFILE} "FFLAGS = ${CBLAS_Fortran_FLAGS}\n")
 file(APPEND ${CBLAS_MAKEFILE} "ARCH = ${CMAKE_AR}\n")
 file(APPEND ${CBLAS_MAKEFILE} "ARCHFLAGS = cr\n")
 file(APPEND ${CBLAS_MAKEFILE} "RANLIB = echo\n")

@@ -26,12 +26,12 @@ leverage NWChemExBase for their projects.
 The following topics are aimed at people wanting to extend or 
 contribute to NWChemExBase:
 
-- [Extending NWChemExBase](dox/ExtendingNWChemExBase.md)
 - [Building Basic CMake Projects](dox/BuildBasics.md)
 - [Understanding CMake Superbuilds](dox/CMakeSuperBuild.md)
+- [Finding Dependencies](dox/FindingDependencies.md)
 - [Finding BLAS/LAPACK](dox/SoYouWannaFindBLAS.md)
+- [NWChemExBase Model](dox/NWChemExBaseModel.md)
 - [NWChemExBase Macros and Functions](dox/MacroDocumentation.md)
-
 
 Contributing
 ------------
