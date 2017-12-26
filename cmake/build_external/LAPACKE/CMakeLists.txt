@@ -32,7 +32,7 @@ ExternalProject_Add(LAPACKE
                    -DUSE_OPTIMIZED_BLAS=ON
                    -DBLAS_LIBRARIES=${NWX_BLAS_LIBRARIES}
                    -DUSE_OPTIMIZED_LAPACK=ON
-                   -DLAPACK_LIBRARIES=${NWX_LAPACK_LIBRARIES}
+
                    -DBUILD_TESTING=OFF
                    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
                    -DCMAKE_C_FLAGS=${LAPACK_FLAGS}
@@ -42,4 +42,5 @@ ExternalProject_Add(LAPACKE
                    -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
         MAKE_COMMAND $(MAKE)
         INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
+        CMAKE_CACHE_ARGS -DLAPACK_LIBRARIES:LIST=${NWX_LAPACK_LIBRARIES}
         )
