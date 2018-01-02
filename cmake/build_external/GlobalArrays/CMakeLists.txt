@@ -3,7 +3,7 @@ project(GlobalArrays VERSION 5.6.2 LANGUAGES C Fortran)
 
 include(DependencyMacros)
 include(ExternalProject)
-foreach(depend NWX_MPI NWX_CBLAS LAPACKE )#ScaLAPACK)
+foreach(depend NWX_MPI CBLAS LAPACKE )#ScaLAPACK)
     find_dependency(${depend} ${depend}_INCLUDE_DIRS
                                   ${depend}_LIBRARIES
                                   ${depend}_DEFINITIONS
