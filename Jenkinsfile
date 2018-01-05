@@ -6,11 +6,11 @@ pipeline {
             steps {
                 echo 'Building...'
 	            sh '''
-		        set +x
+    		    set +x
 	            source /etc/profile
-  	            module load gcc/7.1.0-4bgguyp
-     	        module load cmake
-     	        cd NWChemExBase_Test
+  	            module load gcc/7.1.0
+     	            module load cmake
+     	            cd NWChemExBase_Test
 	            cmake -H. -Bbuild
 	            cd build
 	            make
@@ -19,15 +19,16 @@ pipeline {
         }
         stage('Test') {
             steps {
-                echo 'Testing..'module
+                echo 'Testing..'
 	  	        sh'''
 		        set +x
-     	        source /etc/profile
-	            module load cmake
-	            cd NWChemExBase_Test
-	            cd build
-	            ctest
-	            '''
+     	          	source /etc/profile
+			module load gcc/7.1.0
+	        	module load cmake
+	 	        cd NWChemExBase_Test
+	     	        cd build
+	              	ctest -V
+	     	        '''
             }
         }
     }
