@@ -40,7 +40,7 @@ mkdir ${test_dir}
 
 #Change to and setup the build directory
 cd ${test_dir}
-ln -s ${nwx_base_path} #Pretend NWChemExBase is a sub-folder
+ln -s ${nwx_base_path} NWChemExBase #Pretend NWChemExBase is a sub-folder
 ${basic_setup} ${test_name}
 
 #Make the header file
