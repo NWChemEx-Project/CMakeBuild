@@ -46,7 +46,7 @@ set(GA_FFLAGS "${CMAKE_Fortran_Flags} -fPIC")
 # Build GA
 set(GA_INSTALL_DIR ${STAGE_DIR}${CMAKE_INSTALL_PREFIX})
 ExternalProject_Add(GlobalArrays_External
-        URL https://github.com/GlobalArrays/ga/releases/download/v5.6.2/ga-5.6.2.tar.gz
+        URL https://github.com/GlobalArrays/ga/releases/download/v5.6.3/ga-5.6.3.tar.gz
         #Pass location where autotools needs to be built
         #CONFIGURE_COMMAND ./autogen.sh
         CONFIGURE_COMMAND ./configure --with-tcgmsg
