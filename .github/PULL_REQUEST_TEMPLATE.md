@@ -13,7 +13,7 @@
 
 ## Detailed Description (optional)
 
-## TODOs and/or Questions
+## TODOs and/or Questions (optional)
 
 <!--- If you are opening your PR early, so as to tell us what you are working
       on, it can be useful to have a checklist of what you plan to do and
