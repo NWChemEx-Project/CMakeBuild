@@ -26,16 +26,6 @@ option_w_default(CMAKE_BUILD_TYPE Release)
 option_w_default(BUILD_SHARED_LIBS TRUE)
 option_w_default(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
-#Make a list of all CMake variables that should be passed to all dependencies
-bundle_cmake_args(CORE_CMAKE_OPTIONS CMAKE_CXX_COMPILER CMAKE_C_COMPILER
-    CMAKE_BUILD_TYPE BUILD_SHARED_LIBS CMAKE_INSTALL_PREFIX CMAKE_CXX_STANDARD
-    CMAKE_VERSION PROJECT_VERSION CMAKE_POSITION_INDEPENDENT_CODE)
-
-bundle_cmake_list(CORE_CMAKE_LISTS CMAKE_PREFIX_PATH CMAKE_INSTALL_RPATH
-    CMAKE_MODULE_PATH)
-
-bundle_cmake_strings(CORE_CMAKE_STRINGS CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG)
-
 ################################################################################
 #
 # Handle NWChemEx's special options, report their values.
@@ -52,7 +42,7 @@ foreach(__project ${NWX_PROJECTS})
                            DIRECTORY)
     #Directory where your tests are
     option_w_default(${__project}_TEST_DIR
-            ${SUPER_PROJECT_ROOT}/${__project}_Test)
+                     ${SUPER_PROJECT_ROOT}/${__project}_Test)
     #Name of variable containing your project's dependencies
     option_w_default(${__project}_DEPENDENCIES "")
 endforeach()
@@ -61,6 +51,23 @@ endforeach()
 option_w_default(BUILD_TESTS TRUE)
 #Do you want verbose printing on the CMake configuration?
 option_w_default(NWX_DEBUG_CMAKE TRUE)
+if(NWX_DEBUG_CMAKE)
+    set(CMAKE_VERBOSE_MAKEFILE TRUE)
+endif()
+
+
+#Make a list of all CMake variables that should be passed to all dependencies
+bundle_cmake_args(CORE_CMAKE_OPTIONS CMAKE_CXX_COMPILER CMAKE_C_COMPILER
+    CMAKE_BUILD_TYPE BUILD_SHARED_LIBS CMAKE_INSTALL_PREFIX CMAKE_CXX_STANDARD
+    CMAKE_VERSION PROJECT_VERSION CMAKE_POSITION_INDEPENDENT_CODE
+    CMAKE_VERBOSE_MAKEFILE)
+
+bundle_cmake_list(CORE_CMAKE_LISTS CMAKE_PREFIX_PATH CMAKE_INSTALL_RPATH
+    CMAKE_MODULE_PATH)
+
+bundle_cmake_strings(CORE_CMAKE_STRINGS CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG)
+
+
 
 ################################################################################
 #

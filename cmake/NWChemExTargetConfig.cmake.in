@@ -35,7 +35,7 @@ foreach(__header_i ${__headers})
    list(APPEND ${__name}_HEADERS ${__file_name}_INCLUDE_DIR)
 
    #If another dependency has the same include this value is still set..
-   set(${__file_name}_INCLUDE_DIR)
+   unset(${__file_name}_INCLUDE_DIR CACHE)
    find_path(${__file_name}_INCLUDE_DIR ${__name}/${__header_i}
              PATHS ${INSTALL_ROOT}/include)
    #All header files better result in same include path...
