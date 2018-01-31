@@ -6,6 +6,10 @@
 #                                                                              #
 ################################################################################
 
+function(enforce_build_dir)
+    if()
+endfunction()
+
 function(prefix_paths __prefix __list)
     foreach(__file ${${__list}})
         list(APPEND __temp_list ${__prefix}/${__file})
@@ -50,4 +54,25 @@ function(is_valid_and_true __variable __out)
     if(__temp AND ${__variable})
         set(${__out} TRUE PARENT_SCOPE)
     endif()
+endfunction()
+
+function(print_banner msg)
+    foreach(_dummy_idx RANGE 79)
+        set(_lots_o_stars "${_lots_o_stars}*")
+    endforeach()
+    string(LENGTH ${msg} _msg_length)
+    math(EXPR _white_space "78-${_msg_length}")
+    math(EXPR _extra_space "${_white_space}%2")
+    math(EXPR _lmargin_length "(${_white_space}-${_extra_space})/2 - 1")
+    math(EXPR _rmargin_length "(${_white_space}-${_extra_space})/2 +
+    ${_extra_space} - 1")
+    foreach(_margin _rmargin _lmargin)
+        foreach(_dummy_idx RANGE ${${_margin}_length})
+            set(${_margin} " ${${_margin}}")
+        endforeach()
+    endforeach()
+
+    message("${_lots_o_stars}")
+    message("*${_lmargin}${msg}${_rmargin}*")
+    message("${_lots_o_stars}")
 endfunction()

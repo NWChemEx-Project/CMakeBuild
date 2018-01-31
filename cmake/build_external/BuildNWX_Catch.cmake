@@ -8,8 +8,7 @@
 ExternalProject_Add(NWX_Catch_External
         PREFIX ${CMAKE_BINARY_DIR}/NWX_Catch_External
         SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/NWX_Catch
-        CMAKE_ARGS -DCMAKE_CXX_COMILER=${CMAKE_CXX_COMPILER}
-                   ${CORE_CMAKE_OPTIONS}
+        CMAKE_ARGS ${CORE_CMAKE_OPTIONS}
         BUILD_ALWAYS 1
         BINARY_DIR ${CMAKE_BINARY_DIR}/NWX_Catch_External
         INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}

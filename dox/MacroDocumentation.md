@@ -14,16 +14,24 @@ see it in the macro definitions).
 Contents
 --------
 
-1. [Dependency Macros](#dependency-macros)
-   a. [find_dependency](#find-dependency)
-   b. [find_or_build_dependency](#find_or_build_dependency)
+1. [build_nwchemex_module.cmake](#build_nwchemex_module)  
+1. [Dependency Macros](#dependency-macros)  
+   a. [find_dependency](#find-dependency)  
+   b. [find_or_build_dependency](#find_or_build_dependency)  
 2. [Utility Macros](#utility-macros)  
    a. [prefix_paths](#prefix_paths)    
    b. [make_full_paths](#make_full_paths)  
    c. [clean_flags](#clean_flags)  
    d. [is_valid](#is_valid)  
    e. [is_valid_and_true](#is_valid_and_true)  
+   f. [print_banner](#print_banner)
 
+BuildNWChemExModule
+----------------------
+
+### build_nwchemex_module
+
+This is the main entry point into the NWChemExBase CMake infrastructure.
 
 Dependency Macros
 -----------------
@@ -330,3 +338,28 @@ Output:
 -- Check4: TRUE
 ```
 
+### print_banner
+
+This is a macro to print a pretty 80 column wide banner in the CMake log.
+
+#### Syntax
+
+```cmake
+print_banner(MESSAGE)
+```
+
+Arguments:
+- `MESSAGE` the message to print in the banner.  Must be 78 characters or less.
+
+#### Example
+
+```cmake
+print_banner("Test Banner")
+```
+
+Output:
+```
+********************************************************************************
+*                                 Test Banner                                  *
+********************************************************************************
+```
