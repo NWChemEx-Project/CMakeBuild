@@ -7,7 +7,7 @@ set(LIBINT_URL https://github.com/evaleev/libint)
 set(LIBINT_TAR ${LIBINT_URL}/releases/download/v${LIBINT_VERSION}/)
 set(LIBINT_TAR ${LIBINT_TAR}/libint-${LIBINT_VERSION})
 
-if(${PROJECT_NAME} STREQUAL "BuildLibInt")
+if(${PROJECT_NAME} STREQUAL "TestBuildLibInt")
     #Grab the small version of libint for testing purposes
     set(LIBINT_TAR ${LIBINT_TAR}-test-mpqc4.tgz)
 else()

@@ -1,4 +1,4 @@
-include(AssertMacros.cmake)
+include(AssertMacros)
 
 #There's no way to signal that the commented lines are intentional failures
 #uncomment o manually check

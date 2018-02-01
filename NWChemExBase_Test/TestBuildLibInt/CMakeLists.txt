@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.6)
+project(TestBuildLibInt VERSION 1.0.0 LANGUAGES CXX)
+find_package(NWChemExBase)
+set(TestBuildLibInt_DEPENDENCIES LibInt)
+set(BUILD_LibInt TRUE)
+build_nwchemex_module(${CMAKE_CURRENT_LIST_DIR})

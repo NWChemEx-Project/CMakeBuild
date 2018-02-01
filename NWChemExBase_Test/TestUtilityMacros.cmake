@@ -1,5 +1,5 @@
-include(UtilityMacros.cmake)
-include(AssertMacros.cmake)
+include(UtilityMacros)
+include(AssertMacros)
 
 is_valid(not_defined test1)
 assert(NOT test1)
