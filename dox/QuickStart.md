@@ -1,95 +1,115 @@
-QuickStart
-==========
+Using NWChemExBase in a New Project
+===================================
 
-The purpose of this page is to get you up and using NWChemExBase as quickly 
-as possible.  For the purposes of this tutorial we assume you haven't started a
-repo yet. If you have, you'll want to follow these steps until step 3, at which
-point you'll migrate your files over.
-
-Step 0 : Preliminaries
----------------------------
-
-We'll need a directory for the project.  We'll call this directory `workspace`.
-Although not strictly necessary, you may want to look into git subrepo and use
-that instead of normal git in the commands below.
-
-Step 1 : Obtain NWChemExBase
+Step 0 : Obtain NWChemExBase
 ----------------------------
 
 The most up to date version of NWChemExBase is always given by the `master` 
-branch of the GitHub repository.  To obtain it, run the following command 
-inside `workspace`:
+branch of the GitHub repository.  To obtain it, run the following command:
 
 ```git
 git clone https://github.com/NWChemEx-Project/NWChemExBase.git
 ```
 
-Step 2 : Set-up Directory Structure
------------------------------------
-
-NWChemExBase is easiest to use if you organize your source the way we do.  
-You can get a skeleton set-up by running (still inside `workspace`):
+As NWChemExBase doesn't require anything aside from CMake and a C++ compiler,
+for building the tests, building and installing it should be as easy as:
 
 ```bash
-NWChemExBase/BasicSetup.sh NameOfProject
+cd NWChemExBase #Assuming you didn't already
+cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=/path/to/cxx/compiler \
+          -DCMAKE_INSTALL_PREFIX=/where/to/put/NWChemExBase
+          
+-- lots of output --
+
+cd build && make
+
+-- ton more output --
+
+make test 
+
+-- a bit more output --
+
+make install          
 ```
 
-where `NameOfProject` should be replaced by a single word, descriptive name for 
-your project; this tutorial will continue to use `NameOfProject`.
+Step 1 : Set-up Directory Structure
+-----------------------------------
 
-Step 3 : Add Sources and Headers
---------------------------------
+With NWChemExBase installed we're ready to start setting up your source tree.
+Let's call the root of your tree `root`.  Owing to how CMake super builds 
+work it's easiest if you have two subdirectories: one for your source and header
+files, which we'll call `srcs` one for your tests, which we'll call `tests`.  
+You will need a file with the name `CMakeLists.txt` in `root`, `srcs`, and 
+`tests`.  Respectively these files will provide the CMake settings for your 
+overall project, the building of the sources, and the testing.
 
-The directory `workspace/NameOfProject` is your source directory.  
-Let's say your project involves one source file, `SourceFile.cpp` and one header
-file `HeaderFile.hpp`.  Their paths would be 
-`workspace/NameOfProject/SourceFile.cpp` and 
-`workspace/NameOfProject/HeaderFile.hpp` respectively.  You now need to register
-them with the build, this is done inside the file 
-`workspace/NameOfProject/CMakeLists.txt`.  Specifically add them to the lists
-entitled `NameOfProject_SRCS` and `NameOfProject_INCLUDES` by writing:
+Step 2 : Configure Top-Level `CMakeLists.txt`
+--------------------------------------------
+
+The top-level `CMakeLists.txt` should look something like:
 
 ```cmake
-set(NameOfProject_SRCS SourceFile.cpp)
-set(NameOfProject_INCLUDES HeaderFile.hpp) 
+cmake_minimum_required(VERSION 3.6)
+project(<ProjectName> VERSION 0.0.0 LANGUAGES CXX)
+find_package(NWChemExBase)
+set(${PROJECT_NAME}_DEPENDENCIES <list_of_dependencies>)
+set(${PROJECT_NAME}_SRC_DIR <srcs>)
+set(${PROJECT_NAME}_TEST_DIR <tests>)
+build_nwchemex_module(${CMAKE_CURRENT_LIST_DIR})
 ```
 
-Step 4 : Add Tests
-------------------
+where you will need to replace:
+ 
+-`<ProjectName>` with the name of your project 
+  - `${PROJECT_NAME}` will evaluate to that value and need not be changed 
+- `<list_of_dependencies>` with a list of the libraries your code requires  
+  - Supported dependencies are [here](SupportedDependencies.md)),  
+- `<srcs>` with the path to `srcs` relative to `root`, and
+- `<tests>` with the path to `tests` relative to `root`.
 
-Your main testing directory is `workspace/NameOfProject_Tests`.  Let's say you
-want to make a test called `Test1` and the source for this test lives in 
-`workspace/NameOfProject_Tests/Test1.cpp` then all you have to do is add the
-following line to `workspace/NameOfProject_Tests`:
+Step 3: Configure `srcs/CMakeLists.txt`
+---------------------------------------- 
+
+This file should look something like:
 
 ```cmake
-add_cxx_unit_test(Test1 NameOfProject)
+cmake_minimum_required(VERSION ${CMAKE_VERSION})
+project(<ProjectName>-srcs VERSION ${PROJECT_VERSION} LANGUAGES CXX)
+include(TargetMacros)
+set(${PROJECT_NAME}_SRCS file1.cpp)
+set(${PROJECT_NAME}_INCLUDES file1.hpp)
+set(${PROJECT_NAME}_DEFINITIONS "-DASymbol2Define")
+set(${PROJECT_NAME}_LINK_FLAGS )
+nwchemex_add_library(<ProjectName> ${PROJECT_NAME}_SRCS
+                                 ${PROJECT_NAME}_INCLUDES
+                                 ${PROJECT_NAME}_DEFINITIONS
+                                 ${PROJECT_NAME}_LINK_FLAGS)
 ```
 
-this line tells us that you want to add a test called `Test1` (NWChemExBase 
-assumes the test lives in `Test1.cpp`) and that the test depends on 
-`NameOfProject`.
+Strictly speaking the names of the variables are arbitrary so long as they 
+match what is passed to `nwchemex_add_library`.  Similarly whatever is put as
+the name of the project on the second line is also arbitrary; however, whatever
+replaces `<ProjectName>` in the call `nwchemex_add_library` will determine the
+name of the library.  Otherwise the remainder of the file should be self 
+explanatory.
 
-Step 5 : Add Dependencies
--------------------------
+Step 4: Configure: `tests/CMakeLists.txt`
+-----------------------------------------
 
-The last major part of a C++ project is handling the dependencies (*i.e.* the
-other libraries your project depends on).  As long as your project uses 
-dependencies on [this list](SupportedDependencies.md), then adding 
-dependencies is as simple as modifying the following line in 
-`workspace/CMakeLists.txt`:
+This file should be something like:
 
 ```cmake
-set(ProjectName_DEPENDENCIES BLAS)
-``` 
+cmake_minimum_required(VERSION ${CMAKE_VERSION})
+project(<ProjectName>-Test VERSION ${PROJECT_VERSION} LANGUAGES CXX)
+include(TargetMacros)
 
-would for example make your project depend on BLAS.
+add_cxx_unit_test(Test1)
+add_cxx_unit_test(Test2)
+```
 
-Further Reading
----------------
-
-The above 5 steps are all it takes to get a repo up and running with 
-NWChemExBase.  NWChemExBase actually allows you to do quite a bit of 
-customization on top of what's outlined here, to learn more check out 
-[this link](AdvancedUsage.md).
-
+Again the name used in the second line is arbitrary.  The important part of this
+file is adding the tests.  For now we assume that the the names of the tests are
+the same as the `.cpp` file they are in.  So for this example you'll need source
+files: `Test1.cpp` and `Test2.cpp`, which contain the code to form executables.
+By default the `Catch` testing framework is included while compiling so that
+you can use that.
