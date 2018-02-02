@@ -239,3 +239,70 @@ Output:
 *                                 Test Banner                                  *
 ********************************************************************************
 ```
+
+string_concat
+-------------
+
+CMake's string function has the ability to concatenate strings.  Usually in 
+CMake what we want is to be able to concatenate a list of strings while 
+appending a prefix and putting a separator between them.  (We need both in case 
+the string we're appending to is empty).
+
+### Syntax:
+
+```cmake
+string_concat(LIST PREFIX SPACER RESULT)
+```
+
+Arguments:
+- `LIST` the list of things to join into a string
+  - Should be a variable that evaluates to a list
+- `PREFIX` the prefix to put in front of each item in the list
+- `SPACER` the string to use to separate items in the list
+- `RESULT` the variable that will contain your new string
+
+### Example
+
+```cmake
+set(A_LIST "item1" "item2")
+string_concat(A_LIST "-I" "&" NEW_LIST)
+message(${NEW_LIST})
+```
+
+Output:
+
+```
+"-Iitem1&-Iitem2"
+```
+
+makify_includes
+---------------
+
+This little wrapper function will take a list of include directories, such as
+those returned from `find_package` and make them into a single string which 
+is suitable for passing to a GNU Make external project.  It ultimately calls
+`string_concat`
+
+### Syntax
+
+```cmake
+makify_includes(LIST_OF_INCLUDES RESULT)
+```
+
+Arguments:
+- `LIST_OF_INCLUDES` A list of include directories
+  - Should be a variable that can be dereferenced to a list
+- `RESULT` The name of the variable that will contain the result
+
+### Example
+
+```cmake
+set(INCLUDE_LIST "/some/path;/some/path2")
+makify_includes(INCLUDE_LIST MAKIFIED_LIST)
+message(${MAKIFIED_LIST})
+```   
+
+Output:
+```
+"-I/some/path -I/some/path2"
+```

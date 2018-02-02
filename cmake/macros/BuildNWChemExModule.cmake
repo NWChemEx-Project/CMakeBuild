@@ -8,10 +8,12 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
     include(${NWXBASE_MACROS}/SetPaths.cmake)
     set_paths() #Puts macro paths in module path
     include(OptionMacros)
-    include(Flags)
     include(DependencyMacros)
     include(ExternalProject)
     include(UtilityMacros)
+
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
 
     print_banner("Configuration Options")
 

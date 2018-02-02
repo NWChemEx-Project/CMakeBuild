@@ -6,9 +6,6 @@
 #                                                                              #
 ################################################################################
 
-function(enforce_build_dir)
-    if()
-endfunction()
 
 function(prefix_paths __prefix __list)
     foreach(__file ${${__list}})
@@ -20,6 +17,7 @@ endfunction()
 function(make_full_paths __list)
     set(__prefix "${CMAKE_CURRENT_LIST_DIR}")
     prefix_paths(${__prefix} ${__list})
+    set(${__list} ${${__list}} PARENT_SCOPE)
 endfunction()
 
 function(clean_flags __list __output_list)
@@ -75,4 +73,22 @@ function(print_banner msg)
     message("${_lots_o_stars}")
     message("*${_lmargin}${msg}${_rmargin}*")
     message("${_lots_o_stars}")
+endfunction()
+
+
+function(string_concat list_o_stuff prefix spacer _result)
+    foreach(_item ${${list_o_stuff}})
+        is_valid(${_result} result_set)
+        if(result_set) #Only put space if we're actually appending
+            set(${_result} "${${_result}}${spacer}${prefix}${_item}")
+        else()
+            set(${_result} "${prefix}${_item}")
+        endif()
+    endforeach()
+    set(${_result} ${${_result}} PARENT_SCOPE)
+endfunction()
+
+function(makify_includes includes result)
+    string_concat(${includes} "-I" " " ${result})
+    set(${result} ${${result}} PARENT_SCOPE)
 endfunction()

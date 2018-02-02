@@ -47,7 +47,8 @@ can be found by following the links
    d. `is_valid` checks if a variable is valid (defined and set)
    e. `is_valid_and_true` wraps `is_valid` and also checks variable for true
    f. `print_banner` writes a message to the log inside a pretty banner
-
+   g. `string_concat` takes a list of things and makes them into one long string
+   h. `makify_includes` puts "-I" in front of a list of folders
 
 
 `
