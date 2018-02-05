@@ -20,25 +20,7 @@ include(AssertMacros)
 #Little trick so we always know this directory even when we are in a function
 set(DIR_OF_TARGET_MACROS ${CMAKE_CURRENT_LIST_DIR})
 
-#
-# This is code factorization for the next few functions and only used internally
-#
-#  To make hide a lot of complexity from the user we transport the following:
-#     - NWX_INCLUDE_DIR : path the root of source tree, should be the include
-#                         path for all headers included with target
-#     - NWX_DEPENDENCIES : A list of all dependencies this target depends on
-#                          will be passed to find_dependencies so names must be
-#                          find_packgage-able
-#
-# Syntax: nwchemex_set_up_target(<name> <flags> <lflags> <includes> <install>
-#         name : the name of the target
-#         flags : a list of compile flags needed to compile the target in
-#                 addition to those added by dependencies
-#         lflags : a list of flags needed to link the target in addition to
-#                  those provided by dependencies
-#         install : The path to install the target to (relative to
-#                   CMAKE_INSTALL_PREFIX
-#
+
 function(nwchemex_set_up_target __name __flags __lflags __install)
     set(__headers_copy ${${__includes}})
     make_full_paths(__headers_copy)
@@ -66,18 +48,6 @@ function(nwchemex_set_up_target __name __flags __lflags __install)
     install(TARGETS ${__name} DESTINATION ${__install})
 endfunction()
 
-#
-# Macro for building an executable
-#
-# Syntax: nwchemex_add_executable(<Name> <Sources> <Headers> <Flags> <LFlags>
-#     - Name : The name to use for the executable
-#     - Sources : A list of source files to compile to form the executable.
-#                 Should be relative paths.
-#     - Flags   : These are flags needed to compile the executable in
-#                 addition to those provided by dependencies.
-#     - LFlags  " These are the flags needed to link this executable in addition
-#                 to those provided by the dependencies
-#
 function(nwchemex_add_executable __name __srcs __flags __lflags)
     set(__srcs_copy ${${__srcs}})
     make_full_paths(__srcs_copy)
@@ -88,20 +58,6 @@ function(nwchemex_add_executable __name __srcs __flags __lflags)
                            bin/${__name})
 endfunction()
 
-#
-# Macro for building a library
-#
-# Syntax: nwchemex_add_library(<Name> <Sources> <Headers> <Flags> <LFlags>
-#     - Name : The name to use for the library, result will be libName.so
-#     - Sources : A list of source files to compile to form the library.  Should
-#                 be relative paths.
-#     - Headers : A list of header files that should be considered the public
-#                 API of the library.  Should be relative paths.
-#     - Flags   : These are flags needed to compile the library in addition to
-#                 those provided by this library's dependencies.
-#     - LFlags  " These are the flags needed to link this library in addition
-#                 to those provided by the dependencies
-#
 function(nwchemex_add_library __name __srcs __headers __flags __lflags)
     set(__srcs_copy ${${__srcs}})
     make_full_paths(__srcs_copy)
@@ -128,13 +84,6 @@ function(nwchemex_add_library __name __srcs __headers __flags __lflags)
     endforeach()
 endfunction()
 
-#
-# Defines a test.  This is the base call.  You'll likely be using one of the
-#    functions that follows this declaration.
-#
-# Syntax: nwchemex_add_test(<name> <test_file>)
-#    - name      : the name of the test
-#    - test_file : This is the file containing the test
 function(nwchemex_add_test __name __test_file)
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
     set(__file_copy ${__test_file})
@@ -146,11 +95,36 @@ function(nwchemex_add_test __name __test_file)
     install(FILES ${CMAKE_BINARY_DIR}/CTestTestfile.cmake DESTINATION tests)
 endfunction()
 
-#
-# Specializes add_test to C++ unit tests.  Assumes the test is coded up in a
-# file with the same name as the test and a ".cpp" extension.
-#
 function(add_cxx_unit_test __name)
     nwchemex_add_test(${__name} ${__name}.cpp)
     set_tests_properties(${__name} PROPERTIES LABELS "UnitTest")
+endfunction()
+
+function(add_cmake_macro_test __name)
+    install(FILES ${__name}.cmake DESTINATION tests)
+    list(GET CMAKE_MODULE_PATH 0 _stage_dir)
+    set(_macro_dir "${_stage_dir}/share/cmake/NWChemExBase/macros")
+    add_test(NAME ${__name}
+             COMMAND ${CMAKE_COMMAND} -DCMAKE_MODULE_PATH=${_macro_dir}
+                                      -P ${__name}.cmake)
+    install(FILES ${CMAKE_BINARY_DIR}/CTestTestfile.cmake DESTINATION tests)
+endfunction()
+
+function(add_nwxbase_test __name)
+    include(ExternalProject)
+    ExternalProject_Add(${__name}
+        PREFIX ${__name}
+        DOWNLOAD_DIR ${__name}
+        BINARY_DIR ${__name}/build
+        SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/${__name}
+        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+        BUILD_ALWAYS 1
+        CMAKE_CACHE_ARGS -DCMAKE_PREFIX_PATH:LIST=${CMAKE_PREFIX_PATH}
+                         -DCMAKE_MODULE_PATH:LIST=${CMAKE_MODULE_PATH}
+        INSTALL_COMMAND ""
+    )
+    set(working_dir ${CMAKE_BINARY_DIR}/${__name}/build/test_stage/${CMAKE_INSTALL_PREFIX})
+    add_test(NAME ${__name}
+             COMMAND ${working_dir}/tests/${__name})
+    install(FILES ${CMAKE_BINARY_DIR}/CTestTestfile.cmake DESTINATION tests)
 endfunction()

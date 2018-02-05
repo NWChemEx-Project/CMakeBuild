@@ -28,17 +28,29 @@ foreach(__module_i ${__modules})
 endforeach()
 
 #Find the FindXXX.cmake files
-set(__modules @__BUILD_FILES@)
+set(__modules @__FIND_FILES@)
 foreach(__module_i ${__modules})
    get_filename_component(__file_name ${__module_i} NAME_WE)
    list(APPEND NWCHEMEXBASE_MODULES ${__file_name}_MODULE)
-   find_path(${__file_name}_MODULE external/find_external/${__file_name}.cmake
+   find_path(${__file_name}_MODULE find_external/${__file_name}.cmake
              PATHS ${NWCHEMEXBASE_MODULE_PATH})
    assert_strings_are_equal(${__file_name}_MODULE NWCHEMEXBASE_MODULE_PATH)
 endforeach()
 
+#Find the BuildXXX.cmake files
+set(__modules @__BUILD_FILES@)
+foreach(__module_i ${__modules})
+   get_filename_component(__file_name ${__module_i} NAME_WE)
+   list(APPEND NWCHEMEXBASE_MODULES ${__file_name}_MODULE)
+   find_path(${__file_name}_MODULE build_external/${__file_name}.cmake
+             PATHS ${NWCHEMEXBASE_MODULE_PATH})
+   assert_strings_are_equal(${__file_name}_MODULE NWCHEMEXBASE_MODULE_PATH)
+endforeach()
+
+
 list(APPEND CMAKE_MODULE_PATH ${NWCHEMEXBASE_MODULE_PATH}/macros
-                              ${NWCHEMEXBASE_MODULE_PATH}/external/find_external)
+                              ${NWCHEMEXBASE_MODULE_PATH}/find_external
+                              ${NWCHEMEXBASE_MODULE_PATH}/build_external)
 
 #Find the testing infrastructure
 find_package(NWX_Catch REQUIRED)
@@ -48,3 +60,4 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(NWCHEMEXBASE DEFAULT_MSG
 list(APPEND NWCHEMEXBASE_INCLUDE_DIRS ${NWX_CATCH_INCLUDE_DIRS})
 list(APPEND NWCHEMEXBASE_LIBRARIES ${NWX_CATCH_LIBRARIES})
 set(NWChemExBase_FOUND ${NWCHEMEXBASE_FOUND})
+include(BuildNWChemExModule)
