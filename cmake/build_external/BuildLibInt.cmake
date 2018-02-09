@@ -1,28 +1,21 @@
-set(LIBINT_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-set(LIBINT_MAJOR 2)
-set(LIBINT_MINOR 4)
-set(LIBINT_PATCH 2)
-set(LIBINT_VERSION "${LIBINT_MAJOR}.${LIBINT_MINOR}.${LIBINT_PATCH}")
-set(LIBINT_URL https://github.com/evaleev/libint)
-set(LIBINT_TAR ${LIBINT_URL}/releases/download/v${LIBINT_VERSION}/)
-set(LIBINT_TAR ${LIBINT_TAR}/libint-${LIBINT_VERSION})
+#
+# This file will build LibInt using a mock super-build incase Eigen3 needs to be
+# built as well
+#
+find_or_build_dependency(Eigen3 _was_Found)
 
-if(${PROJECT_NAME} STREQUAL "BuildLibInt")
-    #Grab the small version of libint for testing purposes
-    set(LIBINT_TAR ${LIBINT_TAR}-test-mpqc4.tgz)
-else()
-    set(LIBINT_TAR ${LIBINT_TAR}.tgz)
+set(TEST_LIBINT FALSE)
+if(${PROJECT_NAME} STREQUAL "TestBuildLibInt")
+    set(TEST_LIBINT TRUE)
 endif()
-
-find_or_build_dependency(Eigen3 was_found)
 ExternalProject_Add(LibInt_External
-    URL ${LIBINT_TAR}
-    CONFIGURE_COMMAND ./configure --prefix=${CMAKE_INSTALL_PREFIX}
-        CXX=${CMAKE_CXX_COMPILER}
-        CC=${CMAKE_C_COMPILER}
-        CXXFLAGS=${LIBINT_FLAGS}
-        ${LIBINT_CONFIG_OPTIONS}
-    INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
-    BUILD_IN_SOURCE 1
-)
+        SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/LibInt
+        CMAKE_ARGS -DSTAGE_DIR=${STAGE_DIR}
+                   -DTEST_LIBINT=${TEST_LIBINT}
+                   ${CORE_CMAKE_OPTIONS}
+        BUILD_ALWAYS 1
+        INSTALL_COMMAND $(MAKE) DESTDIR=${STAGE_DIR}
+        CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}
+                         ${CORE_CMAKE_STRINGS}
+        )
 add_dependencies(LibInt_External Eigen3_External)

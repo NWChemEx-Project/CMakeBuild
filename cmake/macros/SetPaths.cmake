@@ -5,17 +5,11 @@
 #
 
 macro(set_paths)
-    #The root of the NWChemExBase build system
-    set(NWXBASE_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
+    #The directory containing the macros directory
+    get_filename_component(NWXBASE_CMAKE ${NWXBASE_MACROS} DIRECTORY)
 
-    #The directory that called us
-    get_filename_component(SUPER_PROJECT_ROOT ${NWXBASE_ROOT} DIRECTORY)
-
-    #The NWChemExBase cmake folder
-    set(NWXBASE_CMAKE ${NWXBASE_ROOT}/cmake)
-
-    #The location of the macros
-    set(NWXBASE_MACROS ${NWXBASE_CMAKE}/macros)
+    #The root of the NWChemExBase install
+    get_filename_component(NWXBASE_ROOT ${NWXBASE_CMAKE} DIRECTORY)
 
     #The location of our find scripts
     set(NWXBASE_FIND_SCRIPTS ${NWXBASE_CMAKE}/find_external)
@@ -36,6 +30,8 @@ macro(set_paths)
     list(APPEND CMAKE_MODULE_PATH ${NWXBASE_MACROS} ${NWXBASE_FIND_SCRIPTS}
                 ${NWXBASE_BUILD_SCRIPTS})
 
+    #Prepend our stage install dir so staged dependencies and their CMake
+    #files can be found (and are preferred)
     set(CMAKE_PREFIX_PATH "${STAGE_INSTALL_DIR}" "${CMAKE_PREFIX_PATH}")
-    list(APPEND CMAKE_MODULE_PATH "${STAGE_INSTALL_DIR}")
+    set(CMAKE_MODULE_PATH "${STAGE_INSTALL_DIR}" "${CMAKE_MODULE_PATH}")
 endmacro()
