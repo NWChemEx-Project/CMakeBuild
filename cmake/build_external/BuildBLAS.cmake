@@ -15,7 +15,7 @@ set(BLAS_PREFIX ${CMAKE_BINARY_DIR}/NWX_BLAS_External)
 #This is where the BLAS tar-ball will be downloaded to
 set(BLAS_DOWNLOAD ${BLAS_PREFIX}/src)
 #This is where BLAS will be extracted to
-set(BLAS_SRC_DIR  ${BLAS_DOWNLOAD}/BLAS/BLAS-${BLAS_VERSION})
+set(BLAS_SRC_DIR  ${BLAS_DOWNLOAD}/BLAS-${BLAS_VERSION})
 #This is where we need to put the Makefile settings
 set(MAKEFILE_DEST ${BLAS_SRC_DIR}/make.inc)
 #This is the name of the created library
@@ -47,7 +47,7 @@ ExternalProject_Add(BLAS_External
         PREFIX ${BLAS_PREFIX}
         DOWNLOAD_NO_PROGRESS TRUE
         DOWNLOAD_DIR ${BLAS_DOWNLOAD}
-        SOURCE_DIR ${BLAS_DOWNLOAD}/BLAS
+        SOURCE_DIR ${BLAS_SRC_DIR}
         URL ${BLAS_URL}
         URL_MD5 ${BLAS_MD5}
         BINARY_DIR ${BLAS_SRC_DIR}
