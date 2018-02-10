@@ -16,6 +16,7 @@ enable_testing()
 include(UtilityMacros)
 include(DependencyMacros)
 include(AssertMacros)
+include(OptionMacros)
 
 #Little trick so we always know this directory even when we are in a function
 set(DIR_OF_TARGET_MACROS ${CMAKE_CURRENT_LIST_DIR})
