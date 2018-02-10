@@ -117,10 +117,7 @@ function(add_nwxbase_test __name)
         DOWNLOAD_DIR ${__name}
         BINARY_DIR ${__name}/build
         SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/${__name}
-        CMAKE_ARGS -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-                   -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-                   -DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}
-                   -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
         BUILD_ALWAYS 1
         CMAKE_CACHE_ARGS -DCMAKE_PREFIX_PATH:LIST=${CMAKE_PREFIX_PATH}
                          -DCMAKE_MODULE_PATH:LIST=${CMAKE_MODULE_PATH}
