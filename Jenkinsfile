@@ -5,8 +5,10 @@ pipeline {
     }
     stages {
         stage('Clean Workspace') {
-            deleteDir()
-            checkout scm
+            steps {
+                deleteDir()
+                checkout scm
+            }
         }
         stage('Build') {
             steps {
