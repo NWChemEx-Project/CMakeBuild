@@ -15,8 +15,9 @@ install(FILES ${__FIND_FILES}
         DESTINATION share/cmake/NWChemExBase/find_external)
 
 file(GLOB __BUILD_FILES "${NWXBASE_CMAKE}/build_external/*.cmake")
-install(FILES ${__BUILD_FILES}
+install(DIRECTORY ${NWXBASE_CMAKE}/build_external/
         DESTINATION share/cmake/NWChemExBase/build_external)
+
 
 configure_file("${NWXBASE_CMAKE}/NWChemExBaseConfig.cmake.in"
                NWChemExBaseConfig.cmake @ONLY
