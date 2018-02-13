@@ -6,4 +6,9 @@ project(NWChemExBase VERSION ${PROJECT_VERSION} LANGUAGES NONE)
 set(NWXBASE_CMAKE ${NWX_INCLUDE_DIR}/cmake)
 install(DIRECTORY ${NWXBASE_CMAKE} DESTINATION share/cmake/NWChemExBase)
 
-
+configure_file("${NWXBASE_CMAKE}/NWChemExBaseConfig.cmake.in"
+                       NWChemExBaseConfig.cmake @ONLY
+)
+install(FILES ${CMAKE_BINARY_DIR}/NWChemExBaseConfig.cmake
+        DESTINATION share/cmake/NWChemExBase
+)
