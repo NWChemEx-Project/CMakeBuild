@@ -1,7 +1,15 @@
 pipeline {
     agent any
-
+    options {
+        skipDefaultCheckout true
+    }
     stages {
+        stage('Clean Workspace') {
+            steps {
+                deleteDir()
+                checkout scm
+            }
+        }
         stage('Build') {
             steps {
                 echo 'Building...'
