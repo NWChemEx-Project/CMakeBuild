@@ -16,6 +16,7 @@ enable_testing()
 include(UtilityMacros)
 include(DependencyMacros)
 include(AssertMacros)
+include(OptionMacros)
 
 #Little trick so we always know this directory even when we are in a function
 set(DIR_OF_TARGET_MACROS ${CMAKE_CURRENT_LIST_DIR})
@@ -112,12 +113,15 @@ endfunction()
 
 function(add_nwxbase_test __name)
     include(ExternalProject)
+    bundle_cmake_args(CMAKE_CORE_OPTIONS CMAKE_CXX_COMPILER CMAKE_C_COMPILER
+            CMAKE_Fotran_COMPILER CMAKE_INSTALL_PREFIX)
+
     ExternalProject_Add(${__name}
         PREFIX ${__name}
         DOWNLOAD_DIR ${__name}
         BINARY_DIR ${__name}/build
         SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/${__name}
-        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+        CMAKE_ARGS ${CMAKE_CORE_OPTIONS}
         BUILD_ALWAYS 1
         CMAKE_CACHE_ARGS -DCMAKE_PREFIX_PATH:LIST=${CMAKE_PREFIX_PATH}
                          -DCMAKE_MODULE_PATH:LIST=${CMAKE_MODULE_PATH}
