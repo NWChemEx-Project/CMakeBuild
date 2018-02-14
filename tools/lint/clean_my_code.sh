@@ -36,12 +36,12 @@ find ${source_dir} \
         -o -name '*.h' \
         -o -name '*.hh' \
         -o -name '*.hpp' \) \
-        -exec "${clang_format_command}" -i '{}' \;
+        -exec "${clang_format_command}" -i -style=file '{}' \;
 
 
 # Run tidy
 # Step 1: Build compile command database
-cd ${build_dir}
-${make_json_cmmd} all > ${commands_out}
-${run_clang_tidy} -clang-tidy-binary=${clang_tidy_command} \
-                  -checks="-*,cppcoreguidelines-*"
+#cd ${build_dir}
+#${make_json_cmmd} all > ${commands_out}
+#${run_clang_tidy} -clang-tidy-binary=${clang_tidy_command} \
+#                  -checks="-*,cppcoreguidelines-*"
