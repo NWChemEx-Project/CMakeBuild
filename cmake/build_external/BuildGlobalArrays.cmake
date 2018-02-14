@@ -53,12 +53,11 @@ message(STATUS ${CMAKE_BINARY_DIR}/stage)
 # Add the mock CMake-ified GA project
 ExternalProject_Add(GlobalArrays_External
         SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/GlobalArrays
-        CMAKE_ARGS -DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}
+        CMAKE_ARGS ${CORE_CMAKE_OPTIONS}
                    -DSUPER_PROJECT_ROOT=${SUPER_PROJECT_ROOT}
                    -DNWX_DEBUG_CMAKE=${NWX_DEBUG_CMAKE}
                    -DARMCI_NETWORK=${ARMCI_NETWORK}
                    -DSTAGE_DIR=${STAGE_DIR}
-                   ${CORE_CMAKE_OPTIONS}
         BUILD_ALWAYS 1
         INSTALL_COMMAND ""
         CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}

@@ -114,7 +114,7 @@ endfunction()
 function(add_nwxbase_test __name)
     include(ExternalProject)
     bundle_cmake_args(CMAKE_CORE_OPTIONS CMAKE_CXX_COMPILER CMAKE_C_COMPILER
-            CMAKE_Fotran_COMPILER CMAKE_INSTALL_PREFIX)
+            CMAKE_Fortran_COMPILER CMAKE_INSTALL_PREFIX)
 
     ExternalProject_Add(${__name}
         PREFIX ${__name}
