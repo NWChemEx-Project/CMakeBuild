@@ -9,7 +9,7 @@ enable_language(C Fortran)
 
 ExternalProject_Add(LAPACKE_External
         SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/LAPACKE
-        CMAKE_ARGS ${CORE_CMAKE_OPTIONS}
+        CMAKE_ARGS ${DEPENDENCY_CMAKE_OPTIONS}
                    -DSTAGE_DIR=${STAGE_DIR}
         BUILD_ALWAYS 1
         INSTALL_COMMAND $(MAKE) DESTDIR=${STAGE_DIR}

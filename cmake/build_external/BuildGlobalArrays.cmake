@@ -53,7 +53,7 @@ message(STATUS ${CMAKE_BINARY_DIR}/stage)
 # Add the mock CMake-ified GA project
 ExternalProject_Add(GlobalArrays_External
         SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/GlobalArrays
-        CMAKE_ARGS ${CORE_CMAKE_OPTIONS}
+        CMAKE_ARGS ${DEPENDENCY_CMAKE_OPTIONS}
                    -DSUPER_PROJECT_ROOT=${SUPER_PROJECT_ROOT}
                    -DNWX_DEBUG_CMAKE=${NWX_DEBUG_CMAKE}
                    -DARMCI_NETWORK=${ARMCI_NETWORK}

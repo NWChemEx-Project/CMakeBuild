@@ -10,7 +10,7 @@ if(${PROJECT_NAME} STREQUAL "TestBuildLibInt")
 endif()
 ExternalProject_Add(LibInt_External
         SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/LibInt
-        CMAKE_ARGS ${CORE_CMAKE_OPTIONS}
+        CMAKE_ARGS ${DEPENDENCY_CMAKE_OPTIONS}
                    -DSTAGE_DIR=${STAGE_DIR}
                    -DTEST_LIBINT=${TEST_LIBINT}
         BUILD_ALWAYS 1

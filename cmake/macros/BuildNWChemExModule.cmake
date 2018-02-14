@@ -51,6 +51,12 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
 
     bundle_cmake_strings(CORE_CMAKE_STRINGS CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG)
 
+    set (CMAKE_BUILD_TYPE Release)
+    bundle_cmake_args(DEPENDENCY_CMAKE_OPTIONS CMAKE_CXX_COMPILER CMAKE_C_COMPILER
+            CMAKE_Fortran_COMPILER CMAKE_BUILD_TYPE BUILD_SHARED_LIBS
+            CMAKE_INSTALL_PREFIX CMAKE_CXX_STANDARD CMAKE_VERSION PROJECT_VERSION
+            CMAKE_POSITION_INDEPENDENT_CODE CMAKE_VERBOSE_MAKEFILE)
+
     print_banner("Locating Dependencies and Creating Targets")
     ################################################################################
     #
