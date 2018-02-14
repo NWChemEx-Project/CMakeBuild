@@ -8,9 +8,7 @@ enable_language(C Fortran)
 
 ExternalProject_Add(LAPACK_External
         SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/LAPACK
-        CMAKE_ARGS -DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}
-                   -DCMAKE_C_COMILER=${CMAKE_C_COMPILER}
-                   ${CORE_CMAKE_OPTIONS}
+        CMAKE_ARGS ${DEPENDENCY_CMAKE_OPTIONS}
         BUILD_ALWAYS 1
         INSTALL_COMMAND $(MAKE) install DESTDIR=${STAGE_DIR}
         CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}
