@@ -15,7 +15,11 @@ set(BLAS_PREFIX ${CMAKE_BINARY_DIR}/NWX_BLAS_External)
 #This is where the BLAS tar-ball will be downloaded to
 set(BLAS_DOWNLOAD ${BLAS_PREFIX}/src)
 #This is where BLAS will be extracted to
-set(BLAS_SRC_DIR  ${BLAS_DOWNLOAD}/BLAS/BLAS-${BLAS_VERSION})
+if(APPLE)
+    set(BLAS_SRC_DIR  ${BLAS_DOWNLOAD}/BLAS)
+else()
+    set(BLAS_SRC_DIR  ${BLAS_DOWNLOAD}/BLAS/BLAS-${BLAS_VERSION})
+endif()
 #This is where we need to put the Makefile settings
 set(MAKEFILE_DEST ${BLAS_SRC_DIR}/make.inc)
 #This is the name of the created library
