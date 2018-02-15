@@ -16,7 +16,7 @@ set(BLAS_PREFIX ${CMAKE_BINARY_DIR}/NWX_BLAS_External)
 set(BLAS_DOWNLOAD ${BLAS_PREFIX}/src)
 #This is where BLAS will be extracted to
 if(APPLE)
-    set(BLAS_SRC_DIR  ${BLAS_DOWNLOAD}/BLAS)
+    set(BLAS_SRC_DIR  ${BLAS_DOWNLOAD}/BLAS) 
 else()
     set(BLAS_SRC_DIR  ${BLAS_DOWNLOAD}/BLAS/BLAS-${BLAS_VERSION})
 endif()
