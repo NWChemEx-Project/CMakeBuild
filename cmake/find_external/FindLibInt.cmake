@@ -8,7 +8,6 @@
 #  LIBINT_INCLUDE_DIR - The Libint include directories
 #  LIBINT_LIBRARY - The libraries needed to use Libint
 include(DependencyMacros)
-find_package(Eigen3 REQUIRED)
 
 #Prefer LIBINT_ROOT_DIR if the user specified it
 if(NOT DEFINED LIBINT_ROOT_DIR)
@@ -31,5 +30,10 @@ find_library(LIBINT_LIBRARY NAMES int2
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(LibInt DEFAULT_MSG
                                   LIBINT_LIBRARY LIBINT_INCLUDE_DIR)
+
+if (LibInt_FOUND)
+    find_package(Eigen3 REQUIRED)
+endif()
+
 set(LIBINT_LIBRARIES ${LIBINT_LIBRARY})
 set(LIBINT_INCLUDE_DIRS ${LIBINT_INCLUDE_DIR} ${EIGEN3_INCLUDE_DIRS})
