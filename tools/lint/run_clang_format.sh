@@ -7,7 +7,7 @@ if [ "$#" -lt 3 ]; then
     echo "                             [<dir2>...]"
     echo ""
     echo "clang-format-exe: path to clang-format command to run"
-    echo "path/to/.clang-format: path to .clang-format fiel to use"
+    echo "path/to/.clang-format: path to .clang-format file to use"
     echo "dir1: the directory to format"
     echo "(optional) dir2...: additional directories to format"
     exit 1
