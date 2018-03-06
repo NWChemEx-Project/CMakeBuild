@@ -26,8 +26,16 @@ install(FILES ${CMAKE_BINARY_DIR}/NWChemExBaseConfig.cmake
         DESTINATION share/cmake/NWChemExBase
 )
 
+configure_file(
+        "${NWXBASE_CMAKE}/cmake_uninstall.cmake.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+        IMMEDIATE @ONLY)
+
 install(FILES ${NWXBASE_CMAKE}/NWChemExTargetConfig.cmake.in
-              ${NWXBASE_CMAKE}/cmake_uninstall.cmake.in
+        ${NWXBASE_CMAKE}/cmake_uninstall.cmake.in
         DESTINATION share/cmake/NWChemExBase)
 
+add_custom_target(uninstall
+        COMMAND ${CMAKE_COMMAND} -P
+        ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
 
