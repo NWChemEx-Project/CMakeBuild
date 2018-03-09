@@ -65,7 +65,7 @@ Calling BLAS/LAPACK from languages derived from C is typically facilitated by
 going through CBLAS/LAPACKE.  CBLAS/LAPACKE are thin wrapper libraries over a 
 standard BLAS/LAPACK implementation designed to give it C-like linkage.  
 Unfortunately, their adoption is not as widespread as one would like with most
-codes still relying on BLAS/LAPACK directly.  Given that NWChemExBase's target
+codes still relying on BLAS/LAPACK directly.  Given that CMakeBuild's target
 software stack is written primarily in C/C++ we will insist on using 
 CBLAS/LAPACKE.  Finally, note that for most CBLAS/LAPACKE implementations one 
 still needs to link against the underlying BLAS/LAPACK implementation so we 
@@ -92,7 +92,7 @@ from we're given nothing, to we're given a single library, to we're given
 everything.  Doing this in a robust manner is difficult.
 
 Making matters more fun, just because we found the libraries/headers doesn't
-mean our dependencies can.  Hence it will fall upon NWChemExBase to manually set
+mean our dependencies can.  Hence it will fall upon CMakeBuild to manually set
 the paths for all dependencies wanting BLAS/LAPACK support.  This becomes 
 increasingly difficult for the non-standard distributions like MKL as many 
 dependencies may not recognize that it is actually BLAS/LAPACK and 
@@ -102,21 +102,21 @@ Current Status of FindBLAS/FindLAPACK and FindCBLAS/FindLAPACKE
 ---------------------------------------------------------------
 
 Given the statement of what the various find modules should do, let's discuss
-what the ones included in NWChemExBase actually do.  
+what the ones included in CMakeBuild actually do.  
 
 ### FindBLAS/FindLAPACK
 
 The first decision is whether we want to brand these modules with the `NWX_` 
 prefix.  One argument for this is that CMake includes default versions of these
 modules; however, the version we are writing will find a traditionally installed
-version and all codes using NWChemExBase will be capable of using that version 
+version and all codes using CMakeBuild will be capable of using that version 
 without modification.  The last point suggests that we're just writing a 
 "better" version of the modules included with CMake and underlies our decision 
 to forgo the `NWX_` prefix.  This is facilitated by the fact that (within 
-NWChemExBase) CMake will look for `FindBLAS.cmake`/`FindLAPACK.cmake` in our 
+CMakeBuild) CMake will look for `FindBLAS.cmake`/`FindLAPACK.cmake` in our 
 `cmake/find_external` directory (and find it) before looking for the one 
 included with CMake itself. Hence CMake guarantees we are able to override the 
-system version (again only within NWChemExBase, it is possible for dependencies 
+system version (again only within CMakeBuild, it is possible for dependencies 
 to clear `CMAKE_MODULE_PATH` and go back to finding the system version).  
 
 Our version of the module is very simple at the moment.  We'll look for a 

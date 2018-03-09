@@ -5,7 +5,7 @@
 ################################################################################
 
 include(FindPackageHandleStandardArgs)
-find_package(NWChemExBase REQUIRED)
+find_package(CMakeBuild REQUIRED)
 include(AssertMacros)
 #Get the install root by assuming we are in root/share/cmake/ProjectName
 set(INSTALL_ROOT      "${CMAKE_CURRENT_LIST_DIR}") #ProjectName/

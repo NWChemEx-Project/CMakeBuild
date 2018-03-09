@@ -1,7 +1,7 @@
-NWChemExBase Macro Documentation
+CMakeBuild Macro Documentation
 ================================
 
-Certain tasks are done so often (or are so easy to mess-up) in NWChemExBase that
+Certain tasks are done so often (or are so easy to mess-up) in CMakeBuild that
 we have created macros/functions for them (the difference between a macro and a
 function in CMake is that functions establish new scope and should be 
 preferred to avoid contaminating the global scope).  For most languages, 
@@ -22,7 +22,7 @@ each macro including:
 can be found by following the links
 
 1. [BuildNWChemExModule](BuildNWChemExModule.md)  
-   a. `build_nwchemex_module` main call to NWChemExBase  
+   a. `build_nwchemex_module` main call to CMakeBuild  
 1. [Dependency Macros](DependencyMacros.md)    
    a. `find_dependency` wraps CMake's `find_package` to use our environment    
    b. `find_or_build_dependency` wraps `find_dependency` to build dependency if
@@ -39,7 +39,7 @@ can be found by following the links
    executable that is used for unit testing.
    f. `add_cmake_macro_test` used internally for testing macros
    g. `add_nwxbase_test` used internally to test results of building with
-       NWChemExBase
+       CMakeBuild
 2. [Utility Macros](UtiltityMacros.md)    
    a. `prefix_paths` applies a prefix to a group of paths   
    b. `make_full_paths` wraps `prefix_paths` so prefix is path to root

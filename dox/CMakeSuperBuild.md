@@ -110,7 +110,7 @@ to `${CMAKE_INSTALL_PREFIX}/lib` and headers to
 
 ### Target Names
 
-If you look at `NWChemExBase/CMakeLists.txt` you'll notice that we put a suffix
+If you look at `CMakeBuild/CMakeLists.txt` you'll notice that we put a suffix
 on all target names.  CMake (and the underlying build programs) prohibit two 
 targets from having the same name.  In particular it is quite natural for say
 library A to name its target A.  `ExternalProject_Add` command 

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION ${CMAKE_VERSION})
-project(NWChemExBase-Tests VERSION ${PROJECT_VERSION} LANGUAGES CXX)
+project(CMakeBuild-Tests VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 include(TargetMacros)
 
 add_cmake_macro_test(TestAssertMacros)

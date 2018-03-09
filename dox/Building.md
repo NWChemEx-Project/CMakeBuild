@@ -2,15 +2,15 @@ Configuring and Building the Project
 ====================================
 
 The current project uses
-:link:[NWChemExBase](https://github.com/NWChemEx-Project/NWChemExBase) for
-its build infrastructure.  NWChemExBase is a collection of infrastructure meant 
+:link:[CMakeBuild](https://github.com/NWChemEx-Project/CMakeBuild) for
+its build infrastructure.  CMakeBuild is a collection of infrastructure meant 
 to provide a uniform and reproducible build environment for C++ projects.  It
 also is meant to greatly simplify the process of writing build files for 
 those C++ projects.  Hence the build instructions here are generic; however, 
-they should work with any project that uses NWChemExBase.  These instructions
-are aimed at people trying to build an NWChemExBase project; users hoping to 
-leverage NWChemExBase in their C++ project are encouraged to follow the above
-link to the NWChemExBase GitHub repository for more information.
+they should work with any project that uses CMakeBuild.  These instructions
+are aimed at people trying to build an CMakeBuild project; users hoping to 
+leverage CMakeBuild in their C++ project are encouraged to follow the above
+link to the CMakeBuild GitHub repository for more information.
 
 
 Contents
@@ -19,7 +19,7 @@ Contents
 1. [Building in a Sane, Linux-Like Environment](#building-in-a-sane,-linux-like-environment)
 2. [CMake Basics](#cmake-basics)
 3. [CMake Supplied Options](#cmake-supplied-options)
-4. [NWChemExBase Specific Options](#nwchemexbase-specific-options)
+4. [CMakeBuild Specific Options](#cmakebuild-specific-options)
 5. [Troubleshooting](#troubleshooting)
    
 
@@ -87,7 +87,7 @@ CMake by default already includes a whole host of options for configuring common
 build settings.  We have striven to honor these variables throughout the build
 infrastructure.  A list of the more commonly used CMake variables is included in
 the following table along with brief descriptions.  Obviously not every variable
-is used by every project using NWChemExBase (if you set a variable and it is 
+is used by every project using CMakeBuild (if you set a variable and it is 
 not used by that project CMake will warn you in the configuration logs). Note
  `Lang` is a placeholder for language, valid choices are `CXX` (for C++),
 `C`, or  `Fortran`.
@@ -106,10 +106,10 @@ not used by that project CMake will warn you in the configuration logs). Note
 
 :memo: It will greatly behoove you to always pass full paths.
 
-NWChemExBase Specific Options
+CMakeBuild Specific Options
 -----------------------------
 
-In addition to the above standard CMake options NWChemExBase's CMake 
+In addition to the above standard CMake options CMakeBuild's CMake 
 infrastructure also recognizes the following options (Note `XXX` in the 
 following table can be any dependency in [this list](SupportedDependencies.md)):
 

@@ -109,14 +109,14 @@ set(ABC_DEFINITIONS ...)
 ~~~
 Once written your file goes in `NWChemBase/cmake/external_find/FindaBc.cmake`
 
-### Enabling NWChemExBase to Build a Dependency
+### Enabling CMakeBuild to Build a Dependency
 
 In an effort to make the build process more user-friendly it is common to want
 to build dependencies for the user.  That is, if we are unable to locate a
 required dependency on the system, we instead build it.  CMake doesn't have a
 particular convention for how this done so we have taken the liberty of defining
 a process for you.  We assume the following is in 
-`NWChemExBase/cmake/external_build/BuildXXX.cmake`.
+`CMakeBuild/cmake/external_build/BuildXXX.cmake`.
 
 ~~~cmake
 #include(ExternalProject) and include(DependancyMacros) are already sourced

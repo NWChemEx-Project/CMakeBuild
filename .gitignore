@@ -1,9 +1,9 @@
 #These are configuration files for QtCreator
-NWChemExBase.config
-NWChemExBase.creator
-NWChemExBase.creator.user
-NWChemExBase.files
-NWChemExBase.includes
+CMakeBuild.config
+CMakeBuild.creator
+CMakeBuild.creator.user
+CMakeBuild.files
+CMakeBuild.includes
 *.autosave
 
 #These are configuration files for CLion

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.6)
 project(TestBuildLibInt VERSION 1.0.0 LANGUAGES CXX)
-find_package(NWChemExBase)
+find_package(CMakeBuild)
 set(TestBuildLibInt_DEPENDENCIES LibInt)
 set(BUILD_LibInt TRUE)
 set(BUILD_Eigen3 TRUE)

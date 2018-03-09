@@ -91,7 +91,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
         endforeach()
 
         if(${BUILD_TESTS})
-            list(APPEND TEST_DEPENDS "NWChemExBase" "${__project}")
+            list(APPEND TEST_DEPENDS "CMakeBuild" "${__project}")
             ExternalProject_Add(${__project}_Tests_External
                     SOURCE_DIR ${${__project}_TEST_DIR}
                     CMAKE_ARGS -DSUPER_PROJECT_ROOT=${SUPER_PROJECT_TEST}

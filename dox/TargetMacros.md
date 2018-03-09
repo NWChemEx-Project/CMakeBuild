@@ -172,7 +172,7 @@ add_cxx_unit_test(ATest)
 add_cmake_macro_test
 --------------------
 
-Used by the NWChemExBase project to test its macros.  This function takes the
+Used by the CMakeBuild project to test its macros.  This function takes the
 name of a CMake script (without the `.cmake` suffix) and will run that script as
 a test.
 
@@ -197,21 +197,21 @@ add_cmake_macro_test(ATest)
 add_nwxbase_test
 --------------------
 
-This function is meant to be used by the NWChemExBase project to simulate runs 
-of NWChemExBase in order to test functionality. This means it's a bit meta.  In
-an attempt to be clear let's call the NWChemExBase distribution that we just 
-built and are now testing the "root NWChemExBase".  Since tests are run from 
+This function is meant to be used by the CMakeBuild project to simulate runs 
+of CMakeBuild in order to test functionality. This means it's a bit meta.  In
+an attempt to be clear let's call the CMakeBuild distribution that we just 
+built and are now testing the "root CMakeBuild".  Since tests are run from 
 the build directory all invocations will use the staged version of the root 
-NWChemExBase to build the test.
+CMakeBuild to build the test.
 
 Each test is expected to be a mock CMake project, which can be built with 
-NWChemExBase.  Ultimately, that mock project must produce a test with the 
+CMakeBuild.  Ultimately, that mock project must produce a test with the 
 same name in the usual way (*i.e.* make a call to `add_cxx_unit_test`).  The 
-root NWChemExBase distribution will then run that test (in a very nested 
+root CMakeBuild distribution will then run that test (in a very nested 
 folder since tests aren't installed).
 
 There's ultimately a lot of assumptions here so it is recommended that you 
-use the file `NWChemExBase_Test/bin/MakeTest.py` to make a skeleton setup for 
+use the file `CMakeBuild_Test/bin/MakeTest.py` to make a skeleton setup for 
 your new test.  After running the script you should only need to fill in the 
 details of the `passed` method in the resulting `.cpp` file and (depending on
 the test) set CMake variables in the `CMakeLists.txt` just inside the 
@@ -225,7 +225,7 @@ add_nwxbase_test(NAME)
 
 Arguments:
 - `NAME` the name of the resulting test and the name of a directory that is set
-up correctly for use with NWChemExBase
+up correctly for use with CMakeBuild
   
 ### Example
 

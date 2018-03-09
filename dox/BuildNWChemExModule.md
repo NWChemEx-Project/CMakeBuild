@@ -3,7 +3,7 @@ BuildNWChemExModule
 
 ### build_nwchemex_module
 
-This is the main entry point into the NWChemExBase CMake infrastructure.
+This is the main entry point into the CMakeBuild CMake infrastructure.
 
 #### Syntax
 
@@ -36,7 +36,7 @@ This example shows typical usage with dependencies, but otherwise default
 values:
 
 ```cmake
-find_package(NWChemExBase)
+find_package(CMakeBuild)
 set(${PROJECT_NAME}_DEPENDENCIES NWX_Catch)
 build_nwchemex_module(${CMAKE_CURRENT_LIST_DIR})
 ```      
@@ -44,7 +44,7 @@ build_nwchemex_module(${CMAKE_CURRENT_LIST_DIR})
 This example shows how to build two projects:
 
 ```cmake
-find_package(NWChemExBase)
+find_package(CMakeBuild)
 set(NWX_PROJECTS Project1 Project2)
 set(Project1_DEPENDENCIES NWX_Catch)
 set(Project2_DEPENDENCIES Eigen3)
@@ -55,7 +55,7 @@ This example show how to build a project with a non-default named source
 directory, `unique/dir`:
 
 ```cmake
-find_package(NWChemExBase)
+find_package(CMakeBuild)
 set(${PROJECT_NAME}_DEPENDENCIES unique/dir)
 build_nwchemex_module(${CMAKE_CURRENT_LIST_DIR})
 ```      
