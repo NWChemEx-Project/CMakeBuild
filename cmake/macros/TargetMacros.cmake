@@ -104,7 +104,7 @@ endfunction()
 function(add_cmake_macro_test __name)
     install(FILES ${__name}.cmake DESTINATION tests)
     list(GET CMAKE_MODULE_PATH 0 _stage_dir)
-    set(_macro_dir "${_stage_dir}/share/cmake/NWChemExBase/macros")
+    set(_macro_dir "${_stage_dir}/share/cmake/CMakeBuild/macros")
     add_test(NAME ${__name}
              COMMAND ${CMAKE_COMMAND} -DCMAKE_MODULE_PATH=${_macro_dir}
                                       -P ${__name}.cmake)

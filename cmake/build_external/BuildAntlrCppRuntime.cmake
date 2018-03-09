@@ -1,5 +1,5 @@
 set(ANTLR_PATCH_FILE
-        ${PROJECT_SOURCE_DIR}/NWChemExBase/cmake/external/patches/antlr_cmakelists.patch)
+        ${PROJECT_SOURCE_DIR}/CMakeBuild/cmake/external/patches/antlr_cmakelists.patch)
 
 ExternalProject_Add(AntlrCppRuntime${TARGET_SUFFIX}
         URL http://www.antlr.org/download/antlr4-cpp-runtime-4.7.1-source.zip

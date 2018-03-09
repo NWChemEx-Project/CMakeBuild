@@ -8,7 +8,7 @@ macro(set_paths)
     #The directory containing the macros directory
     get_filename_component(NWXBASE_CMAKE ${NWXBASE_MACROS} DIRECTORY)
 
-    #The root of the NWChemExBase install
+    #The root of the CMakeBuild install
     get_filename_component(NWXBASE_ROOT ${NWXBASE_CMAKE} DIRECTORY)
 
     #The location of our find scripts

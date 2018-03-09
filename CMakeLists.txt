@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.6)
-project(NWChemExBase VERSION 0.0.0 LANGUAGES CXX)
+project(CMakeBuild VERSION 0.0.0 LANGUAGES CXX)
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/macros/BuildNWChemExModule.cmake)
-set(NWChemExBase_DEPENDENCIES NWX_Catch)
+set(CMakeBuild_DEPENDENCIES NWX_Catch)
 build_nwchemex_module(${CMAKE_CURRENT_LIST_DIR})

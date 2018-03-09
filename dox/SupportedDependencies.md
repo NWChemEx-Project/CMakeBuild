@@ -5,11 +5,11 @@ General note, dependencies prefixed with `NWX` are special to `NWChemEx` in some
 manner.  The reasons why are given after all listings.  In general you should
 prefer the `NWX_` variants.
 
-NWChemExBase relies on CMake's `find_package` module for locating dependencies
-and setting paths up correctly.  NWChemExBase takes it a step further by 
+CMakeBuild relies on CMake's `find_package` module for locating dependencies
+and setting paths up correctly.  CMakeBuild takes it a step further by 
 attempting to build a dependency for the user if it can't find that 
 dependency.  Nonetheless, aside from compilers, the following is a list of 
-dependencies that NWChemExBase can find, but won't build:
+dependencies that CMakeBuild can find, but won't build:
 
 --------------------------------------------------------------------------------
 | Name            | Brief Description                                          |  
@@ -19,7 +19,7 @@ dependencies that NWChemExBase can find, but won't build:
 --------------------------------------------------------------------------------
   
 
-NWChemExBase can find and build the following:
+CMakeBuild can find and build the following:
 
 --------------------------------------------------------------------------------
 | Name            | Brief Description                                          |  

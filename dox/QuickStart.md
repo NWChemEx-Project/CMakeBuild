@@ -1,23 +1,23 @@
-Using NWChemExBase in a New Project
+Using CMakeBuild in a New Project
 ===================================
 
-Step 0 : Obtain NWChemExBase
+Step 0 : Obtain CMakeBuild
 ----------------------------
 
-The most up to date version of NWChemExBase is always given by the `master` 
+The most up to date version of CMakeBuild is always given by the `master` 
 branch of the GitHub repository.  To obtain it, run the following command:
 
 ```git
-git clone https://github.com/NWChemEx-Project/NWChemExBase.git
+git clone https://github.com/NWChemEx-Project/CMakeBuild.git
 ```
 
-As NWChemExBase doesn't require anything aside from CMake and a C++ compiler,
+As CMakeBuild doesn't require anything aside from CMake and a C++ compiler,
 for building the tests, building and installing it should be as easy as:
 
 ```bash
-cd NWChemExBase #Assuming you didn't already
+cd CMakeBuild #Assuming you didn't already
 cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=/path/to/cxx/compiler \
-          -DCMAKE_INSTALL_PREFIX=/where/to/put/NWChemExBase
+          -DCMAKE_INSTALL_PREFIX=/where/to/put/CMakeBuild
           
 -- lots of output --
 
@@ -35,7 +35,7 @@ make install
 Step 1 : Set-up Directory Structure
 -----------------------------------
 
-With NWChemExBase installed we're ready to start setting up your source tree.
+With CMakeBuild installed we're ready to start setting up your source tree.
 Let's call the root of your tree `root`.  Owing to how CMake super builds 
 work it's easiest if you have two subdirectories: one for your source and header
 files, which we'll call `srcs` one for your tests, which we'll call `tests`.  
@@ -51,7 +51,7 @@ The top-level `CMakeLists.txt` should look something like:
 ```cmake
 cmake_minimum_required(VERSION 3.6)
 project(<ProjectName> VERSION 0.0.0 LANGUAGES CXX)
-find_package(NWChemExBase)
+find_package(CMakeBuild)
 set(${PROJECT_NAME}_DEPENDENCIES <list_of_dependencies>)
 set(${PROJECT_NAME}_SRC_DIR <srcs>)
 set(${PROJECT_NAME}_TEST_DIR <tests>)

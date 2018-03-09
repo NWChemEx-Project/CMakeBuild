@@ -1,8 +1,8 @@
 """
-This script will set up the skeleton of a test case for the NWChemExBase repo.
-It is meant to be run from NWChemExBase_Test/bin and will place the result in
+This script will set up the skeleton of a test case for the CMakeBuild repo.
+It is meant to be run from CMakeBuild_Test/bin and will place the result in
 a directory with the name of the test.  That directory will reside up one
-level from this script (NWChemExBase_Test).
+level from this script (CMakeBuild_Test).
 
 Syntax: python3 MakeTest.py NameForTest
 
@@ -27,7 +27,7 @@ os.mkdir(test_dir)
 with open(os.path.join(root_dir, "CMakeLists.txt"), 'w') as f:
     f.write("cmake_minimum_required(VERSION 3.6)\n")
     f.write("project({:s} VERSION 1.0.0 LANGUAGES CXX)\n".format(test_name))
-    f.write("find_package(NWChemExBase)\n")
+    f.write("find_package(CMakeBuild)\n")
     f.write("set({:s}_DEPENDENCIES )\n".format(test_name))
     f.write("build_nwchemex_module(${CMAKE_CURRENT_LIST_DIR})\n")
 

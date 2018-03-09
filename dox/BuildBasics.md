@@ -3,7 +3,7 @@ CMake Build Basics
 
 This page is designed to detail the basic steps required to build a C++ project
 using CMake.  It is targeted at users who want to understand how CMake works in
-order to contribute to NWChemExBase (or simply because there's a lack of good
+order to contribute to CMakeBuild (or simply because there's a lack of good
 tutorials on the internets).
 
 Contents
@@ -183,6 +183,6 @@ find_package(LAPACK QUIET)
 ~~~
 
 There are many more CMake commands, options, (and pitfalls) but for the most 
-part you'll be interacting with them via the NWChemExBase API, which modifies 
+part you'll be interacting with them via the CMakeBuild API, which modifies 
 those commands.
 
