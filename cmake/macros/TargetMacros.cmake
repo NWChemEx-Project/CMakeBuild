@@ -92,7 +92,7 @@ function(nwchemex_add_test __name __test_file)
     add_executable(${__name} ${__file_copy})
     nwchemex_set_up_target(${__name} "" "" "tests")
     add_test(NAME ${__name} COMMAND ./${__name})
-    #target_include_directories(${__name} PRIVATE ${NWCHEMEXBASE_INCLUDE_DIRS})
+    #target_include_directories(${__name} PRIVATE ${CMAKEBUILD_INCLUDE_DIRS})
     install(FILES ${CMAKE_BINARY_DIR}/CTestTestfile.cmake DESTINATION tests)
 endfunction()
 

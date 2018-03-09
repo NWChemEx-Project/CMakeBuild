@@ -7,7 +7,7 @@ and to provide guidance on how to extend it.
 Contents
 --------
 
-1. [CMakeBuild Model](#nwchemexbase-model)  
+1. [CMakeBuild Model](#cmakebuild-model)  
    a. [Superbuild Settings](#superbuild-settings)  
    b. [Declaring Your Library](#declaring-your-library)  
    c. [Declaring Your Tests](#delcaring-your-tests)  

@@ -19,7 +19,7 @@ Contents
 1. [Building in a Sane, Linux-Like Environment](#building-in-a-sane,-linux-like-environment)
 2. [CMake Basics](#cmake-basics)
 3. [CMake Supplied Options](#cmake-supplied-options)
-4. [CMakeBuild Specific Options](#nwchemexbase-specific-options)
+4. [CMakeBuild Specific Options](#cmakebuild-specific-options)
 5. [Troubleshooting](#troubleshooting)
    
 
