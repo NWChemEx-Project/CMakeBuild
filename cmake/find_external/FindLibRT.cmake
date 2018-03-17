@@ -1,7 +1,7 @@
 # - Try to find POSIX.1b Realtime Extensions library
 #
 #  In order to aid find_package the user may set LIBRT_ROOT_DIR to the root of
-#  the installed libint.
+#  the installed realtime library.
 #
 #   Once done this will define
 #   LIBRT_FOUND         - True if realtime library found.
