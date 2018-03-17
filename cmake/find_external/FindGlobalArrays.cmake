@@ -14,6 +14,10 @@ if(NOT DEFINED GLOBALARRAYS_ROOT_DIR)
     pkg_check_modules(PC_GLOBALARRAYS QUIET ga)
 endif()
 
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+find_package(LibRT)
+
 find_path(GLOBALARRAYS_INCLUDE_DIR ga.h
           HINTS ${PC_GLOBALARRAYS_INCLUDEDIR}
                 ${PC_GLOBALARRAYS_INCLUDE_DIRS}
@@ -39,7 +43,8 @@ find_library(GLOBALARRAYS_ARMCI_LIBRARY libarmci${CMAKE_STATIC_LIBRARY_SUFFIX}
              PATHS ${GLOBALARRAYS_ROOT_DIR}
         )
 set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_C_LIBRARY}
-                           ${GLOBALARRAYS_ARMCI_LIBRARY})
+                           ${GLOBALARRAYS_ARMCI_LIBRARY} 
+                           ${LIBRT_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GlobalArrays DEFAULT_MSG
