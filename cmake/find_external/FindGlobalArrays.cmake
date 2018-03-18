@@ -16,7 +16,6 @@ endif()
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
-find_package(LibRT)
 
 find_path(GLOBALARRAYS_INCLUDE_DIR ga.h
           HINTS ${PC_GLOBALARRAYS_INCLUDEDIR}
@@ -42,9 +41,15 @@ find_library(GLOBALARRAYS_ARMCI_LIBRARY libarmci${CMAKE_STATIC_LIBRARY_SUFFIX}
                    ${PC_GLOBALARRAYS_LIBRARY_DIRS}
              PATHS ${GLOBALARRAYS_ROOT_DIR}
         )
+
 set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_C_LIBRARY}
                            ${GLOBALARRAYS_ARMCI_LIBRARY} 
-                           ${LIBRT_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+                           ${CMAKE_THREAD_LIBS_INIT})
+
+find_package(LibRT)
+if(LIBRT_LIBRARIES)
+  set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${LIBRT_LIBRARIES})
+endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GlobalArrays DEFAULT_MSG
