@@ -11,14 +11,35 @@ foreach(depend NWX_MPI CBLAS LAPACKE )#ScaLAPACK)
                                   _${depend}_FOUND)
     assert(_${depend}_FOUND)
 endforeach()
-string (REPLACE ";" " " BLAS_LIBRARIES "${NWX_CBLAS_LIBRARIES}")
-set(GA_BLAS "--with-blas8=${BLAS_LIBRARIES}")
-string(REPLACE ";" " " LAPACK_LIBRARIES "${LAPACKE_LIBRARIES}")
-set(GA_LAPACK "--with-lapack=${LAPACK_LIBRARIES}")
+
 #string(REPLACE ";" " " GA_ScaLAPACK_LIBRARIES "${ScaLAPACK_LIBRARIES}")
 #set(GA_SCALAPACK "--with-scalapack8=${GA_ScaLAPACK_LIBRARIES}")
 
-# GA has to be difficult when it comes to MPI...
+# GA has to be difficult when it comes to MPI, BLAS, LAPACK...
+#string (REPLACE ";" " " BLAS_LIBRARIES "${CBLAS_LIBRARIES}")
+foreach(_nwx_lib ${CBLAS_LIBRARIES})
+    # Remove the actual library from the path
+    get_filename_component(_lib_path ${_nwx_lib} DIRECTORY)
+    # Get only library name with extension
+    get_filename_component(_name_lib ${_nwx_lib} NAME_WE)
+    # Strip the lib prefix
+    string(SUBSTRING ${_name_lib} 3 -1 _name_lib)
+    set(GA_BLAS "${GA_BLAS} -L${_lib_path} -l${_name_lib}")
+endforeach()
+set(GA_BLAS "--with-blas8=${GA_BLAS}")
+
+#string(REPLACE ";" " " LAPACK_LIBRARIES "${LAPACKE_LIBRARIES}")
+foreach(_nwx_lib ${LAPACKE_LIBRARIES})
+    # Remove the actual library from the path
+    get_filename_component(_lib_path ${_nwx_lib} DIRECTORY)
+    # Get only library name with extension
+    get_filename_component(_name_lib ${_nwx_lib} NAME_WE)
+    # Strip the lib prefix
+    string(SUBSTRING ${_name_lib} 3 -1 _name_lib)
+    set(GA_LAPACK "${GA_LAPACK} -L${_lib_path} -l${_name_lib}")
+endforeach()
+set(GA_LAPACK "--with-lapack=${GA_LAPACK}")
+
 string(REPLACE ";" " -I" GA_MPI_INCLUDES "${NWX_MPI_INCLUDE_DIRS}")
 message(STATUS "${GA_MPI_INCLUDES}")
 foreach(_nwx_lib ${NWX_MPI_LIBRARIES})

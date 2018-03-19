@@ -60,3 +60,15 @@ find_package_handle_standard_args(GlobalArrays DEFAULT_MSG
 set(GLOBALARRAYS_INCLUDE_DIRS ${GLOBALARRAYS_INCLUDE_DIR})
 set(GLOBALARRAYS_FOUND ${GlobalArrays_FOUND})
 
+#Get GA + dependent libs using ga-config script
+#Usually the dependent libs are MPI, blas, lapack, pthreads, librt
+#The ga-config script does not need to verify that these dependency libs actually exist since
+#that is already done by the corresponding FindPackage module and passed to GA configure in BuildGlobalArrays.cmake
+execute_process(COMMAND ${GLOBALARRAYS_CONFIG}/ga-config --libs OUTPUT_VARIABLE GA_CONFIG_LIBS OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND ${GLOBALARRAYS_CONFIG}/ga-config --ldflags OUTPUT_VARIABLE GA_CONFIG_LDFLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+#Linker options for Threads & librt will be provided through ga-config in the next release (5.6.4) of GA
+set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${GA_CONFIG_LDFLAGS} ${GA_CONFIG_LIBS})
+
+
+
