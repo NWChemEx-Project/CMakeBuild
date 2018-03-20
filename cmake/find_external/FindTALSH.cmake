@@ -27,10 +27,14 @@ find_library(TALSH_LIBRARY
 	     PATHS ${TALSH_ROOT_DIR}
 	  )
 
+
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(TALSH DEFAULT_MSG
                                   TALSH_LIBRARY
                                   TALSH_INCLUDE_DIR)
 
-set(TALSH_LIBRARIES ${TALSH_LIBRARY})
+find_package(CUDA REQUIRED)
+find_package(OpenMP REQUIRED)
+
+set(TALSH_LIBRARIES ${TALSH_LIBRARY} ${CUDA_cudart_static_LIBRARY} ${CUDA_CUBLAS_LIBRARIES} ${OpenMP_CXX_FLAGS})
 set(TALSH_INCLUDE_DIRS ${TALSH_INCLUDE_DIR})
