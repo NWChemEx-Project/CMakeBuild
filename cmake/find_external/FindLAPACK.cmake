@@ -6,7 +6,7 @@
 #   LAPACK_FOUND     : True if we found a LAPACK library
 #
 include(FindPackageHandleStandardArgs)
-find_library(LAPACK_LIBRARIES liblapack${CMAKE_STATIC_LIBRARY_SUFFIX})
+find_library(LAPACK_LIBRARIES NAMES lapack)
 
 #Now we need to find a BLAS library that hopefully is compatible with our LAPACK
 find_package(BLAS)

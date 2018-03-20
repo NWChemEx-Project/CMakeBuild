@@ -21,7 +21,7 @@ find_path(ANTLRCPPRUNTIME_INCLUDE_DIR antlr4-runtime.h
           PATH_SUFFIXES antlr4-runtime)
 
 find_library(ANTLRCPPRUNTIME_LIBRARY
-             NAMES libantlr4-runtime${CMAKE_STATIC_LIBRARY_SUFFIX}
+             NAMES antlr4-runtime
              HINTS ${PC_ANTLRCPPRUNTIME_LIBDIR}
                    ${PC_ANTLRCPPRUNTIME_LIBRARY_DIRS})
 

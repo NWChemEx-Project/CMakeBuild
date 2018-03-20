@@ -6,11 +6,11 @@
 #
 # This module defines
 #  NWX_CATCH_INCLUDE_DIRS, where to find catch/catch.hpp
-#  NWX_CATCH_LIBRARIES, where to find libcatch.so
+#  NWX_CATCH_LIBRARIES, where to find libcatch
 #  NWX_Catch_FOUND, True if we found NWX_Catch
 
 find_path(NWX_CATCH_INCLUDE_DIR catch/catch.hpp)
-find_library(NWX_CATCH_LIBRARY libcatch${CMAKE_SHARED_LIBRARY_SUFFIX})
+find_library(NWX_CATCH_LIBRARY NAMES catch)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(NWX_Catch DEFAULT_MSG NWX_CATCH_INCLUDE_DIR

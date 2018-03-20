@@ -17,7 +17,7 @@
 include(FindPackageHandleStandardArgs)
 set(FINDCBLAS_is_mkl FALSE)
 set(FINDCBLAS_HEADER cblas.h)
-find_library(CBLAS_LIBRARIES libcblas${CMAKE_STATIC_LIBRARY_SUFFIX})
+find_library(CBLAS_LIBRARIES NAMES cblas)
 
 #Let's see if it's MKL. Intel likes their branding, which we can use to our
 #advantage by looking if the string "mkl" appears in any of the library names

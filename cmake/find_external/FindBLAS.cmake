@@ -6,5 +6,5 @@
 #   BLAS_FOUND     : True if we found a BLAS library or if the user provided one
 #
 include(FindPackageHandleStandardArgs)
-find_library(BLAS_LIBRARIES libblas${CMAKE_STATIC_LIBRARY_SUFFIX})
+find_library(BLAS_LIBRARIES NAMES blas)
 find_package_handle_standard_args(BLAS DEFAULT_MSG BLAS_LIBRARIES)
