@@ -67,7 +67,7 @@ set(GA_FFLAGS "${CMAKE_Fortran_Flags} -fPIC")
 # Build GA
 set(GA_INSTALL_DIR ${STAGE_DIR}${CMAKE_INSTALL_PREFIX})
 ExternalProject_Add(GlobalArrays_External
-        URL https://github.com/GlobalArrays/ga/releases/download/v5.6.4/ga-5.6.4.tar.gz
+        URL https://github.com/GlobalArrays/ga/releases/download/v${PROJECT_VERSION}/ga-${PROJECT_VERSION}.tar.gz
         CONFIGURE_COMMAND ./configure --with-tcgmsg
                                       ${GA_MPI}
                                       --enable-underscoring
