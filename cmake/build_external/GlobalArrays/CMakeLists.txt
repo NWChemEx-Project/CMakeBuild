@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION ${CMAKE_VERSION})
-project(GlobalArrays VERSION 5.6.2 LANGUAGES C Fortran)
+project(GlobalArrays VERSION 5.6.4 LANGUAGES C Fortran)
 
 include(DependencyMacros)
 include(ExternalProject)
@@ -67,9 +67,7 @@ set(GA_FFLAGS "${CMAKE_Fortran_Flags} -fPIC")
 # Build GA
 set(GA_INSTALL_DIR ${STAGE_DIR}${CMAKE_INSTALL_PREFIX})
 ExternalProject_Add(GlobalArrays_External
-        URL https://github.com/GlobalArrays/ga/releases/download/v5.6.3/ga-5.6.3.tar.gz
-        #Pass location where autotools needs to be built
-        #CONFIGURE_COMMAND ./autogen.sh
+        URL https://github.com/GlobalArrays/ga/releases/download/v5.6.4/ga-5.6.4.tar.gz
         CONFIGURE_COMMAND ./configure --with-tcgmsg
                                       ${GA_MPI}
                                       --enable-underscoring
