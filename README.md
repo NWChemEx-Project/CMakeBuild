@@ -1,4 +1,4 @@
-NWChemEx Base Repository
+CMakeBuild Repository
 ==============================
 
 Building C++ projects is a laborious process that is somewhat simplified with
