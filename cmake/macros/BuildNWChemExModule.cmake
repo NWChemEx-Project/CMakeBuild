@@ -53,6 +53,11 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
 
     bundle_cmake_strings(CORE_CMAKE_STRINGS CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG)
 
+    #When a user provides BLAS, LAPACK, they are not propagated to NWX_PROJECTS that 
+    #depend on them.
+    bundle_cmake_list(CMAKE_USER_LISTS BLAS_LIBRARIES CBLAS_LIBRARIES LAPACK_LIBRARIES
+                      LAPACKE_LIBRARIES CBLAS_INCLUDE_DIRS LAPACKE_INCLUDE_DIRS)
+
     set (CMAKE_BUILD_TYPE Release)
     bundle_cmake_args(DEPENDENCY_CMAKE_OPTIONS CMAKE_CXX_COMPILER CMAKE_C_COMPILER
             CMAKE_Fortran_COMPILER CMAKE_BUILD_TYPE BUILD_SHARED_LIBS
@@ -77,6 +82,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
                 INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
                 CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}
                                  ${CORE_CMAKE_STRINGS}
+                                 ${CMAKE_USER_LISTS}
                 -DNWX_DEPENDENCIES:STRING=${${__project}_DEPENDENCIES}
                 )
 
@@ -102,6 +108,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
                     INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${TEST_STAGE_DIR}
                     CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}
                                      ${CORE_CMAKE_STRINGS}
+                                     ${CMAKE_USER_LISTS}
                                      -DNWX_DEPENDENCIES:LIST=${TEST_DEPENDS}
                     )
             add_dependencies(${__project}_Tests_External ${__project}_External)
