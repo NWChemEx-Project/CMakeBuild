@@ -62,6 +62,7 @@ ExternalProject_Add(GlobalArrays_External
         INSTALL_COMMAND ""
         CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}
                          ${CORE_CMAKE_STRINGS}
+                         ${CMAKE_USER_LISTS}
 )
 
 # Establish the dependencies
