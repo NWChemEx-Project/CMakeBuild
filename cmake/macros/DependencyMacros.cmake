@@ -7,6 +7,7 @@
 include(DebuggingMacros)
 include(UtilityMacros)
 include(AssertMacros)
+include(OptionMacros)
 
 function(package_dependency __depend __lists)
     string(TOUPPER ${__depend} __DEPEND)
@@ -87,12 +88,13 @@ function(find_dependency __name)
 
             is_valid(${__NAME}_DEFINITIONS __has_defs)
             if(__has_defs)
-                target_compile_defintions(${_tname} INTERFACE ${__NAME}_DEFINITIONS)
+                target_compile_definitions(${_tname} INTERFACE
+                        ${${__NAME}_DEFINITIONS})
             endif()
 
             is_valid(${__NAME}_LINK_FLAGS __has_lflags)
             if(__has_lflags)
-                target_link_flags(${_tname} INTERFACE ${__NAME}_LINK_FLAGS)
+                target_link_flags(${_tname} INTERFACE ${${__NAME}_LINK_FLAGS})
             endif()
 
             if(NWX_DEBUG_CMAKE)
