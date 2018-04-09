@@ -15,7 +15,7 @@ if(CMAKE_POSITION_INDEPENDENT_CODE)
 endif()
 
 set(LIBINT_URL https://github.com/evaleev/libint)
-set(LIBINT_TAR ${LIBINT_URL}/releases/download/v${PROJECT_VERSION}/)
+set(LIBINT_TAR ${LIBINT_URL}/releases/download/v${PROJECT_VERSION})
 set(LIBINT_TAR ${LIBINT_TAR}/libint-${PROJECT_VERSION})
 if(TEST_LIBINT)
     #Grab the small version of libint for testing purposes
@@ -24,14 +24,9 @@ else()
     set(LIBINT_TAR ${LIBINT_TAR}.tgz)
 endif()
 
-find_dependency(Eigen3 _EIGEN3_INCLUDE_DIRS
-                       _EIGEN3_LIBRARIES
-                       _EIGEN3_DEFINITIONS
-                       _EIGEN3_LINK_FLAGS
-                       _EIGEN3_FOUND)
-find_or_build_dependency(Eigen3 was_found)
+find_dependency(Eigen3)
+makify_dependency(Eigen3 LIBINT_FLAGS Eigen3_LIBRARIES)
 
-makify_includes(_EIGEN3_INCLUDE_DIRS LIBINT_FLAGS)
 ExternalProject_Add(LibInt_External
         URL ${LIBINT_TAR}
         CONFIGURE_COMMAND ./configure --prefix=${CMAKE_INSTALL_PREFIX}

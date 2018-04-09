@@ -68,25 +68,32 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
     ################################################################################
 
     foreach(__project ${NWX_PROJECTS})
+        foreach(depend ${${__project}_DEPENDENCIES})
+            find_or_build_dependency(${depend})
+            are_we_building(${depend} were_building)
+            if(were_building)
+                list(APPEND DEPENDS_WERE_BUILDING ${depend})
+            else()
+                list(APPEND DEPENDS_WE_FOUND ${depend})
+                package_dependency(${depend} DEPENDENCY_PATHS)
+            endif()
+
+        endforeach()
+
         ExternalProject_Add(${__project}_External
                 SOURCE_DIR ${${__project}_SRC_DIR}
-                CMAKE_ARGS -DNWX_INCLUDE_DIR=${${__project}_INCLUDE_DIR}
-                           -DNWX_DEBUG_CMAKE=${NWX_DEBUG_CMAKE}
+                CMAKE_ARGS -DNWX_DEBUG_CMAKE=${NWX_DEBUG_CMAKE}
+                           -DNWX_INCLUDE_DIR=${${__project}_INCLUDE_DIR}
                            ${CORE_CMAKE_OPTIONS}
                 BUILD_ALWAYS 1
                 INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
                 CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}
                                  ${CORE_CMAKE_STRINGS}
+                                 ${DEPENDENCY_PATHS}
                 -DNWX_DEPENDENCIES:STRING=${${__project}_DEPENDENCIES}
                 )
 
-        foreach(depend ${${__project}_DEPENDENCIES})
-            find_or_build_dependency(${depend} was_found)
-            if(was_found)
-                list(APPEND DEPENDS_WE_FOUND ${depend})
-            else()
-                list(APPEND DEPENDS_WERE_BUILDING ${depend})
-            endif()
+        foreach(depend ${DEPENDS_WERE_BUILDING})
             add_dependencies(${__project}_External ${depend}_External)
         endforeach()
 
