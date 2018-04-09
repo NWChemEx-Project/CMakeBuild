@@ -93,7 +93,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
                 -DNWX_DEPENDENCIES:STRING=${${__project}_DEPENDENCIES}
                 )
 
-        foreach(depend ${DEPENDS_WERE_BUILDING})
+        foreach(depend ${${__project}_DEPENDENCIES})
             add_dependencies(${__project}_External ${depend}_External)
         endforeach()
 
@@ -132,7 +132,6 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
     ############################################################################
 
     print_banner("Summary of ${PROJECT_NAME} Configuration Settings:")
-    #message(STATUS "CXX Flags: ${CMAKE_CXX_FLAGS}")
     message(STATUS "Found the following dependencies: ")
     foreach(__depend ${DEPENDS_WE_FOUND})
         message(STATUS "    ${__depend}")

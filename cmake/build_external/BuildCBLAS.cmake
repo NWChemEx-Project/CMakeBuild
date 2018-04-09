@@ -7,6 +7,7 @@ find_or_build_dependency(BLAS)
 package_dependency(BLAS DEPENDENCY_PATHS)
 enable_language(C Fortran)
 
+message(STATUS "${CMAKE_MODULE_PATH}  ")
 ExternalProject_Add(CBLAS_External
         SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/CBLAS
         CMAKE_ARGS ${DEPENDENCY_CMAKE_OPTIONS}
