@@ -59,11 +59,10 @@ set(${__NAME}_INCLUDE_DIRS ${${__NAME}_INCLUDE_DIR})
 include(DependencyMacros)
 set(__depends @NWX_DEPENDENCIES@)
 foreach(__depend_i ${__depends})
-    find_dependency(${__depend_i} ${__NAME}_INCLUDE_DIRS
-                                  ${__NAME}_LIBRARIES
-                                  ${__NAME}_DEFINITIONS
-                                  ${__NAME}_LINK_FLAGS
-                                  ${__NAME}_FOUND)
+    find_dependency(${__depend_i})
+    dependency_to_variables(${__depend_i} ${__NAME}_INCLUDE_DIRS
+                                          ${__NAME}_LIBRARIES
+                                          ${__NAME}_DEFINITIONS)
 endforeach()
 
 #Print our hardwork out

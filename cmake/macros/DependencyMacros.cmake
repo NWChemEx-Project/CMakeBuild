@@ -9,14 +9,25 @@ include(UtilityMacros)
 include(AssertMacros)
 include(OptionMacros)
 
+set(PROPERTY_NAMES INCLUDE_DIRECTORIES LINK_LIBRARIES COMPILE_DEFINITIONS)
+
+function(dependency_to_variables __name _INCLUDE_DIRECTORIES
+                                        _LINK_LIBRARIES
+                                        _COMPILE_DEFINITIONS)
+    foreach(__var ${PROPERTY_NAMES})
+        get_property(__value TARGET ${__name}_External
+                                       PROPERTY INTERFACE_${__var})
+        set(${_${__var}} ${${_${_var}}} ${__value} PARENT_SCOPE)
+    endforeach()
+endfunction()
+
 function(package_dependency __depend __lists)
     string(TOUPPER ${__depend} __DEPEND)
-    get_property(${__DEPEND}_INCLUDE_DIRS TARGET ${__depend}_External
-            PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
-    get_property(${__DEPEND}_LIBRARIES TARGET ${__depend}_External
-            PROPERTY INTERFACE_LINK_LIBRARIES)
+    dependency_to_variables(${__depend} ${__DEPEND}_INCLUDE_DIRS
+                                        ${__DEPEND}_LIBRARIES
+                                        ${__DEPEND}_DEFINITIONS)
     bundle_cmake_list(${__lists} ${__DEPEND}_INCLUDE_DIRS
-            ${__DEPEND}_LIBRARIES)
+                                 ${__DEPEND}_LIBRARIES)
     set(${__lists} ${${__lists}} PARENT_SCOPE)
 endfunction()
 
@@ -36,20 +47,11 @@ endfunction()
 
 function(print_dependency __name)
     message("Target: ${__name}")
-    foreach(prefix "INTERFACE_")
-        foreach(_prop INCLUDE_DIRECTORIES LINK_LIBRARIES COMPILE_DEFINITIONS
-                LINK_FLAGS)
-            get_property(__value TARGET ${__name} PROPERTY ${prefix}${_prop})
-            is_valid(__value __has_prop)
-            if(__has_prop)
-                message("  ${_prop} : ${__value}")
-                if(prefix STREQUAL "INTERFACE_")
-                    set(is_interface TRUE)
-                endif()
-            endif()
-        endforeach()
-        if(is_interface)
-            break()
+    foreach(_prop ${PROPERTY_NAMES} LINK_FLAGS)
+        get_property(__value TARGET ${__name} PROPERTY INTERFACE_${_prop})
+        is_valid(__value __has_prop)
+        if(__has_prop)
+            message("  ${_prop} : ${__value}")
         endif()
     endforeach()
 endfunction()
@@ -74,6 +76,7 @@ function(find_dependency __name)
         if(_upper OR _lower)
             set(_tname ${__name}_External)
             add_library(${_tname} INTERFACE)
+            #CMake's lack of consistent naming makes a loop ineffective here
             is_valid(${__NAME}_INCLUDE_DIRS __has_includes)
             if(__has_includes)
                 target_include_directories(${_tname} INTERFACE
@@ -120,11 +123,10 @@ endfunction()
 
 function(makify_dependency __depend __incs __libs)
     string(TOUPPER ${__depend} __DEPEND)
-    get_property(${__DEPEND}_INCLUDE_DIRS TARGET ${__depend}_External
-            PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+    dependency_to_variables(${__depend} ${__DEPEND}_INCLUDE_DIRS
+                                        ${__DEPEND}_LIBRARIES
+                                        ${__DEPEND}_DEFINITIONS)
     string_concat(${__DEPEND}_INCLUDE_DIRS "-I" " " ${__incs})
-    get_property(${__DEPEND}_LIBRARIES TARGET ${__depend}_External
-            PROPERTY INTERFACE_LINK_LIBRARIES)
     foreach(__lib ${${__DEPEND}_LIBRARIES})
         # Remove the actual library from the path
         get_filename_component(_lib_path ${__lib} DIRECTORY)
