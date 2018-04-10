@@ -8,51 +8,60 @@
 # `LAPACKE_DEFINITIONS` cmake variable
 #
 # This module defines
-#  LAPACKE_INCLUDE_DIRS, where to find cblas.h or mkl.h
-#  LAPACKE_LIBRARIES, the libraries to link against for LAPACKE support
+#  LAPACKE_INCLUDE_DIR, the path to includes for LAPACKE
+#  LAPACKE_INCLUDE_DIRS, path to includes for LAPACKE and all dependencies
+#  LAPACKE_LIBRARY, path to the LAPACKE library(s)
+#  LAPACKE_LIBRARIES, the LAPACKE library(s) and all dependencies
 #  LAPACKE_DEFINITIONS, flags to include when compiling against LAPACKE
 #  LAPACKE_LINK_FLAGS, flags to include when linking against LAPACKE
 #  LAPACKE_FOUND, True if we found LAPACKE
+#
+# Users can override paths in this module in several ways:
+# 1. Set LAPACKE_INCLUDE_DIRS and/or LAPACKE_LIBRARIES
+#    - This will not look for includes/libraries for LAPACKE or its dependencies
+# 2. Set LAPACKE_INCLUDE_DIR and/or LAPACKE_LIBRARY
+#    - This will not look for includes/libraries for LAPACKE, but will look for
+#      includes/libraries for the dependencies
+# 3. Set X_INCLUDE_DIR and/or X_LIBRARY (X=BLAS and/or LAPACK)
+#    - This will look for includes/libraries for LAPACKE, but not its
+#      dependencies
 
 include(FindPackageHandleStandardArgs)
 set(FINDLAPACKE_is_mkl FALSE)
-set(FINDLAPACKE_HEADER lapacke.h)
+
 is_valid(LAPACKE_LIBRARIES FINDLAPACKE_LIBS_SET)
 if(NOT FINDLAPACKE_LIBS_SET)
-    find_library(LAPACKE_LIBRARIES NAMES lapacke)
+    find_library(LAPACKE_LIBRARY NAMES lapacke)
+
+    #Now we have to find a LAPACK library
+    find_package(LAPACK)
+
+    #This is where'd we check that it's compatible, but as you can see we don't
+
+    #and a BLAS implementation
+    find_package(BLAS)
+
+    #This is where'd we check that it's compatible, but as you can see we don't
+
+    set(LAPACKE_LIBRARIES ${LAPACKE_LIBRARY} ${LAPACK_LIBRARIES}
+                          ${BLAS_LIBRARIES})
 endif()
 
-is_valid(LAPACKE_INCLUDE_DIRS FINDLAPACKE_INCLUDES_SET)
-if(FINDLAPACKE_INCLUDES_SET)
+set(FINDLAPACKE_HEADER lapacke.h)
+is_valid(LAPACKE_INCLUDE_DIRS FINDLAPACKE_INCS_SET)
+if(NOT FINDLAPACKE_INCS_SET)
     #Let's see if it's MKL. Intel likes their branding, which we can use
     #to our advantage by looking if the string "mkl" appears in any of the
     #library names
-    string(FIND "${BLAS_LIBRARIES}" "mkl" FINDLAPACKE_substring_found)
-    is_valid_and_true(FINDNWXLAPACKE_substring_found FINDLAPACKE_is_mkl)
-    if(FINDLAPACKE_is_mkl)
+    string(FIND "${LAPACKE_LIBRARIES}" "mkl" FINDLAPACKE_substring_found)
+
+    if(NOT "${FINDLAPACKE_substring_found}" STREQUAL "-1")
         set(FINDLAPACKE_HEADER mkl.h)
     endif()
-    #For sanity could make sure header is actually located in that path, but not
-    #typical CMake behavior...
-    #find_path(LAPACKE_INCLUDE_DIR ${FINDLAPACKE_HEADER}
-    #          HINTS ${LAPACKE_INCLUDE_DIRS})
-    #assert_strings_are_equal("${LAPACKE_INCLUDE_DIR}" "${LAPACKE_INCLUDE_DIRS}")
-else()
-    find_path(LAPACKE_INCLUDE_DIRS ${FINDLAPACKE_HEADER})
+    find_path(LAPACKE_INCLUDE_DIR ${FINDLAPACKE_HEADER})
+    set(LAPACKE_INCLUDE_DIRS ${LAPACKE_INCLUDE_DIR})
 endif()
 list(APPEND LAPACKE_DEFINITIONS "-DLAPACKE_HEADER=\"${FINDLAPACKE_HEADER}\"")
-
-#Now we have to find a LAPACK library compatible with our CBLAS implementation
-find_package(LAPACK)
-
-#This is where'd we check that it's compatible, but as you can see we don't
-
-#Now we have to find a BLAS library compatible with our LAPACK implementation
-find_package(BLAS)
-
-#This is where'd we check that it's compatible, but as you can see we don't
-
-list(APPEND LAPACKE_LIBRARIES ${LAPACK_LIBRARIES} ${BLAS_LIBRARIES})
 
 find_package_handle_standard_args(LAPACKE DEFAULT_MSG LAPACKE_INCLUDE_DIRS
                                                       LAPACKE_LIBRARIES)

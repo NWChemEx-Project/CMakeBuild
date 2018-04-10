@@ -21,31 +21,18 @@ include(OptionMacros)
 #Little trick so we always know this directory even when we are in a function
 set(DIR_OF_TARGET_MACROS ${CMAKE_CURRENT_LIST_DIR})
 
-
 function(nwchemex_set_up_target __name __flags __lflags __install)
     set(__headers_copy ${${__includes}})
     make_full_paths(__headers_copy)
     foreach(__depend ${NWX_DEPENDENCIES})
-        find_dependency(${__depend} __DEPEND_INCLUDES
-                                    __DEPEND_LIBRARIES
-                                    __DEPEND_FLAG
-                                    __DEPEND_LFLAG
-                                    __${__depend}_found)
-        assert(__${__depend}_found)
+        find_dependency(${__depend})
+        target_link_libraries(${__name} PRIVATE ${__depend}_External)
     endforeach()
-    list(APPEND __all_flags ${__flags} ${__DEPEND_FLAG})
-    list(APPEND __all_lflags ${__lflags} ${__DEPEND_LFLAG})
-    debug_message("Adding target ${__name}:")
-    debug_message("    Include Directories: ${__DEPEND_INCLUDES}")
-    debug_message("    Compile Flags: ${__all_flags}")
-    debug_message("    Link Libraries: ${__DEPEND_LIBRARIES}")
-    debug_message("    Link Flags: ${__all_lflags}")
-    target_link_libraries(${__name} PRIVATE "${__DEPEND_LIBRARIES}")
-    target_compile_options(${__name} PRIVATE "${__all_flags}")
-    target_include_directories(${__name} SYSTEM PRIVATE ${__DEPEND_INCLUDES})
+    target_link_libraries(${__name} PRIVATE "${NWX_LIBRARIES}")
+    target_compile_definitions(${__name} PRIVATE "${__flags}")
     target_include_directories(${__name} PRIVATE ${NWX_INCLUDE_DIR})
     set_property(TARGET ${__name} PROPERTY CXX_STANDARD ${CMAKE_CXX_STANDARD})
-    set_property(TARGET ${__name} PROPERTY LINK_FLAGS "${__all_lflags}")
+    set_property(TARGET ${__name} PROPERTY LINK_FLAGS "${__lflags}")
     install(TARGETS ${__name} DESTINATION ${__install})
 endfunction()
 

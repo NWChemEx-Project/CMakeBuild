@@ -4,54 +4,16 @@ project(GlobalArrays VERSION 5.6.4 LANGUAGES C Fortran)
 include(DependencyMacros)
 include(ExternalProject)
 foreach(depend NWX_MPI CBLAS LAPACKE )#ScaLAPACK)
-    find_dependency(${depend} ${depend}_INCLUDE_DIRS
-                                  ${depend}_LIBRARIES
-                                  ${depend}_DEFINITIONS
-                                  ${depend}_LINK_FLAGS
-                                  _${depend}_FOUND)
-    assert(_${depend}_FOUND)
+    find_dependency(${depend})
+    makify_dependency(${depend} ${depend}_INCS ${depend}_LIBS)
 endforeach()
 
 #string(REPLACE ";" " " GA_ScaLAPACK_LIBRARIES "${ScaLAPACK_LIBRARIES}")
 #set(GA_SCALAPACK "--with-scalapack8=${GA_ScaLAPACK_LIBRARIES}")
 
-# GA has to be difficult when it comes to MPI, BLAS, LAPACK...
-#string (REPLACE ";" " " BLAS_LIBRARIES "${CBLAS_LIBRARIES}")
-foreach(_nwx_lib ${CBLAS_LIBRARIES})
-    # Remove the actual library from the path
-    get_filename_component(_lib_path ${_nwx_lib} DIRECTORY)
-    # Get only library name with extension
-    get_filename_component(_name_lib ${_nwx_lib} NAME_WE)
-    # Strip the lib prefix
-    string(SUBSTRING ${_name_lib} 3 -1 _name_lib)
-    set(GA_BLAS "${GA_BLAS} -L${_lib_path} -l${_name_lib}")
-endforeach()
-set(GA_BLAS "--with-blas8=${GA_BLAS}")
-
-#string(REPLACE ";" " " LAPACK_LIBRARIES "${LAPACKE_LIBRARIES}")
-foreach(_nwx_lib ${LAPACKE_LIBRARIES})
-    # Remove the actual library from the path
-    get_filename_component(_lib_path ${_nwx_lib} DIRECTORY)
-    # Get only library name with extension
-    get_filename_component(_name_lib ${_nwx_lib} NAME_WE)
-    # Strip the lib prefix
-    string(SUBSTRING ${_name_lib} 3 -1 _name_lib)
-    set(GA_LAPACK "${GA_LAPACK} -L${_lib_path} -l${_name_lib}")
-endforeach()
-set(GA_LAPACK "--with-lapack=${GA_LAPACK}")
-
-string(REPLACE ";" " -I" GA_MPI_INCLUDES "${NWX_MPI_INCLUDE_DIRS}")
-message(STATUS "${GA_MPI_INCLUDES}")
-foreach(_nwx_lib ${NWX_MPI_LIBRARIES})
-    # Remove the actual library from the path
-    get_filename_component(_lib_path ${_nwx_lib} DIRECTORY)
-    # Get only library name with extension
-    get_filename_component(_name_lib ${_nwx_lib} NAME_WE)
-    # Strip the lib prefix
-    string(SUBSTRING ${_name_lib} 3 -1 _name_lib)
-    set(GA_MPI "${GA_MPI} -L${_lib_path} -l${_name_lib}")
-endforeach()
-set(GA_MPI "--with-mpi=${GA_MPI_INCLUDES} ${GA_MPI}")
+set(GA_BLAS "--with-blas8=${CBLAS_LIBS}")
+set(GA_LAPACK "--with-lapack=${LAPACKE_LIBS}")
+set(GA_MPI "--with-mpi=${NWX_MPI_INCS} ${NWX_MPI_LIBS}")
 
 set(GA_SYSVSHMEM "ARMCI_DEFAULT_SHMMAX_UBOUND=131072")
 

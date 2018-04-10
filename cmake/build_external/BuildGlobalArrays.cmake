@@ -15,10 +15,10 @@ include(DependencyMacros)
 enable_language(Fortran)
 
 # Now find or build GA's dependencies
-find_or_build_dependency(CBLAS __found_blas)
-find_or_build_dependency(LAPACKE __found_lapack)
-find_or_build_dependency(NWX_MPI __found_mpi)
-#find_or_build_dependency(ScaLAPACK __found_scalapack)
+foreach(depend CBLAS LAPACKE NWX_MPI)
+    find_or_build_dependency(${depend})
+    package_dependency(${depend} DEPENDENCY_PATHS)
+endforeach()
 
 ##########################################################
 # Determine aggregate remote memory copy interface (ARMCI)
@@ -62,6 +62,7 @@ ExternalProject_Add(GlobalArrays_External
         INSTALL_COMMAND ""
         CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}
                          ${CORE_CMAKE_STRINGS}
+                         ${DEPENDENCY_PATHS}
 )
 
 # Establish the dependencies

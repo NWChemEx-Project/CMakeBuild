@@ -1,24 +1,36 @@
 #
-# Attempts to find a LAPACK distribution.
+# Attempts to find a LAPACK distribution.  This module will override the one
+# that comes with CMake.
 #
 # After this module runs the following variables are set:
-#   LAPACK_LIBRARIES : The literal LAPACK library(s) to link against
+#   LAPACK_LIBRARY   : The LAPACK library(s)
+#   LAPACK_LIBRARIES : The LAPACK library(s) plus those of any dependencies
 #   LAPACK_FOUND     : True if we found a LAPACK library
 #
+# Users can override paths found by this module in several ways:
+# 1. Specify LAPACK_LIBRARIES
+#    - This will prevent attempts to find LAPACK or its dependencies and will
+#      use the supplied paths instead
+# 2. Specify LAPACK_LIBRARY
+#    - This will not look for LAPACK, but will look for its dependencies
 include(FindPackageHandleStandardArgs)
-find_library(LAPACK_LIBRARIES NAMES lapack)
 
-#Now we need to find a BLAS library that hopefully is compatible with our LAPACK
-find_package(BLAS)
+is_valid(LAPACK_LIBRARIES FINDLAPACK_LIBS_SET)
+if(NOT FINDLAPACK_LIBS_SET)
+    find_library(LAPACK_LIBRARY NAMES lapack)
 
-#Here we test that it is, which as you can see we actually don't...
-list(APPEND LAPACK_LIBRARIES ${BLAS_LIBRARIES})
+    #Now we need to find a BLAS library that hopefully is compatible with our LAPACK
+    find_package(BLAS)
 
-#Now if we built LAPACK we need to find the standard Fortran libraries,
-#specifically the ones our LAPACK was compiled with
-find_package(StandardFortran REQUIRED)
+    #Here we test that it is, which as you can see we actually don't...
+    set(LAPACK_LIBRARIES ${LAPACK_LIBRARY} ${BLAS_LIBRARIES})
 
-#Here's where we test that it worked, which as you can see we don't
+    #Now if we built LAPACK we need to find the standard Fortran libraries,
+    #specifically the ones our LAPACK was compiled with
+    find_package(StandardFortran REQUIRED)
 
-list(APPEND LAPACK_LIBRARIES ${STANDARDFORTRAN_LIBRARIES})
+    #Here's where we test that it worked, which as you can see we don't
+    list(APPEND LAPACK_LIBRARIES ${STANDARDFORTRAN_LIBRARIES})
+endif()
+
 find_package_handle_standard_args(LAPACK DEFAULT_MSG LAPACK_LIBRARIES)

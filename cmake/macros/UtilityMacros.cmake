@@ -87,8 +87,3 @@ function(string_concat list_o_stuff prefix spacer _result)
     endforeach()
     set(${_result} ${${_result}} PARENT_SCOPE)
 endfunction()
-
-function(makify_includes includes result)
-    string_concat(${includes} "-I" " " ${result})
-    set(${result} ${${result}} PARENT_SCOPE)
-endfunction()

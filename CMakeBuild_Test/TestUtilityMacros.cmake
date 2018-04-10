@@ -59,7 +59,3 @@ string_concat(SOME_LIST "-I" "" test15)
 assert_strings_are_equal(${test15} "-Ithing1-Ithing2")
 string_concat(SOME_LIST "-I" "+" test16)
 assert_strings_are_equal(${test16} "-Ithing1+-Ithing2")
-
-set(SOMEPATH "/some/path")
-makify_includes(SOMEPATH test17)
-assert_strings_are_equal("${test17}" "-I/some/path")

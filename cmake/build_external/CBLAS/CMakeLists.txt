@@ -4,11 +4,8 @@ project(CBLAS VERSION 0.0.0 LANGUAGES C Fortran)
 
 include(DependencyMacros)
 include(ExternalProject)
-find_dependency(BLAS NWX_BLAS_INCLUDE_DIRS
-                     NWX_BLAS_LIBRARIES
-                     NWX_BLAS_DEFINITIONS
-                     NWX_BLAS_LINK_FLAGS
-                     _BLAS_FOUND)
+find_dependency(BLAS)
+makify_dependency(BLAS BLAS_INCS BLAS_LIBS)
 
 set(CBLAS_URL http://www.netlib.org/blas/blast-forum/cblas.tgz)
 set(CBLAS_MD5 1E8830F622D2112239A4A8A83B84209A)
@@ -28,7 +25,7 @@ set(MAKEFILE_DEST "${CBLAS_BUILD_DIR}/Makefile.in")
 set(CBLAS_LIB "libcblas${CMAKE_STATIC_LIBRARY_SUFFIX}")
 file(WRITE  ${CBLAS_MAKEFILE} "SHELL = /bin/sh\n")
 file(APPEND ${CBLAS_MAKEFILE} "PLAT = ${CMAKE_SYSTEM_NAME}\n")
-file(APPEND ${CBLAS_MAKEFILE} "BLLIB = ${NWX_BLAS_LIBRARIES}\n")
+file(APPEND ${CBLAS_MAKEFILE} "BLLIB = ${BLAS_LIBS}\n")
 file(APPEND ${CBLAS_MAKEFILE} "CBLIB = ../lib/${CBLAS_LIB}\n")
 file(APPEND ${CBLAS_MAKEFILE} "CC = ${CMAKE_C_COMPILER}\n")
 file(APPEND ${CBLAS_MAKEFILE} "FC = ${CMAKE_Fortran_COMPILER}\n")
