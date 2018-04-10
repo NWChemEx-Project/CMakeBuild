@@ -5,15 +5,15 @@ include(DependencyMacros)
 include(ExternalProject)
 foreach(depend NWX_MPI CBLAS LAPACKE )#ScaLAPACK)
     find_dependency(${depend})
-    makify_dependency(${depend} ${depend}_INCLUDE_DIRS ${depend}_LIBRARIES)
+    makify_dependency(${depend} ${depend}_INCS ${depend}_LIBS)
 endforeach()
 
 #string(REPLACE ";" " " GA_ScaLAPACK_LIBRARIES "${ScaLAPACK_LIBRARIES}")
 #set(GA_SCALAPACK "--with-scalapack8=${GA_ScaLAPACK_LIBRARIES}")
 
-set(GA_BLAS "--with-blas8=${CBLAS_LIBRARIES}")
-set(GA_LAPACK "--with-lapack=${LAPACKE_LIBRARIES}")
-set(GA_MPI "--with-mpi=${NWX_MPI_INCLUDE_DIRS} ${NWX_MPI_LIBRARIES}")
+set(GA_BLAS "--with-blas8=${CBLAS_LIBS}")
+set(GA_LAPACK "--with-lapack=${LAPACKE_LIBS}")
+set(GA_MPI "--with-mpi=${NWX_MPI_INCS} ${NWX_MPI_LIBS}")
 
 set(GA_SYSVSHMEM "ARMCI_DEFAULT_SHMMAX_UBOUND=131072")
 
