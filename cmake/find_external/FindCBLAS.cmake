@@ -22,8 +22,7 @@ find_library(CBLAS_LIBRARIES NAMES cblas)
 #Let's see if it's MKL. Intel likes their branding, which we can use to our
 #advantage by looking if the string "mkl" appears in any of the library names
 string(FIND "${BLAS_LIBRARIES}" "mkl" FINDCBLAS_substring_found)
-is_valid_and_true(FINDCBLAS_substring_found FINDCBLAS_is_mkl)
-if(FINDCBLAS_is_mkl)
+if(NOT "${FINDCBLAS_substring_found}" STREQUAL "-1")
     set(FINDCBLAS_HEADER mkl.h)
 endif()
 find_path(CBLAS_INCLUDE_DIRS ${FINDCBLAS_HEADER})

@@ -28,8 +28,8 @@ if(FINDLAPACKE_INCLUDES_SET)
     #to our advantage by looking if the string "mkl" appears in any of the
     #library names
     string(FIND "${BLAS_LIBRARIES}" "mkl" FINDLAPACKE_substring_found)
-    is_valid_and_true(FINDLAPACKE_substring_found FINDLAPACKE_is_mkl)
-    if(FINDLAPACKE_is_mkl)
+
+    if(NOT "${FINDLAPACKE_substring_found}" STREQUAL "-1")
         set(FINDLAPACKE_HEADER mkl.h)
     endif()
     #For sanity could make sure header is actually located in that path, but not
