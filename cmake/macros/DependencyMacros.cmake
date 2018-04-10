@@ -112,8 +112,7 @@ endfunction()
 
 function(find_or_build_dependency __name)
         find_dependency(${__name})
-        are_we_building(${__name} __are_building)
-        if(__are_building)
+        if(NOT TARGET ${__name}_External)
             is_valid(BUILD_${__name} __is_set)
             if(__is_set AND NOT BUILD_${__name})
                 message(FATAL_ERROR "Could not locate ${__name} and user has "
