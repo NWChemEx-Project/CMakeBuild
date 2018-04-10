@@ -17,7 +17,9 @@ function(dependency_to_variables __name _INCLUDE_DIRECTORIES
     foreach(__var ${PROPERTY_NAMES})
         get_property(__value TARGET ${__name}_External
                                        PROPERTY INTERFACE_${__var})
-        set(${_${__var}} ${${_${_var}}} ${__value} PARENT_SCOPE)
+        set(input_var ${_${__var}}) # Name of the variable user gave us
+        list(APPEND ${input_var} ${__value})
+        set(${input_var} ${${input_var}} PARENT_SCOPE)
     endforeach()
 endfunction()
 
