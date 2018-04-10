@@ -20,6 +20,18 @@ set(FINDLAPACKE_HEADER lapacke.h)
 is_valid(LAPACKE_LIBRARIES FINDLAPACKE_LIBS_SET)
 if(NOT FINDLAPACKE_LIBS_SET)
     find_library(LAPACKE_LIBRARIES NAMES lapacke)
+
+    #Now we have to find a LAPACK library compatible with our CBLAS implementation
+    find_package(LAPACK)
+
+    #This is where'd we check that it's compatible, but as you can see we don't
+
+    #Now we have to find a BLAS library compatible with our LAPACK implementation
+    find_package(BLAS)
+
+    #This is where'd we check that it's compatible, but as you can see we don't
+
+    list(APPEND LAPACKE_LIBRARIES ${LAPACK_LIBRARIES} ${BLAS_LIBRARIES})
 endif()
 
 is_valid(LAPACKE_INCLUDE_DIRS FINDLAPACKE_INCLUDES_SET)
@@ -27,32 +39,17 @@ if(FINDLAPACKE_INCLUDES_SET)
     #Let's see if it's MKL. Intel likes their branding, which we can use
     #to our advantage by looking if the string "mkl" appears in any of the
     #library names
-    string(FIND "${BLAS_LIBRARIES}" "mkl" FINDLAPACKE_substring_found)
+    string(FIND "${LAPACKE_LIBRARIES}" "mkl" FINDLAPACKE_substring_found)
 
     if(NOT "${FINDLAPACKE_substring_found}" STREQUAL "-1")
         set(FINDLAPACKE_HEADER mkl.h)
     endif()
-    #For sanity could make sure header is actually located in that path, but not
-    #typical CMake behavior...
-    #find_path(LAPACKE_INCLUDE_DIR ${FINDLAPACKE_HEADER}
-    #          HINTS ${LAPACKE_INCLUDE_DIRS})
-    #assert_strings_are_equal("${LAPACKE_INCLUDE_DIR}" "${LAPACKE_INCLUDE_DIRS}")
-else()
     find_path(LAPACKE_INCLUDE_DIRS ${FINDLAPACKE_HEADER})
 endif()
+
 list(APPEND LAPACKE_DEFINITIONS "-DLAPACKE_HEADER=\"${FINDLAPACKE_HEADER}\"")
 
-#Now we have to find a LAPACK library compatible with our CBLAS implementation
-find_package(LAPACK)
 
-#This is where'd we check that it's compatible, but as you can see we don't
-
-#Now we have to find a BLAS library compatible with our LAPACK implementation
-find_package(BLAS)
-
-#This is where'd we check that it's compatible, but as you can see we don't
-
-list(APPEND LAPACKE_LIBRARIES ${LAPACK_LIBRARIES} ${BLAS_LIBRARIES})
 
 find_package_handle_standard_args(LAPACKE DEFAULT_MSG LAPACKE_INCLUDE_DIRS
                                                       LAPACKE_LIBRARIES)

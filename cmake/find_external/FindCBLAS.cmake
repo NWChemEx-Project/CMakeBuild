@@ -17,22 +17,27 @@
 include(FindPackageHandleStandardArgs)
 set(FINDCBLAS_is_mkl FALSE)
 set(FINDCBLAS_HEADER cblas.h)
-find_library(CBLAS_LIBRARIES NAMES cblas)
-
-#Let's see if it's MKL. Intel likes their branding, which we can use to our
-#advantage by looking if the string "mkl" appears in any of the library names
-string(FIND "${BLAS_LIBRARIES}" "mkl" FINDCBLAS_substring_found)
-if(NOT "${FINDCBLAS_substring_found}" STREQUAL "-1")
-    set(FINDCBLAS_HEADER mkl.h)
+is_valid(CBLAS_LIBRARIES FINDCBLAS_LIBS_SET)
+if(NOT FINDCBLAS_LIBS_SET)
+    find_library(CBLAS_LIBRARIES NAMES cblas)
+    #Now we have to find a BLAS library compatible with our CBLAS implementation
+    find_package(BLAS)
+    #This is where'd we check that it's compatible, but as you can see we don't
+    list(APPEND CBLAS_LIBRARIES ${BLAS_LIBRARIES})
 endif()
-find_path(CBLAS_INCLUDE_DIRS ${FINDCBLAS_HEADER})
+
+is_valid(CBLAS_INCLUDE_DIRS FINDCBLAS_INCS_SET)
+if(NOT FINDCBLAS_INCS_SET)
+    #Let's see if it's MKL. Intel likes their branding, which we can use to our
+    #advantage by looking if the string "mkl" appears in any of the library names
+    string(FIND "${CBLAS_LIBRARIES}" "mkl" FINDCBLAS_substring_found)
+    if(NOT "${FINDCBLAS_substring_found}" STREQUAL "-1")
+        set(FINDCBLAS_HEADER mkl.h)
+    endif()
+    find_path(CBLAS_INCLUDE_DIRS ${FINDCBLAS_HEADER})
+endif()
 list(APPEND CBLAS_DEFINITIONS "-DCBLAS_HEADER=\<${FINDCBLAS_HEADER}\>")
 
-#Now we have to find a BLAS library compatible with our CBLAS implementation
-find_package(BLAS)
 
-#This is where'd we check that it's compatible, but as you can see we don't
-
-list(APPEND CBLAS_LIBRARIES ${BLAS_LIBRARIES})
 find_package_handle_standard_args(CBLAS DEFAULT_MSG CBLAS_INCLUDE_DIRS
                                                     CBLAS_LIBRARIES)
