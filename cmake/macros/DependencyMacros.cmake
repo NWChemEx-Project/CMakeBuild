@@ -99,7 +99,8 @@ function(find_dependency __name)
 
             is_valid(${__NAME}_LINK_FLAGS __has_lflags)
             if(__has_lflags)
-                target_link_flags(${_tname} INTERFACE ${${__NAME}_LINK_FLAGS})
+                target_link_libraries(${_tname} INTERFACE
+                                      ${${__NAME}_LINK_FLAGS})
             endif()
 
             if(NWX_DEBUG_CMAKE)
