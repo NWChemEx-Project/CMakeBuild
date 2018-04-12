@@ -37,18 +37,19 @@ if(NOT FINDCBLAS_LIBS_SET)
     set(CBLAS_LIBRARIES ${CBLAS_LIBRARY} ${BLAS_LIBRARIES})
 endif()
 
+#Let's see if it's MKL. Intel likes their branding, which we can use to our
+#advantage by looking if the string "mkl" appears in any of the library names
+string(FIND "${CBLAS_LIBRARIES}" "mkl" FINDCBLAS_substring_found)
+if(NOT "${FINDCBLAS_substring_found}" STREQUAL "-1")
+    set(FINDCBLAS_HEADER mkl.h)
+endif()
+
 is_valid(CBLAS_INCLUDE_DIRS FINDCBLAS_INCS_SET)
 if(NOT FINDCBLAS_INCS_SET)
-    #Let's see if it's MKL. Intel likes their branding, which we can use to our
-    #advantage by looking if the string "mkl" appears in any of the library names
-    string(FIND "${CBLAS_LIBRARIES}" "mkl" FINDCBLAS_substring_found)
-    if(NOT "${FINDCBLAS_substring_found}" STREQUAL "-1")
-        set(FINDCBLAS_HEADER mkl.h)
-    endif()
     find_path(CBLAS_INCLUDE_DIR ${FINDCBLAS_HEADER})
     set(CBLAS_INCLUDE_DIRS ${CBLAS_INCLUDE_DIR})
 endif()
-list(APPEND CBLAS_DEFINITIONS "-DCBLAS_HEADER=\<${FINDCBLAS_HEADER}\>")
+list(APPEND CBLAS_DEFINITIONS "-DCBLAS_HEADER=\"${FINDCBLAS_HEADER}\"")
 
 
 find_package_handle_standard_args(CBLAS DEFAULT_MSG CBLAS_INCLUDE_DIRS

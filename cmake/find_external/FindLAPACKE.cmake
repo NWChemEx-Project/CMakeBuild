@@ -48,16 +48,16 @@ if(NOT FINDLAPACKE_LIBS_SET)
 endif()
 
 set(FINDLAPACKE_HEADER lapacke.h)
-is_valid(LAPACKE_INCLUDE_DIRS FINDLAPACKE_INCS_SET)
-if(NOT FINDLAPACKE_INCS_SET)
     #Let's see if it's MKL. Intel likes their branding, which we can use
     #to our advantage by looking if the string "mkl" appears in any of the
     #library names
-    string(FIND "${LAPACKE_LIBRARIES}" "mkl" FINDLAPACKE_substring_found)
+string(FIND "${LAPACKE_LIBRARIES}" "mkl" FINDLAPACKE_substring_found)
+if(NOT "${FINDLAPACKE_substring_found}" STREQUAL "-1")
+    set(FINDLAPACKE_HEADER mkl.h)
+endif()
 
-    if(NOT "${FINDLAPACKE_substring_found}" STREQUAL "-1")
-        set(FINDLAPACKE_HEADER mkl.h)
-    endif()
+is_valid(LAPACKE_INCLUDE_DIRS FINDLAPACKE_INCS_SET)
+if(NOT FINDLAPACKE_INCS_SET)
     find_path(LAPACKE_INCLUDE_DIR ${FINDLAPACKE_HEADER})
     set(LAPACKE_INCLUDE_DIRS ${LAPACKE_INCLUDE_DIR})
 endif()
