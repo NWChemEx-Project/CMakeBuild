@@ -18,6 +18,7 @@ pipeline {
 	            source /etc/profile
   	            module load gcc/7.1.0
      	        module load cmake
+     	        module load mvapich2
 	            cmake -H. -Bbuild
 	            cd build
 	            make

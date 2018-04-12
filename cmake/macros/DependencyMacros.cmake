@@ -81,7 +81,7 @@ function(find_dependency __name)
             #CMake's lack of consistent naming makes a loop ineffective here
             is_valid(${__NAME}_INCLUDE_DIRS __has_includes)
             if(__has_includes)
-                target_include_directories(${_tname} INTERFACE
+                target_include_directories(${_tname} SYSTEM INTERFACE
                         ${${__NAME}_INCLUDE_DIRS})
             endif()
 
