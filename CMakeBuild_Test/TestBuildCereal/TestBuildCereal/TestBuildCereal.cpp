@@ -8,7 +8,7 @@ bool TestBuildCereal::passed(){
     std::stringstream os;
     cereal::BinaryOutputArchive archive( os );
     double x{3.14};
-    archive(os);
+    archive(x);
 
     return true;
 }
