@@ -78,31 +78,34 @@ function(find_dependency __name)
         if(_upper OR _lower)
             set(_tname ${__name}_External)
             add_library(${_tname} INTERFACE)
-            #CMake's lack of consistent naming makes a loop ineffective here
-            is_valid(${__NAME}_INCLUDE_DIRS __has_includes)
-            if(__has_includes)
-                target_include_directories(${_tname} SYSTEM INTERFACE
-                        ${${__NAME}_INCLUDE_DIRS})
-            endif()
+            #By convention CMake vaiables are supposed to be all caps, but some
+            #some projects instead use the same name
+            foreach(name_var ${__NAME} ${__name})
+                #CMake's lack of consistent naming makes a loop ineffective here
+                is_valid(${name_var}_INCLUDE_DIRS __has_includes)
+                if(__has_includes)
+                    target_include_directories(${_tname} SYSTEM INTERFACE
+                            ${${name_var}_INCLUDE_DIRS})
+                endif()
 
-            is_valid(${__NAME}_LIBRARIES __has_libs)
-            if(__has_libs)
-                target_link_libraries(${_tname} INTERFACE
-                        ${${__NAME}_LIBRARIES})
-            endif()
+                is_valid(${name_var}_LIBRARIES __has_libs)
+                if(__has_libs)
+                    target_link_libraries(${_tname} INTERFACE
+                            ${${name_var}_LIBRARIES})
+                endif()
 
-            is_valid(${__NAME}_DEFINITIONS __has_defs)
-            if(__has_defs)
-                target_compile_definitions(${_tname} INTERFACE
-                        ${${__NAME}_DEFINITIONS})
-            endif()
+                is_valid(${name_var}_DEFINITIONS __has_defs)
+                if(__has_defs)
+                    target_compile_definitions(${_tname} INTERFACE
+                            ${${name_var}_DEFINITIONS})
+                endif()
 
-            is_valid(${__NAME}_LINK_FLAGS __has_lflags)
-            #if(__has_lflags)
-            #    target_link_libraries(${_tname} INTERFACE
-            #                          ${${__NAME}_LINK_FLAGS})
-            #endif()
-
+                is_valid(${name_var}_LINK_FLAGS __has_lflags)
+                #if(__has_lflags)
+                #    target_link_libraries(${_tname} INTERFACE
+                #                          ${${__NAME}_LINK_FLAGS})
+                #endif()
+            endforeach()
             if(NWX_DEBUG_CMAKE)
                 print_dependency(${_tname})
             endif()
