@@ -29,9 +29,8 @@ set(GA_FFLAGS "${CMAKE_Fortran_Flags} -fPIC")
 # Build GA
 set(GA_INSTALL_DIR ${STAGE_DIR}${CMAKE_INSTALL_PREFIX})
 ExternalProject_Add(GlobalArrays_External
-        GIT_REPOSITORY https://github.com/GlobalArrays/ga
-        GIT_TAG 1537981033d7b2e5cbeeaaf40529fbf4d414724a
-        CONFIGURE_COMMAND ./autogen.sh && ./configure --with-tcgmsg
+        URL https://github.com/GlobalArrays/ga/releases/download/v${PROJECT_VERSION}/ga-${PROJECT_VERSION}.tar.gz
+        CONFIGURE_COMMAND ./configure --with-tcgmsg
                                       ${GA_MPI}
                                       --enable-underscoring
                                       --disable-mpi-tests
