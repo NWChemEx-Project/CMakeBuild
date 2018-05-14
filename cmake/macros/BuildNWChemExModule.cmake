@@ -103,6 +103,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
                     SOURCE_DIR ${${__project}_TEST_DIR}
                     CMAKE_ARGS -DSUPER_PROJECT_ROOT=${SUPER_PROJECT_TEST}
                                -DNWX_DEBUG_CMAKE=${NWX_DEBUG_CMAKE}
+                               -DSTAGE_INSTALL_DIR=${STAGE_INSTALL_DIR}
                                ${CORE_CMAKE_OPTIONS}
 
                     BUILD_ALWAYS 1
