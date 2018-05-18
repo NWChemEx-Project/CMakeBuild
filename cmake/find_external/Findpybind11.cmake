@@ -12,7 +12,7 @@ if(found_py11)
     #AFAIK pybind11 doesn't run their variables through the usual CMake checks
     foreach(__x ${PYBIND11_LIBRARIES} ${PYBIND11_INCLUDE_DIRS})
         find_package_handle_standard_args(PYBIND11_${__x} DEFAULT_MSG ${__x})
-        if(NOT ${PYBIND11_${__x})
+        if(NOT ${PYBIND11_${__x}})
             set(pybind11_FOUND FALSE)
         endif()
     endforeach()
