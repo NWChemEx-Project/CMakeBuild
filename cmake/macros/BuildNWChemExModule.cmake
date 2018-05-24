@@ -1,17 +1,17 @@
 set(NWXBASE_MACROS ${CMAKE_CURRENT_LIST_DIR})
 
 function(build_nwchemex_module SUPER_PROJECT_ROOT)
-    #We require C++14 get it out of the way early
-    include(OptionMacros)
-    option_w_default(CMAKE_CXX_STANDARD 14)
 
     #Set the environment up and pull-in macros we'll need
     include(${NWXBASE_MACROS}/SetPaths.cmake)
     set_paths() #Puts macro paths in module path
+    include(OptionMacros)
     include(DependencyMacros)
     include(ExternalProject)
     include(UtilityMacros)
 
+    #We require C++14 get it out of the way early
+    option_w_default(CMAKE_CXX_STANDARD 14)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
 
