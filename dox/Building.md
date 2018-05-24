@@ -102,6 +102,7 @@ not used by that project CMake will warn you in the configuration logs). Note
 | CMAKE_PREFIX_PATH   | A list of places CMake will look for dependencies      |
 | CMAKE_INSTALL_PREFIX | The install directory                                 |
 | BUILD_SHARED_LIBS   | If false static libraries will be built                |
+| CMAKE_CXX_STANDARD  | Set CXX Standard, default=14                           |
 --------------------------------------------------------------------------------
 
 :memo: It will greatly behoove you to always pass full paths.
