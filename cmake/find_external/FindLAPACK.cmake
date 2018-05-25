@@ -18,6 +18,7 @@ include(FindPackageHandleStandardArgs)
 is_valid(LAPACK_LIBRARIES FINDLAPACK_LIBS_SET)
 if(NOT FINDLAPACK_LIBS_SET)
     find_library(LAPACK_LIBRARY NAMES lapack)
+    find_package_handle_standard_args(LAPACK DEFAULT_MSG LAPACK_LIBRARY)
 
     #Now we need to find a BLAS library that hopefully is compatible with our LAPACK
     find_package(BLAS)

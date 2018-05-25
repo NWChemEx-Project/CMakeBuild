@@ -38,6 +38,8 @@ find_library(GLOBALARRAYS_ARMCI_LIBRARY NAMES armci
                    ${PC_GLOBALARRAYS_LIBRARY_DIRS}
              PATHS ${GLOBALARRAYS_ROOT_DIR}
         )
+find_package_handle_standard_args(GlobalArrays DEFULT_MSG GLOBALARRAYS_C_LIBRARY
+        GLOBALARRAYS_ARMCI_LIBRARY)
 
 set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_C_LIBRARY}
                            ${GLOBALARRAYS_ARMCI_LIBRARY} 
