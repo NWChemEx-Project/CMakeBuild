@@ -62,6 +62,7 @@ function(nwchemex_add_library __name __srcs __headers __flags __lflags)
                 "${${__lflags}}"
                 lib/${__name})
         install(TARGETS ${__name}
+                ARCHIVE DESTINATION lib
                 LIBRARY DESTINATION lib/${__name}/${__install}
                 RUNTIME DESTINATION lib/${__name}/${__install})
     endif()
