@@ -55,14 +55,43 @@ find_package_handle_standard_args(GlobalArrays DEFAULT_MSG
 set(GLOBALARRAYS_INCLUDE_DIRS ${GLOBALARRAYS_INCLUDE_DIR})
 set(GLOBALARRAYS_FOUND ${GlobalArrays_FOUND})
 
-#Get GA and dependent libs using ga-config script
-#Dependent libs: MPI, Blas, Lapack (paths verified by CMakeBuild)
-#Optional libs: pthreads, librt, libm (paths verified by GA)
-execute_process(COMMAND ${GLOBALARRAYS_CONFIG}/ga-config --libs OUTPUT_VARIABLE GA_CONFIG_LIBS OUTPUT_STRIP_TRAILING_WHITESPACE)
-execute_process(COMMAND ${GLOBALARRAYS_CONFIG}/ga-config --flibs OUTPUT_VARIABLE GA_CONFIG_F_LIBS OUTPUT_STRIP_TRAILING_WHITESPACE)
-execute_process(COMMAND ${GLOBALARRAYS_CONFIG}/ga-config --ldflags OUTPUT_VARIABLE GA_CONFIG_LDFLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
+if (GLOBALARRAYS_FOUND)
+  #GA, MPI, Blas, Lapack, std fortran libs are already figured out by CMakeBuild
+  #Get optional libs using ga-config: pthreads, librt, libm (paths verified by GA)
+  execute_process(COMMAND ${GLOBALARRAYS_CONFIG}/ga-config --libs OUTPUT_VARIABLE GA_CONFIG_LIBS OUTPUT_STRIP_TRAILING_WHITESPACE)
+  execute_process(COMMAND ${GLOBALARRAYS_CONFIG}/ga-config --flibs OUTPUT_VARIABLE GA_CONFIG_F_LIBS OUTPUT_STRIP_TRAILING_WHITESPACE)
+  #execute_process(COMMAND ${GLOBALARRAYS_CONFIG}/ga-config --ldflags OUTPUT_VARIABLE GA_CONFIG_LDFLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${GA_CONFIG_LDFLAGS} ${GA_CONFIG_LIBS} ${GA_CONFIG_F_LIBS})
+  string(REPLACE " " ";" GA_LIBS_LIST ${GA_CONFIG_LIBS} ${GA_CONFIG_F_LIBS})
+  foreach(__lib ${GA_LIBS_LIST})
+    if(NOT __lmath) 
+     string(COMPARE EQUAL "-lm" ${__lib} __lmath) 
+    endif()
+    if(NOT __lpthread) 
+      string(COMPARE EQUAL "-lpthread" ${__lib} __lpthread) 
+    endif()
+    if(NOT __lrt) 
+      string(COMPARE EQUAL "-lrt" ${__lib} __lrt) 
+    endif()
+  endforeach()
+
+
+  if(__lpthread)
+    set(THREADS_PREFER_PTHREAD_FLAG ON)
+    find_package(Threads REQUIRED)
+    set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+  endif()
+
+  if(__lrt)
+    find_package(LibRT REQUIRED)
+    set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${LIBRT_LIBRARIES})
+  endif()
+
+  if(__lmath)
+    find_package(LibM REQUIRED)
+    set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${LIBM_LIBRARIES})
+  endif()
+endif()
 
 
 
