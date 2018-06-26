@@ -17,6 +17,7 @@ before_script:
   - ./travis/build_env.sh
   - lsb_release -a
   - g++ --version
+  - g++-7 --version
   - mpif90 -show
   - python3 --version
 script:
