@@ -1,0 +1,10 @@
+language: C++
+os:
+  - linux
+compiler:
+  - gcc
+before_script:
+  - g++ --version
+  - mpif90 -show
+script:
+  - ./travis/build_and_test.sh
