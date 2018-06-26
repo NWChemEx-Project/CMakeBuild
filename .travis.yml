@@ -9,8 +9,8 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - python3.6
-      - gcc-7.2
-      - g++-7.2
+      - gcc-7
+      - g++-7
 compiler:
   - gcc
 before_script:
