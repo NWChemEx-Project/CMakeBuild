@@ -9,6 +9,7 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - python3.6
+      - pybind11
       - gcc-7
       - g++-7
 compiler:
