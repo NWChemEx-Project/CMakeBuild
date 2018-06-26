@@ -8,5 +8,6 @@ before_script:
   - ./travis/build_env.sh
   - g++ --version
   - mpif90 -show
+  - python --version
 script:
   - ./travis/build_and_test.sh
