@@ -5,8 +5,8 @@ os:
 compiler:
   - gcc
 before_script:
+  - ./travis/build_env.sh
   - g++ --version
   - mpif90 -show
-  - ./travis/build_env.sh
 script:
   - ./travis/build_and_test.sh
