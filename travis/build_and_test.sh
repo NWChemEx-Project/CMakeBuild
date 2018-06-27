@@ -1,6 +1,6 @@
 #!/bin/bash
 mkdir build
 cd build
-cmake ..
+cmake -DCMAKE_CXX_COMPILER=mpicxx ..
 make
 make test
