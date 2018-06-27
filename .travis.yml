@@ -20,5 +20,6 @@ before_script:
   - g++-7 --version
   - mpif90 -show
   - python3 --version
+  - ./travis/build_openblas.sh
 script:
   - ./travis/build_and_test.sh
