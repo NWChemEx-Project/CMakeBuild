@@ -17,8 +17,9 @@ compiler:
 before_script:
   - ./travis/build_env.sh
   - lsb_release -a
+  - gcc --version
   - g++ --version
-  - g++-7 --version
+  - gfortran --version
   - mpif90 -show
   - python3 --version
   - ./travis/build_openblas.sh
