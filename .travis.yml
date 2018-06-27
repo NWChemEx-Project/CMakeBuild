@@ -11,6 +11,7 @@ addons:
       - python3.6
       - gcc-7
       - g++-7
+      - gfortran-7
 compiler:
   - g++-7
 before_script:
