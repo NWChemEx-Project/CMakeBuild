@@ -13,13 +13,15 @@ addons:
       - g++-7
       - gfortran-7
 compiler:
-  - g++-7
+  - mpicxx
 before_script:
   - ./travis/build_env.sh
   - lsb_release -a
   - gcc --version
   - g++ --version
   - gfortran --version
+  - mpicc -show
+  - mpicxx -show
   - mpif90 -show
   - python3 --version
   - ./travis/build_openblas.sh
