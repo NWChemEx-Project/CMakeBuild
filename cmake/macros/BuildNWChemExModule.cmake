@@ -22,6 +22,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
     option_w_default(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
     option_w_default(BUILD_TESTS TRUE)    #Should we build the tests?
     option_w_default(NWX_DEBUG_CMAKE TRUE) #Enable lots of extra CMake printing?
+    option_w_default(CMAKE_EXPORT_COMPILE_COMMANDS ON)
     option_w_default(CMAKE_VERBOSE_MAKEFILE ${NWX_DEBUG_CMAKE})
     option_w_default(CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY TRUE)
 
@@ -46,7 +47,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
             CMAKE_Fortran_COMPILER CMAKE_BUILD_TYPE BUILD_SHARED_LIBS
             CMAKE_INSTALL_PREFIX CMAKE_CXX_STANDARD CMAKE_VERSION PROJECT_VERSION
             CMAKE_POSITION_INDEPENDENT_CODE CMAKE_VERBOSE_MAKEFILE
-            CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY)
+            CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY CMAKE_EXPORT_COMPILE_COMMANDS)
 
     bundle_cmake_list(CORE_CMAKE_LISTS CMAKE_PREFIX_PATH CMAKE_INSTALL_RPATH
             CMAKE_MODULE_PATH)
@@ -58,7 +59,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
             CMAKE_Fortran_COMPILER CMAKE_BUILD_TYPE BUILD_SHARED_LIBS
             CMAKE_INSTALL_PREFIX CMAKE_CXX_STANDARD CMAKE_VERSION PROJECT_VERSION
             CMAKE_POSITION_INDEPENDENT_CODE CMAKE_VERBOSE_MAKEFILE
-            CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY)
+            CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY CMAKE_EXPORT_COMPILE_COMMANDS)
 
     print_banner("Locating Dependencies and Creating Targets")
     ################################################################################
