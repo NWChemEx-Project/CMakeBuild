@@ -2,7 +2,7 @@
 # This file actually builds LibInt 3.8.0
 #
 cmake_minimum_required(VERSION ${CMAKE_VERSION})
-project(LibInt VERSION 2.4.2 LANGUAGES C CXX)
+project(LibInt VERSION 2.5.0-beta.1 LANGUAGES C CXX)
 include(DependencyMacros)
 include(ExternalProject)
 include(UtilityMacros)
