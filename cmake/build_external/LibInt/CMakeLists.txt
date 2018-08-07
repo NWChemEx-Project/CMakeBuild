@@ -1,8 +1,8 @@
 #
-# This file actually builds LibInt 3.8.0
+# This file actually builds LibInt 2.5.0
 #
 cmake_minimum_required(VERSION ${CMAKE_VERSION})
-project(LibInt VERSION 2.4.2 LANGUAGES C CXX)
+project(LibInt LANGUAGES C CXX)
 include(DependencyMacros)
 include(ExternalProject)
 include(UtilityMacros)
@@ -14,9 +14,10 @@ if(CMAKE_POSITION_INDEPENDENT_CODE)
     string_concat(FPIC_LIST "" " " LIBINT_FLAGS)
 endif()
 
+set(LIBINT_VERSION 2.5.0-beta.1)
 set(LIBINT_URL https://github.com/evaleev/libint)
-set(LIBINT_TAR ${LIBINT_URL}/releases/download/v${PROJECT_VERSION})
-set(LIBINT_TAR ${LIBINT_TAR}/libint-${PROJECT_VERSION})
+set(LIBINT_TAR ${LIBINT_URL}/releases/download/v${LIBINT_VERSION})
+set(LIBINT_TAR ${LIBINT_TAR}/libint-${LIBINT_VERSION})
 if(TEST_LIBINT)
     #Grab the small version of libint for testing purposes
     set(LIBINT_TAR ${LIBINT_TAR}-test-mpqc4.tgz)
