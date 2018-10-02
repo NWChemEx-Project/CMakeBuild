@@ -84,6 +84,11 @@ if (GLOBALARRAYS_FOUND)
 
   if(__lrt)
     find_package(LibRT REQUIRED)
+  else()
+    #For now since GA does not export librt in some configurations
+    find_package(LibRT QUIET)
+  endif()
+  if(LIBRT_LIBRARIES)
     set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${LIBRT_LIBRARIES})
   endif()
 
