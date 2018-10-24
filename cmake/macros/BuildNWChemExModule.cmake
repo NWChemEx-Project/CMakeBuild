@@ -11,7 +11,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
     include(UtilityMacros)
 
     #We require C++14 get it out of the way early
-    option_w_default(CMAKE_CXX_STANDARD 14)
+    option_w_default(CMAKE_CXX_STANDARD 17)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     option_w_default(CMAKE_CXX_EXTENSIONS OFF)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
@@ -22,7 +22,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
     print_banner("Configuration Options")
 
     option_w_default(CMAKE_BUILD_TYPE Release)
-    option_w_default(BUILD_SHARED_LIBS TRUE)
+    option_w_default(BUILD_SHARED_LIBS OFF)
     option_w_default(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
     option_w_default(BUILD_TESTS TRUE)    #Should we build the tests?
     option_w_default(NWX_DEBUG_CMAKE TRUE) #Enable lots of extra CMake printing?
