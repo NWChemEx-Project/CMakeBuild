@@ -7,14 +7,14 @@ include(DependencyMacros)
 include(ExternalProject)
 include(UtilityMacros)
 
-string_concat(CMAKE_CXX_FLAGS "" " " LIBINT_FLAGS)
+string_concat(CMAKE_CXX_FLAGS_RELEASE "" " " LIBINT_FLAGS)
 
 if(CMAKE_POSITION_INDEPENDENT_CODE)
     set(FPIC_LIST "-fPIC")
     string_concat(FPIC_LIST "" " " LIBINT_FLAGS)
 endif()
 
-set(LIBINT_VERSION 2.5.0-beta.1)
+set(LIBINT_VERSION 2.5.0-beta.2)
 set(LIBINT_URL https://github.com/evaleev/libint)
 set(LIBINT_TAR ${LIBINT_URL}/releases/download/v${LIBINT_VERSION})
 set(LIBINT_TAR ${LIBINT_TAR}/libint-${LIBINT_VERSION})
@@ -36,6 +36,7 @@ ExternalProject_Add(LibInt_External
                                       CFLAGS=${LIBINT_FLAGS}
                                       CXXFLAGS=${LIBINT_FLAGS}
                                       ${LIBINT_CONFIG_OPTIONS}
+                                      --with-cxx-optflags=-march=native
         INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
         BUILD_IN_SOURCE 1
 )
