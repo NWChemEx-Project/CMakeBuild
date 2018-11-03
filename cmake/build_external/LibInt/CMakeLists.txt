@@ -25,6 +25,11 @@ else()
     set(LIBINT_TAR ${LIBINT_TAR}.tgz)
 endif()
 
+set(LIBINT_OPT_FLAGS -march=native)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+    set(LIBINT_OPT_FLAGS -xHost)
+endif()
+
 find_dependency(Eigen3)
 makify_dependency(Eigen3 LIBINT_FLAGS Eigen3_LIBRARIES)
 
@@ -36,7 +41,7 @@ ExternalProject_Add(LibInt_External
                                       CFLAGS=${LIBINT_FLAGS}
                                       CXXFLAGS=${LIBINT_FLAGS}
                                       ${LIBINT_CONFIG_OPTIONS}
-                                      --with-cxx-optflags=-march=native
+                                      --with-cxx-optflags=${LIBINT_OPT_FLAGS}
         INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
         BUILD_IN_SOURCE 1
 )
