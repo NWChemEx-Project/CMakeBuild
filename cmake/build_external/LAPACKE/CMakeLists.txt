@@ -5,10 +5,10 @@ cmake_minimum_required(VERSION ${CMAKE_VERSION})
 project(LAPACKE VERSION 3.8.0 LANGUAGES C Fortran)
 include(DependencyMacros)
 include(ExternalProject)
-find_dependency(BLAS)
-find_dependency(LAPACK)
-package_dependency(BLAS DEPENDENCY_PATHS)
-package_dependency(LAPACK DEPENDENCY_PATHS)
+# find_dependency(BLAS)
+# find_dependency(LAPACK)
+# package_dependency(BLAS DEPENDENCY_PATHS)
+# package_dependency(LAPACK DEPENDENCY_PATHS)
 set(LAPACKE_VERSION 3.8.0)
 
 set(LAPACKE_URL http://www.netlib.org/lapack/lapack-${LAPACKE_VERSION}.tar.gz)
@@ -23,8 +23,8 @@ ExternalProject_Add(LAPACKE
         URL ${LAPACKE_URL}
         URL_MD5 ${LAPACKE_MD5}
         CMAKE_ARGS -DCMAKE_BUILD_TYPE=RELEASE
-                   -DUSE_OPTIMIZED_BLAS=ON
-                   -DUSE_OPTIMIZED_LAPACK=ON
+                   -DUSE_OPTIMIZED_BLAS=OFF
+                   -DUSE_OPTIMIZED_LAPACK=OFF
                    -DBUILD_TESTING=OFF
                    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
                    -DCMAKE_C_FLAGS=${LAPACK_FLAGS}
