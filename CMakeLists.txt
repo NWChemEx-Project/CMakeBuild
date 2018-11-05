@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.11)
 project(CMakeBuild VERSION 0.0.0 LANGUAGES CXX)
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/macros/BuildNWChemExModule.cmake)
 set(CMakeBuild_DEPENDENCIES NWX_Catch)

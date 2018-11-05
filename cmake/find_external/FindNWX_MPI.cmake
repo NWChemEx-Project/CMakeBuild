@@ -18,7 +18,7 @@ foreach(FindNWX_MPI_lang C CXX)
         list(APPEND NWX_MPI_LIBRARIES
                     ${MPI_${FindNWX_MPI_lang}_LIBRARIES})
         list(APPEND NWX_MPI_INCLUDE_DIRS
-                    ${MPI_${FindNWX_MPI_lang}_INCLUDE_PATH})
+                    ${MPI_${FindNWX_MPI_lang}_INCLUDE_DIRS})
 
         if (NOT "${MPI_${FindNWX_MPI_lang}_COMPILE_FLAGS}" STREQUAL "")
             string(REPLACE " " ";" REPLACED_MPI_${FindNWX_MPI_lang}_COMPILE_FLAGS ${MPI_${FindNWX_MPI_lang}_COMPILE_FLAGS})
