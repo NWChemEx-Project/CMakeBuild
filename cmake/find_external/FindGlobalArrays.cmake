@@ -73,8 +73,19 @@ if (GLOBALARRAYS_FOUND)
     if(NOT __lrt) 
       string(COMPARE EQUAL "-lrt" ${__lib} __lrt) 
     endif()
+    if(NOT __lgfortran) 
+      string(COMPARE EQUAL "-lgfortran" ${__lib} __lgfortran) 
+    endif()    
   endforeach()
 
+  if(__lgfortran)
+    enable_language(Fortran)
+    find_library(GA_STANDARDFORTRAN_LIBRARY
+      libgfortran${CMAKE_SHARED_LIBRARY_SUFFIX}
+      HINTS ${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES}
+    )
+    set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${GA_STANDARDFORTRAN_LIBRARY})
+  endif()
 
   if(__lpthread)
     set(THREADS_PREFER_PTHREAD_FLAG ON)

@@ -115,6 +115,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
                     INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${TEST_STAGE_DIR}
                     CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}
                                      ${CORE_CMAKE_STRINGS}
+                                     ${DEPENDENCY_PATHS}
                                      -DNWX_DEPENDENCIES:LIST=${TEST_DEPENDS}
                     )
             add_dependencies(${__project}_Tests_External ${__project}_External)
