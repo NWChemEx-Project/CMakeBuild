@@ -11,7 +11,7 @@
 #  NWX_MPI_FOUND, True if we found NWX_MPI
 include(UtilityMacros)
 
-find_package(MPI QUIET)
+include(FindMPI)
 foreach(FindNWX_MPI_lang C CXX)
     is_valid_and_true(MPI_${FindNWX_MPI_lang}_FOUND FINDNWX_MPI_was_found)
     if(FINDNWX_MPI_was_found)
