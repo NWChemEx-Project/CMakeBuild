@@ -76,7 +76,19 @@ if (GLOBALARRAYS_FOUND)
     if(NOT __lgfortran) 
       string(COMPARE EQUAL "-lgfortran" ${__lib} __lgfortran) 
     endif()    
+    if(NOT __lifcoremt_pic) 
+      string(COMPARE EQUAL "-lifcoremt_pic" ${__lib} __lifcoremt_pic) 
+    endif()    
   endforeach()
+
+  if(__lifcoremt_pic)
+    enable_language(Fortran)
+    find_library(GA_IFCOREMT_LIBRARY
+      NAMES libifcoremt_pic.a libifcoremt_pic.so
+      HINTS ${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES}
+    )
+    set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${GA_IFCOREMT_LIBRARY})
+  endif()
 
   if(__lgfortran)
     enable_language(Fortran)
