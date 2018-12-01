@@ -33,18 +33,17 @@ is_valid(LAPACKE_LIBRARIES FINDLAPACKE_LIBS_SET)
 if(NOT FINDLAPACKE_LIBS_SET)
     find_library(LAPACKE_LIBRARY NAMES lapacke)
     find_package_handle_standard_args(LAPACKE DEFAULT_MSG LAPACKE_LIBRARY)
-    #Now we have to find a LAPACK library
-    find_package(LAPACK)
-
-    #This is where'd we check that it's compatible, but as you can see we don't
-
-    #and a BLAS implementation
-    find_package(BLAS)
-
-    #This is where'd we check that it's compatible, but as you can see we don't
-
-    set(LAPACKE_LIBRARIES ${LAPACKE_LIBRARY} ${LAPACK_LIBRARIES}
-                          ${BLAS_LIBRARIES})
+    is_valid_and_true(LAPACKE_FOUND found_lapacke)
+    if(found_lapacke)
+        #Now we have to find a LAPACK library
+        find_package(LAPACK)
+        #This is where'd we check that it's compatible, but as you can see we don't
+        #and a BLAS implementation
+        find_package(BLAS)
+        #This is where'd we check that it's compatible, but as you can see we don't
+        set(LAPACKE_LIBRARIES ${LAPACKE_LIBRARY} ${LAPACK_LIBRARIES}
+                            ${BLAS_LIBRARIES})
+    endif()
 endif()
 
 set(FINDLAPACKE_HEADER lapacke.h)

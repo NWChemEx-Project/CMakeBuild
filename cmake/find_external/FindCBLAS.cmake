@@ -32,10 +32,13 @@ is_valid(CBLAS_LIBRARIES FINDCBLAS_LIBS_SET)
 if(NOT FINDCBLAS_LIBS_SET)
     find_library(CBLAS_LIBRARY NAMES cblas)
     find_package_handle_standard_args(CBLAS DEFAULT_MSG CBLAS_LIBRARY)
-    #Now we have to find a BLAS library compatible with our CBLAS implementation
-    find_package(BLAS)
-    #This is where'd we check that it's compatible, but as you can see we don't
-    set(CBLAS_LIBRARIES ${CBLAS_LIBRARY} ${BLAS_LIBRARIES})
+    is_valid_and_true(CBLAS_FOUND found_cblas)
+    if(found_cblas)
+        #Now we have to find a BLAS library compatible with our CBLAS implementation
+        find_package(BLAS)
+        #This is where'd we check that it's compatible, but as you can see we don't
+        set(CBLAS_LIBRARIES ${CBLAS_LIBRARY} ${BLAS_LIBRARIES})
+    endif()
 endif()
 
 #Let's see if it's MKL. Intel likes their branding, which we can use to our
