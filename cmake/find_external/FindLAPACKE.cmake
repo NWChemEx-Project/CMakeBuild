@@ -54,6 +54,12 @@ set(FINDLAPACKE_HEADER lapacke.h)
 string(FIND "${LAPACKE_LIBRARIES}" "mkl" FINDLAPACKE_substring_found)
 if(NOT "${FINDLAPACKE_substring_found}" STREQUAL "-1")
     set(FINDLAPACKE_HEADER mkl.h)
+    list(GET LAPACKE_LIBRARIES 0 _some_mkl_lib)
+    get_filename_component(_mkl_lib_path ${_some_mkl_lib} DIRECTORY)
+    find_library(LAPACKE_LIBRARY NAMES mkl_core PATHS ${_mkl_lib_path})
+    find_path(LAPACKE_INCLUDE_DIR NAMES ${FINDLAPACKE_HEADER} PATHS ${LAPACKE_INCLUDE_DIRS})
+    find_package_handle_standard_args(LAPACKE DEFAULT_MSG LAPACKE_LIBRARY LAPACKE_INCLUDE_DIR)
+
     list(APPEND LAPACKE_DEFINITIONS "-DTAMM_LAPACK_INT=MKL_INT")
 else()
     list(APPEND LAPACKE_DEFINITIONS "-DTAMM_LAPACK_INT=lapack_int")
@@ -68,5 +74,5 @@ if(NOT FINDLAPACKE_INCS_SET)
 endif()
 list(APPEND LAPACKE_DEFINITIONS "-DLAPACKE_HEADER=\"${FINDLAPACKE_HEADER}\"")
 
-find_package_handle_standard_args(LAPACKE DEFAULT_MSG LAPACKE_INCLUDE_DIRS
-                                                      LAPACKE_LIBRARIES)
+find_package_handle_standard_args(LAPACKE DEFAULT_MSG LAPACKE_INCLUDE_DIR
+                                                      LAPACKE_LIBRARY)
