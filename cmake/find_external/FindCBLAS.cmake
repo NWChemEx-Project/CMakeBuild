@@ -59,5 +59,5 @@ endif()
 list(APPEND CBLAS_DEFINITIONS "-DCBLAS_HEADER=\"${FINDCBLAS_HEADER}\"")
 
 
-find_package_handle_standard_args(CBLAS DEFAULT_MSG CBLAS_INCLUDE_DIR
-                                                    CBLAS_LIBRARY)
+find_package_handle_standard_args(CBLAS DEFAULT_MSG CBLAS_INCLUDE_DIRS
+                                                    CBLAS_LIBRARIES)
