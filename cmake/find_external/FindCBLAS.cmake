@@ -43,6 +43,12 @@ endif()
 string(FIND "${CBLAS_LIBRARIES}" "mkl" FINDCBLAS_substring_found)
 if(NOT "${FINDCBLAS_substring_found}" STREQUAL "-1")
     set(FINDCBLAS_HEADER mkl.h)
+    list(GET CBLAS_LIBRARIES 0 _some_mkl_lib)
+    get_filename_component(_mkl_lib_path ${_some_mkl_lib} DIRECTORY)
+    find_library(CBLAS_LIBRARY NAMES mkl_core PATHS ${_mkl_lib_path})
+    find_path(CBLAS_INCLUDE_DIR NAMES ${FINDCBLAS_HEADER} PATHS ${CBLAS_INCLUDE_DIRS})
+    find_package_handle_standard_args(CBLAS DEFAULT_MSG CBLAS_LIBRARY)
+    find_package_handle_standard_args(CBLAS DEFAULT_MSG CBLAS_INCLUDE_DIR)
 endif()
 
 is_valid(CBLAS_INCLUDE_DIRS FINDCBLAS_INCS_SET)
@@ -54,5 +60,5 @@ endif()
 list(APPEND CBLAS_DEFINITIONS "-DCBLAS_HEADER=\"${FINDCBLAS_HEADER}\"")
 
 
-find_package_handle_standard_args(CBLAS DEFAULT_MSG REQUIRED_VARS CBLAS_INCLUDE_DIRS
-                                                    CBLAS_LIBRARIES)
+find_package_handle_standard_args(CBLAS DEFAULT_MSG CBLAS_INCLUDE_DIR
+                                                    CBLAS_LIBRARY)
