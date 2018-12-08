@@ -88,6 +88,10 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
         set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} ${TAMM_CXX_FLAGS})
         bundle_cmake_strings(CORE_CMAKE_STRINGS CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG)
 
+        if(TAMM_EXTRA_LIBS)
+            bundle_cmake_strings(CORE_CMAKE_STRINGS TAMM_EXTRA_LIBS)
+        endif()
+
         ExternalProject_Add(${__project}_External
                 SOURCE_DIR ${${__project}_SRC_DIR}
                 CMAKE_ARGS -DNWX_DEBUG_CMAKE=${NWX_DEBUG_CMAKE}
