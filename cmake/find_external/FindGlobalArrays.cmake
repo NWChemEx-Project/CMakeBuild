@@ -96,7 +96,7 @@ if (GLOBALARRAYS_FOUND)
   if(__lgfortran)
     enable_language(Fortran)
     find_library(GA_STANDARDFORTRAN_LIBRARY
-      libgfortran${CMAKE_SHARED_LIBRARY_SUFFIX}
+      NAMES libgfortran.a libgfortran.so
       HINTS ${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES}
     )
     set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${GA_STANDARDFORTRAN_LIBRARY})
