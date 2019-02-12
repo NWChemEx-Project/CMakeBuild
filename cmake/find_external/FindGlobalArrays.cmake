@@ -90,7 +90,7 @@ if (GLOBALARRAYS_FOUND)
   if(__lifcoremt_pic)
     enable_language(Fortran)
     find_library(GA_IFCOREMT_LIBRARY
-      NAMES libifcoremt_pic.a libifcoremt_pic.so
+      NAMES libifcoremt_pic.so libifcoremt_pic.a 
       HINTS ${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES}
     )
     set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${GA_IFCOREMT_LIBRARY})
