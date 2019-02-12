@@ -90,7 +90,7 @@ if (GLOBALARRAYS_FOUND)
   if(__lifcoremt_pic)
     enable_language(Fortran)
     find_library(GA_IFCOREMT_LIBRARY
-      NAMES libifcoremt_pic.a libifcoremt_pic.so
+      NAMES libifcoremt_pic.so libifcoremt_pic.a 
       HINTS ${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES}
     )
     set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${GA_IFCOREMT_LIBRARY})
@@ -99,7 +99,7 @@ if (GLOBALARRAYS_FOUND)
   if(__lgfortran)
     enable_language(Fortran)
     find_library(GA_STANDARDFORTRAN_LIBRARY
-      NAMES libgfortran.a libgfortran.so
+      NAMES libgfortran.so libgfortran.a
       HINTS ${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES}
     )
     set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${GA_STANDARDFORTRAN_LIBRARY})
@@ -108,7 +108,7 @@ if (GLOBALARRAYS_FOUND)
   if(__lquadmath)
     enable_language(Fortran)
     find_library(GA_QMATH_LIBRARY
-      NAMES libquadmath.a libquadmath.so
+      NAMES  libquadmath.so libquadmath.a
       HINTS ${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES}
     )
     set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${GA_QMATH_LIBRARY})
