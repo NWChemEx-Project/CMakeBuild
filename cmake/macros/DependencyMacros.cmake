@@ -137,9 +137,11 @@ function(makify_dependency __depend __incs __libs)
         get_filename_component(_lib_path ${__lib} DIRECTORY)
         # Get only library name with extension
         get_filename_component(_name_lib ${__lib} NAME_WE)
-        # Strip the lib prefix
-        string(SUBSTRING ${_name_lib} 3 -1 _name_lib)
-        set(${__libs} "${${__libs}} -L${_lib_path} -l${_name_lib}")
+        if(NOT _lib_path STREQUAL "")
+            # Strip the lib prefix
+            string(SUBSTRING ${_name_lib} 3 -1 _name_lib)
+            set(${__libs} "${${__libs}} -L${_lib_path} -l${_name_lib}")
+        endif()
     endforeach()
     set(${__incs} ${${__incs}} PARENT_SCOPE)
     set(${__libs} ${${__libs}} PARENT_SCOPE)

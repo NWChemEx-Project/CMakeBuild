@@ -13,7 +13,14 @@ endforeach()
 
 set(GA_BLAS "--with-blas8=${CBLAS_LIBS}")
 set(GA_LAPACK "--with-lapack=${LAPACKE_LIBS}")
-set(GA_SCALAPACK "--without-scalapack")
+
+is_valid(SCALAPACK_LIBRARIES SCALAPACK_LIBS_SET)
+if (SCALAPACK_LIBS_SET) 
+    set(GA_SCALAPACK "--with-scalapack8=${SCALAPACK_LIBRARIES}")
+else()
+    set(GA_SCALAPACK "--without-scalapack")
+endif()
+
 set(GA_MPI "--with-mpi=${NWX_MPI_INCS} ${NWX_MPI_LIBS}")
 
 set(GA_SYSVSHMEM "ARMCI_DEFAULT_SHMMAX_UBOUND=131072")

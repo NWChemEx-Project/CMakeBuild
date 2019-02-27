@@ -28,6 +28,8 @@ endif()
 set(LIBINT_OPT_FLAGS -march=native)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
     set(LIBINT_OPT_FLAGS -xHost)
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "ppc64le")
+    set(LIBINT_OPT_FLAGS -mtune=native)
 endif()
 
 find_dependency(Eigen3)

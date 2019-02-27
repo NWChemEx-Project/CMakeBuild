@@ -24,7 +24,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
     option_w_default(CMAKE_BUILD_TYPE Release)
     option_w_default(BUILD_SHARED_LIBS OFF)
     option_w_default(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
-    option_w_default(BUILD_TESTS TRUE)    #Should we build the tests?
+    option_w_default(BUILD_TESTS OFF)    #Should we build the tests?
     option_w_default(NWX_DEBUG_CMAKE TRUE) #Enable lots of extra CMake printing?
     option_w_default(CMAKE_EXPORT_COMPILE_COMMANDS ON)
     option_w_default(CMAKE_VERBOSE_MAKEFILE ${NWX_DEBUG_CMAKE})
@@ -84,6 +84,13 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
             endif()
 
         endforeach()
+
+        set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} ${TAMM_CXX_FLAGS})
+        bundle_cmake_strings(CORE_CMAKE_STRINGS CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG)
+
+        if(TAMM_EXTRA_LIBS)
+            bundle_cmake_strings(CORE_CMAKE_STRINGS TAMM_EXTRA_LIBS)
+        endif()
 
         ExternalProject_Add(${__project}_External
                 SOURCE_DIR ${${__project}_SRC_DIR}

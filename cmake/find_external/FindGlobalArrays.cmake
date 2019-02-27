@@ -76,15 +76,42 @@ if (GLOBALARRAYS_FOUND)
     if(NOT __lgfortran) 
       string(COMPARE EQUAL "-lgfortran" ${__lib} __lgfortran) 
     endif()    
+    if(NOT __lquadmath) 
+      string(COMPARE EQUAL "-lquadmath" ${__lib} __lquadmath) 
+    endif()        
+    if(NOT __lifcoremt_pic) 
+      string(COMPARE EQUAL "-lifcoremt_pic" ${__lib} __lifcoremt_pic) 
+    endif()  
+    if(NOT __libverbs) 
+      string(COMPARE EQUAL "-libverbs" ${__lib} __libverbs) 
+    endif()        
   endforeach()
+
+  if(__lifcoremt_pic)
+    enable_language(Fortran)
+    find_library(GA_IFCOREMT_LIBRARY
+      NAMES libifcoremt_pic.so libifcoremt_pic.a 
+      HINTS ${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES}
+    )
+    set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${GA_IFCOREMT_LIBRARY})
+  endif()
 
   if(__lgfortran)
     enable_language(Fortran)
     find_library(GA_STANDARDFORTRAN_LIBRARY
-      libgfortran${CMAKE_SHARED_LIBRARY_SUFFIX}
+      NAMES libgfortran.so libgfortran.a
       HINTS ${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES}
     )
     set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${GA_STANDARDFORTRAN_LIBRARY})
+  endif()
+
+  if(__lquadmath)
+    enable_language(Fortran)
+    find_library(GA_QMATH_LIBRARY
+      NAMES  libquadmath.so libquadmath.a
+      HINTS ${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES}
+    )
+    set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${GA_QMATH_LIBRARY})
   endif()
 
   if(__lpthread)
@@ -106,6 +133,11 @@ if (GLOBALARRAYS_FOUND)
   if(__lmath)
     find_package(LibM REQUIRED)
     set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${LIBM_LIBRARIES})
+  endif()
+
+  if(__libverbs)
+    find_package(Ibverbs REQUIRED)
+    set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${IBVERBS_LIBRARIES})
   endif()
 endif()
 

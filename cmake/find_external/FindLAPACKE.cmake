@@ -33,18 +33,17 @@ is_valid(LAPACKE_LIBRARIES FINDLAPACKE_LIBS_SET)
 if(NOT FINDLAPACKE_LIBS_SET)
     find_library(LAPACKE_LIBRARY NAMES lapacke)
     find_package_handle_standard_args(LAPACKE DEFAULT_MSG LAPACKE_LIBRARY)
-    #Now we have to find a LAPACK library
-    find_package(LAPACK)
-
-    #This is where'd we check that it's compatible, but as you can see we don't
-
-    #and a BLAS implementation
-    find_package(BLAS)
-
-    #This is where'd we check that it's compatible, but as you can see we don't
-
-    set(LAPACKE_LIBRARIES ${LAPACKE_LIBRARY} ${LAPACK_LIBRARIES}
-                          ${BLAS_LIBRARIES})
+    is_valid_and_true(LAPACKE_FOUND found_lapacke)
+    if(found_lapacke)
+        #Now we have to find a LAPACK library
+        find_package(LAPACK)
+        #This is where'd we check that it's compatible, but as you can see we don't
+        #and a BLAS implementation
+        find_package(BLAS)
+        #This is where'd we check that it's compatible, but as you can see we don't
+        set(LAPACKE_LIBRARIES ${LAPACKE_LIBRARY} ${LAPACK_LIBRARIES}
+                            ${BLAS_LIBRARIES})
+    endif()
 endif()
 
 set(FINDLAPACKE_HEADER lapacke.h)
@@ -52,8 +51,27 @@ set(FINDLAPACKE_HEADER lapacke.h)
     #to our advantage by looking if the string "mkl" appears in any of the
     #library names
 string(FIND "${LAPACKE_LIBRARIES}" "mkl" FINDLAPACKE_substring_found)
+string(FIND "${LAPACKE_LIBRARIES}" "essl" FINDLAPACKE_essl_found)
+
 if(NOT "${FINDLAPACKE_substring_found}" STREQUAL "-1")
     set(FINDLAPACKE_HEADER mkl.h)
+    list(GET LAPACKE_LIBRARIES 0 _some_mkl_lib)
+    get_filename_component(_mkl_lib_path ${_some_mkl_lib} DIRECTORY)
+    find_library(LAPACKE_LIBRARY NAMES mkl_core PATHS ${_mkl_lib_path})
+    find_path(LAPACKE_INCLUDE_DIR NAMES ${FINDLAPACKE_HEADER} PATHS ${LAPACKE_INCLUDE_DIRS})
+    find_package_handle_standard_args(LAPACKE DEFAULT_MSG LAPACKE_LIBRARY LAPACKE_INCLUDE_DIR)
+    list(APPEND LAPACKE_DEFINITIONS "-DTAMM_LAPACK_INT=MKL_INT")
+    
+elseif(NOT "${FINDLAPACKE_essl_found}" STREQUAL "-1")
+    set(FINDLAPACKE_HEADER essl_lapacke.h)
+    list(GET LAPACKE_LIBRARIES 0 _some_essl_lib)
+    get_filename_component(_essl_lib_path ${_some_essl_lib} DIRECTORY)
+    find_library(LAPACKE_LIBRARY NAMES essl PATHS ${_essl_lib_path})
+    find_path(LAPACKE_INCLUDE_DIR NAMES ${FINDLAPACKE_HEADER} PATHS ${LAPACKE_INCLUDE_DIRS})
+    find_package_handle_standard_args(LAPACKE DEFAULT_MSG LAPACKE_LIBRARY LAPACKE_INCLUDE_DIR)
+    list(APPEND LAPACKE_DEFINITIONS "-DTAMM_LAPACK_INT=lapack_int")    
+else()
+    list(APPEND LAPACKE_DEFINITIONS "-DTAMM_LAPACK_INT=lapack_int")
 endif()
 
 is_valid(LAPACKE_INCLUDE_DIRS FINDLAPACKE_INCS_SET)
