@@ -92,6 +92,10 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
             bundle_cmake_strings(CORE_CMAKE_STRINGS TAMM_EXTRA_LIBS)
         endif()
 
+        if(NWX_CUDA)
+            bundle_cmake_strings(CORE_CMAKE_STRINGS NWX_CUDA)
+        endif()
+
         ExternalProject_Add(${__project}_External
                 SOURCE_DIR ${${__project}_SRC_DIR}
                 CMAKE_ARGS -DNWX_DEBUG_CMAKE=${NWX_DEBUG_CMAKE}
