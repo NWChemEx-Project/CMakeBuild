@@ -156,14 +156,7 @@ function(add_mpi_cuda_unit_test __name __cudasrcs __np __testargs)
 
     set(__testcudalib "tce_${__name}")
     add_library(${__testcudalib} ${__cudasrcs})
-    foreach(__depend ${NWX_DEPENDENCIES})
-        find_dependency(${__depend})
-        target_link_libraries(${__testcudalib} PRIVATE ${__depend}_External)
-        get_property(_tmp_libs TARGET ${__depend}_External
-                PROPERTY INTERFACE_LINK_LIBRARIES)
-        list(APPEND CMAKE_INSTALL_RPATH ${_tmp_libs})
-    endforeach()
-    target_include_directories(${__testcudalib} PRIVATE ${NWX_INCLUDE_DIR} ${INCLUDE_DIRECTORIES})
+    target_include_directories(${__testcudalib} PRIVATE ${NWX_INCLUDE_DIR} ${NWX_MPI_INCLUDE_DIRS} ${GLOBALARRAYS_INCLUDE_DIRS})
     set_property(TARGET ${__testcudalib} PROPERTY CUDA_SEPARABLE_COMPILATION ON)
     
     add_executable(${__name} ${__file_copy})
