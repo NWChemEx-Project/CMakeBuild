@@ -14,7 +14,7 @@ if(CMAKE_POSITION_INDEPENDENT_CODE)
     string_concat(FPIC_LIST "" " " LIBINT_FLAGS)
 endif()
 
-set(LIBINT_VERSION 2.5.0-beta.2)
+set(LIBINT_VERSION 2.5.0)
 set(LIBINT_URL https://github.com/evaleev/libint)
 set(LIBINT_TAR ${LIBINT_URL}/releases/download/v${LIBINT_VERSION})
 set(LIBINT_TAR ${LIBINT_TAR}/libint-${LIBINT_VERSION})
