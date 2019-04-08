@@ -93,7 +93,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
         endif()
 
         if(NWX_CUDA)
-            bundle_cmake_strings(CORE_CMAKE_STRINGS NWX_CUDA)
+            bundle_cmake_strings(CORE_CMAKE_STRINGS NWX_CUDA NWX_GPU_ARCH)
         endif()
 
         ExternalProject_Add(${__project}_External
