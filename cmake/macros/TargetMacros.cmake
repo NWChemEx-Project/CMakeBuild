@@ -139,7 +139,7 @@ function(nwchemex_set_up_cuda_target __name __testcudalib __flags __lflags __ins
         target_link_libraries(${__name} PRIVATE "${TAMM_EXTRA_LIBS}")
     endif()
     target_compile_definitions(${__name} PRIVATE "${__flags}")
-    target_include_directories(${__name} PRIVATE ${NWX_INCLUDE_DIR})
+    target_include_directories(${__name} PRIVATE ${NWX_INCLUDE_DIR} ${CUDA_TOOLKIT_INCLUDE})
     set_property(TARGET ${__name} PROPERTY CXX_STANDARD ${CMAKE_CXX_STANDARD})
     set_property(TARGET ${__name} PROPERTY LINK_FLAGS "${__lflags}") 
     set_property(TARGET ${__name} PROPERTY CUDA_SEPARABLE_COMPILATION ON)
@@ -164,7 +164,7 @@ function(add_mpi_cuda_unit_test __name __cudasrcs __np __testargs)
     set(__testcudalib "tce_${__name}")
 
     add_library(${__testcudalib} ${__cudasrcs})
-    target_include_directories(${__testcudalib} PRIVATE ${nwx_cuda_incs})
+    target_include_directories(${__testcudalib} PRIVATE ${nwx_cuda_incs} ${CUDA_TOOLKIT_INCLUDE})
     set_property(TARGET ${__testcudalib} PROPERTY CUDA_SEPARABLE_COMPILATION ON)
     
     add_executable(${__name} ${__file_copy})
