@@ -83,5 +83,6 @@ if(NOT FINDLAPACKE_INCS_SET)
 endif()
 list(APPEND LAPACKE_DEFINITIONS "-DLAPACKE_HEADER=\"${FINDLAPACKE_HEADER}\"")
 
+set(LAPACKE_HEADER \\\"${FINDLAPACKE_HEADER}\\\" CACHE STRING "lapacke header" FORCE)
 find_package_handle_standard_args(LAPACKE DEFAULT_MSG LAPACKE_INCLUDE_DIRS
                                                       LAPACKE_LIBRARIES)
