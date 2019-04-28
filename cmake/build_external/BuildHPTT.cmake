@@ -1,7 +1,7 @@
 
 
 ExternalProject_Add(HPTT_External
-    GIT_REPOSITORY https://github.com/springer13/hptt.git
+    GIT_REPOSITORY https://github.com/ajaypanyala/hptt.git
     UPDATE_DISCONNECTED 1
     CMAKE_ARGS ${DEPENDENCY_CMAKE_OPTIONS}
     INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
