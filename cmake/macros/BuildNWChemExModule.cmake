@@ -89,9 +89,8 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
 
         endforeach()
 
-        if(TAMM_CXX_FLAGS)
-            bundle_cmake_strings(CORE_CMAKE_STRINGS TAMM_CXX_FLAGS)
-        endif()
+        set(${NWX_CXX_FLAGS} "${${NWX_CXX_FLAGS}} ${TAMM_CXX_FLAGS}")
+        bundle_cmake_strings(CORE_CMAKE_STRINGS ${NWX_CXX_FLAGS})
 
         if(TAMM_EXTRA_LIBS)
             bundle_cmake_strings(CORE_CMAKE_STRINGS TAMM_EXTRA_LIBS)
