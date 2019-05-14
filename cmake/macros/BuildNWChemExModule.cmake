@@ -69,6 +69,24 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
 
     bundle_cmake_args(DEPENDENCY_CMAKE_OPTIONS ${NWX_CORE_OPTIONS})
 
+    if (SCALAPACK) 
+        bundle_cmake_args(DEPENDENCY_CMAKE_OPTIONS SCALAPACK)
+        set(TAMM_CXX_FLAGS "${TAMM_CXX_FLAGS} -DSCALAPACK")
+    endif()
+
+    if(NOT BLAS_INT4)
+        string(FIND "${LAPACKE_LIBRARIES}" "mkl" FINDLAPACKE_mkl_found)
+        string(FIND "${LAPACKE_LIBRARIES}" "essl" FINDLAPACKE_essl_found)
+
+        if(NOT "${FINDLAPACKE_mkl_found}" STREQUAL "-1")
+            set(TAMM_CXX_FLAGS "${TAMM_CXX_FLAGS} -m64 -DMKL_ILP64")
+        elseif(NOT "${FINDLAPACKE_essl_found}" STREQUAL "-1")
+            set(TAMM_CXX_FLAGS "${TAMM_CXX_FLAGS} -m64 -DLAPACK_ILP64")
+        endif()
+    else()
+        bundle_cmake_args(DEPENDENCY_CMAKE_OPTIONS BLAS_INT4)
+    endif()
+
     print_banner("Locating Dependencies and Creating Targets")
     ################################################################################
     #
