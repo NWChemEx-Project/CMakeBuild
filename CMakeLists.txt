@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.13)
-project(CMakeBuild VERSION 0.0.0 LANGUAGES CXX)
+project(CMakeBuild VERSION 0.0.0 LANGUAGES C CXX Fortran)
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/macros/BuildNWChemExModule.cmake)
 
 if(NOT DEFINED BUILD_TESTS)
