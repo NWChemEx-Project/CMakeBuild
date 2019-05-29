@@ -33,3 +33,6 @@ find_package_handle_standard_args(BLIS DEFAULT_MSG
 
 set(BLIS_LIBRARIES ${BLIS_LIBRARY})
 set(BLIS_INCLUDE_DIRS ${BLIS_INCLUDE_DIR})
+
+list(APPEND BLIS_DEFINITIONS "-DBLIS_HEADER=\"blis.h\"")
+set(BLIS_HEADER \"blis.h\" CACHE STRING "blis header" FORCE)

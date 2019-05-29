@@ -13,6 +13,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
     #We require C++14 get it out of the way early
     option_w_default(CMAKE_CXX_STANDARD 17)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    option_w_default(BLAS_INT4 ON)
     option_w_default(CMAKE_CXX_EXTENSIONS OFF)
     option_w_default(CMAKE_BUILD_TYPE Release)
 

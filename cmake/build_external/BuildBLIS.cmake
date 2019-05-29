@@ -2,6 +2,8 @@
 # This file will build BLIS.
 #
 
+find_or_build_dependency(CBLAS)
+
 is_valid_and_true(BLIS_CONFIG __set)
 if (NOT __set)
     message(STATUS "BLIS_CONFIG not set, will auto-detect")
@@ -23,3 +25,7 @@ ExternalProject_Add(BLIS_External
                          ${CORE_CMAKE_STRINGS}
                          ${DEPENDENCY_PATHS}
         )
+
+
+add_dependencies(BLIS_External CBLAS_External)
+                 

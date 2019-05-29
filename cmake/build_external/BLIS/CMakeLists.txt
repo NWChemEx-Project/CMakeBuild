@@ -25,12 +25,19 @@ endif()
 
 set(BLIS_OPT_FLAGS "${BLIS_FLAGS} ${BLIS_OPT_FLAGS}")
 
+set(BLIS_INT_FLAGS -i 64 -b 64 --enable-cblas)
+
+if(BLAS_INT4)
+    set(BLIS_INT_FLAGS -i 32 -b 32 --enable-cblas)
+endif()
+
 ExternalProject_Add(BLIS_External
         URL ${BLIS_TAR}
         CONFIGURE_COMMAND ./configure --prefix=${CMAKE_INSTALL_PREFIX}
                                       CXX=${CMAKE_CXX_COMPILER}
                                       CC=${CMAKE_C_COMPILER}
                                       CFLAGS=${BLIS_OPT_FLAGS}
+                                      ${BLIS_INT_FLAGS}
                                       ${BLIS_CONFIG_HW}
         INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
         BUILD_IN_SOURCE 1
