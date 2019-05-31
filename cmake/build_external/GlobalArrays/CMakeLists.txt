@@ -13,7 +13,7 @@ endforeach()
 
 set(GA_BLAS "--with-blas8=${CBLAS_LIBS}")
 if(BLAS_INT4)
-    set(GA_BLAS "--with-blas=${CBLAS_LIBS}")
+    set(GA_BLAS "--with-blas4=${CBLAS_LIBS}")
 endif()
 
 set(GA_LAPACK "--with-lapack=${LAPACKE_LIBS}")
