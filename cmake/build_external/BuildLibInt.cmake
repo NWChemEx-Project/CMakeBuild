@@ -8,15 +8,36 @@ set(TEST_LIBINT FALSE)
 if(${PROJECT_NAME} STREQUAL "TestBuildLibInt")
     set(TEST_LIBINT TRUE)
 endif()
+
+set(LIBINT_VERSION 2.6.0-beta.4)
+set(LIBINT_URL https://github.com/evaleev/libint)
+set(LIBINT_TAR ${LIBINT_URL}/releases/download/v${LIBINT_VERSION})
+set(LIBINT_TAR ${LIBINT_TAR}/libint-${LIBINT_VERSION})
+if(TEST_LIBINT)
+    #Grab the small version of libint for testing purposes
+    set(LIBINT_TAR ${LIBINT_TAR}-test-mpqc4.tgz)
+else()
+    set(LIBINT_TAR ${LIBINT_TAR}.tgz)
+endif()
+
+# append platform-specific optimization options for non-Debug builds
+set(LIBINT_EXTRA_FLAGS "-Wno-unused-variable")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+    set(LIBINT_EXTRA_FLAGS "-xHost ${LIBINT_EXTRA_FLAGS}")
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "ppc64le")
+    set(LIBINT_EXTRA_FLAGS "-mtune=native ${LIBINT_EXTRA_FLAGS}")
+else()
+    set(LIBINT_EXTRA_FLAGS "-march=native ${LIBINT_EXTRA_FLAGS}")
+endif()
+set(CXX_FLAGS_INIT "${CMAKE_CXX_FLAGS_INIT} ${LIBINT_EXTRA_FLAGS}")
+
 ExternalProject_Add(LibInt_External
-        SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/LibInt
-        CMAKE_ARGS ${DEPENDENCY_CMAKE_OPTIONS}
-                   -DSTAGE_DIR=${STAGE_DIR}
-                   -DTEST_LIBINT=${TEST_LIBINT}
-        BUILD_ALWAYS 1
-        INSTALL_COMMAND $(MAKE) DESTDIR=${STAGE_DIR}
+        URL ${LIBINT_TAR}
+        CMAKE_ARGS ${DEPENDENCY_CMAKE_OPTIONS} -DCMAKE_CXX_FLAGS_INIT=${CXX_FLAGS_INIT}
+        INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
         CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}
-                         ${CORE_CMAKE_STRINGS}
-                         ${DEPENDENCY_PATHS}
+        ${CORE_CMAKE_STRINGS}
         )
+
 add_dependencies(LibInt_External Eigen3_External)
+
