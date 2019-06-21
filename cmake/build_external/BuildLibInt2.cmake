@@ -31,7 +31,7 @@ else()
 endif()
 set(CXX_FLAGS_INIT "${CMAKE_CXX_FLAGS_INIT} ${LIBINT_EXTRA_FLAGS}")
 
-ExternalProject_Add(LibInt_External
+ExternalProject_Add(LibInt2_External
         URL ${LIBINT_TAR}
         CMAKE_ARGS ${DEPENDENCY_CMAKE_OPTIONS} -DCMAKE_CXX_FLAGS_INIT=${CXX_FLAGS_INIT}
         INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
@@ -39,5 +39,5 @@ ExternalProject_Add(LibInt_External
         ${CORE_CMAKE_STRINGS}
         )
 
-add_dependencies(LibInt_External Eigen3_External)
+add_dependencies(LibInt2_External Eigen3_External)
 
