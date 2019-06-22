@@ -42,7 +42,7 @@ ExternalProject_Add(Catch_Headers
 
 #Generate source file
 set(CATCH_MAIN ${CMAKE_BINARY_DIR}/catch_main.cpp)
-file(WRITE ${CATCH_MAIN} "#define CATCH_CONFIG_MAIN\n")
+#file(WRITE ${CATCH_MAIN} "#define CATCH_CONFIG_MAIN\n")
 file(APPEND ${CATCH_MAIN} "#include \"catch/catch.hpp\"\n")
 
 #Make library target
