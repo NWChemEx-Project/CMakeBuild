@@ -11,7 +11,7 @@
 
 if(NOT DEFINED TALSH_ROOT_DIR)
     find_package(PkgConfig)
-    pkg_check_modules(PC_TALSH QUIET libtalsh)
+    pkg_check_modules(PC_TALSH QUIET talsh)
 endif()
 
 find_path(TALSH_INCLUDE_DIR talsh.h
