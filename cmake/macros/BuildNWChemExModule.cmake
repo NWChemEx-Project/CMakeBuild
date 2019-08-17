@@ -20,6 +20,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
     if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         get_filename_component(__NWX_GCC_INSTALL_PREFIX "${CMAKE_Fortran_COMPILER}/../.." ABSOLUTE)
         set(NWX_GCC_TOOLCHAIN_FLAG "--gcc-toolchain=${__NWX_GCC_INSTALL_PREFIX}")
+        message(STATUS "NWX_GCC_TOOLCHAIN_FLAG: ${NWX_GCC_TOOLCHAIN_FLAG}")
     endif()
 
     if(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
@@ -132,8 +133,28 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
         set(${NWX_CXX_FLAGS} "${${NWX_CXX_FLAGS}} ${TAMM_CXX_FLAGS}")
         bundle_cmake_strings(CORE_CMAKE_STRINGS ${NWX_CXX_FLAGS})
 
+        if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+            find_library(stdfs_LIBRARY 
+                NAMES stdc++fs 
+                PATHS ${__NWX_GCC_INSTALL_PREFIX}/lib
+                      ${__NWX_GCC_INSTALL_PREFIX}/lib64 
+                DOC "GNU FS Library" 
+            )
+        else()
+            find_library(stdfs_LIBRARY 
+                NAMES stdc++fs 
+                PATHS ${CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES} 
+                DOC "GNU FS Library" 
+            )
+        endif()
+        message(STATUS "STDFS LIB: ${stdfs_LIBRARY}")
+        if(stdfs_LIBRARY)
+            list(APPEND TAMM_EXTRA_LIBS ${stdfs_LIBRARY})
+        endif()
+
         if(TAMM_EXTRA_LIBS)
             bundle_cmake_strings(CORE_CMAKE_STRINGS TAMM_EXTRA_LIBS)
+            message(STATUS "TAMM_EXTRA_LIBS: ${TAMM_EXTRA_LIBS}")
         endif()
 
         if(NWX_CUDA)
