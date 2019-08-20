@@ -21,7 +21,7 @@ find_path(BLIS_INCLUDE_DIR blis/blis.h
           PATHS ${BLIS_ROOT_DIR}
           PATH_SUFFIXES blis)
 
-find_library(BLIS_LIBRARY NAMES blis
+find_library(BLIS_LIBRARY NAMES liblis.a blis
              HINTS ${PC_BLIS_LIBDIR}
                    ${PC_BLIS_LIBRARY_DIRS}
              PATHS ${BLIS_ROOT_DIR}
