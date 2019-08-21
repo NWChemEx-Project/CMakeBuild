@@ -135,10 +135,9 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
 
         if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             find_library(stdfs_LIBRARY 
-                NAMES stdc++fs 
-                PATHS ${__NWX_GCC_INSTALL_PREFIX}/lib
-                      ${__NWX_GCC_INSTALL_PREFIX}/lib64 
-                DOC "GNU FS Library" 
+                NAMES c++fs 
+                PATHS ${CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES} 
+                DOC "LIBC++ FS Library" 
             )
         else()
             find_library(stdfs_LIBRARY 
