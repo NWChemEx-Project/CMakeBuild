@@ -23,7 +23,7 @@ if(NWX_CUDA)
         # foreach(__sm ${SMS})
         #     set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -gencode arch=compute_${__sm},code=sm_${__sm}")
         # endforeach()
-        set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --use_fast_math -gencode arch=compute_${NWX_GPU_ARCH},code=sm_${NWX_GPU_ARCH}")
+        set(CMAKE_CUDA_FLAGS "--maxrregcount 128 --use_fast_math -gencode arch=compute_${NWX_GPU_ARCH},code=sm_${NWX_GPU_ARCH}")
     endif()
 endif()
 
