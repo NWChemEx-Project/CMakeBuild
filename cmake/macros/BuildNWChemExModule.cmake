@@ -16,6 +16,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
     option_w_default(BLAS_INT4 ON)
     option_w_default(CMAKE_CXX_EXTENSIONS OFF)
     option_w_default(CMAKE_BUILD_TYPE Release)
+    option_w_default(ENABLE_OPENMP ON)
 
     if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         get_filename_component(__NWX_GCC_INSTALL_PREFIX "${CMAKE_Fortran_COMPILER}/../.." ABSOLUTE)
@@ -159,6 +160,10 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
         if(NWX_CUDA)
             bundle_cmake_strings(CORE_CMAKE_STRINGS NWX_CUDA NWX_GPU_ARCH)
         endif()
+
+        if(ENABLE_OPENMP)
+            bundle_cmake_strings(CORE_CMAKE_STRINGS ENABLE_OPENMP)
+        endif()   
 
         ExternalProject_Add(${__project}_External
                 SOURCE_DIR ${${__project}_SRC_DIR}
