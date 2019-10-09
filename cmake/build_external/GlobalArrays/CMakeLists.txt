@@ -47,8 +47,14 @@ string (STRIP ${GA_FFLAGS} GA_FFLAGS)
 
 # Build GA
 set(GA_INSTALL_DIR ${STAGE_DIR}${CMAKE_INSTALL_PREFIX})
-ExternalProject_Add(GlobalArrays_External
-        URL https://github.com/GlobalArrays/ga/releases/download/v${PROJECT_VERSION}/ga-${PROJECT_VERSION}.tar.gz
+
+if(USE_GA_DEV)
+    ExternalProject_Add(GlobalArrays_External
+        #URL https://github.com/GlobalArrays/ga/releases/download/v${PROJECT_VERSION}/ga-${PROJECT_VERSION}.tar.gz
+        GIT_REPOSITORY https://github.com/GlobalArrays/ga.git
+        GIT_TAG develop
+        UPDATE_DISCONNECTED 1        
+        PATCH_COMMAND ./autogen.sh
         CONFIGURE_COMMAND                      CC=${CMAKE_C_COMPILER}
         CFLAGS=${GA_CFLAGS}
         CXX=${CMAKE_CXX_COMPILER}
@@ -69,4 +75,32 @@ ExternalProject_Add(GlobalArrays_External
         BUILD_IN_SOURCE 1
         #LOG_CONFIGURE 1
         #LOG_BUILD 1
-        )
+    )
+
+else()
+
+    ExternalProject_Add(GlobalArrays_External
+        URL https://github.com/GlobalArrays/ga/releases/download/v${PROJECT_VERSION}/ga-${PROJECT_VERSION}.tar.gz
+        CONFIGURE_COMMAND                      CC=${CMAKE_C_COMPILER}
+        CFLAGS=${GA_CFLAGS}
+        CXX=${CMAKE_CXX_COMPILER}
+        CXXFLAGS=${GA_CXXFLAGS}
+        F77=${CMAKE_Fortran_COMPILER}
+        FFLAGS=${GA_FFLAGS} ./configure --with-tcgmsg
+                                    ${GA_MPI}
+                                    --enable-underscoring
+                                    --disable-mpi-tests
+                                    --prefix=${GA_INSTALL_DIR}
+                                    ${GA_SCALAPACK}
+                                    ${GA_BLAS}
+                                    ${GA_LAPACK}
+                                    ${ARMCI_NETWORK}
+                                    ${GA_OFFLOAD}
+                                    ${GA_SYSVSHMEM}
+                
+        BUILD_IN_SOURCE 1
+        #LOG_CONFIGURE 1
+        #LOG_BUILD 1
+    )
+
+endif()

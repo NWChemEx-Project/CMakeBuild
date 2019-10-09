@@ -33,7 +33,7 @@ find_package_handle_standard_args(HPTT DEFAULT_MSG
                                   HPTT_LIBRARY
                                   HPTT_INCLUDE_DIR)
 
-if(ENABLE_OPENMP)                                  
+if(USE_OPENMP)                                  
       find_package(OpenMP REQUIRED)
 endif()
 
