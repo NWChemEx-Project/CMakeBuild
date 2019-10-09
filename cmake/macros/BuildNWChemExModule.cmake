@@ -173,7 +173,11 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
 
         if(USE_OPENMP)
             bundle_cmake_strings(CORE_CMAKE_STRINGS USE_OPENMP)
-        endif()   
+        endif()  
+        
+        if(USE_GA_DEV)
+            bundle_cmake_strings(CORE_CMAKE_STRINGS USE_GA_DEV)
+        endif()  
 
         ExternalProject_Add(${__project}_External
                 SOURCE_DIR ${${__project}_SRC_DIR}
