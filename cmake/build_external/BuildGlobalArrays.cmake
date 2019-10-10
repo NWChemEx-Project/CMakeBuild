@@ -58,6 +58,7 @@ ExternalProject_Add(GlobalArrays_External
                    -DNWX_DEBUG_CMAKE=${NWX_DEBUG_CMAKE}
                    -DARMCI_NETWORK=${ARMCI_NETWORK}
                    -DSTAGE_DIR=${STAGE_DIR}
+                   -DUSE_GA_DEV=${USE_GA_DEV}
         BUILD_ALWAYS 1
         INSTALL_COMMAND ""
         CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}
