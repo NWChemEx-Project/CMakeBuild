@@ -19,7 +19,6 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
     option_w_default(USE_OPENMP ON)
     option_w_default(USE_CUTENSOR OFF)
     option_w_default(USE_GA_DEV OFF)
-    option_w_default(USE_GA_DEV OFF)
     option_w_default(CUDA_MAXREGCOUNT 64)
 
     if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
