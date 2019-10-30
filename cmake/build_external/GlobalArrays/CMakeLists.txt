@@ -77,6 +77,32 @@ if(USE_GA_DEV)
         #LOG_BUILD 1
     )
 
+
+elseif(USE_GA_DEV_TAR)
+    ExternalProject_Add(GlobalArrays_External
+    URL https://github.com/ajaypanyala/ga/releases/download/v5.7.1/ga-5.7.1.tar.gz
+    CONFIGURE_COMMAND                      CC=${CMAKE_C_COMPILER}
+    CFLAGS=${GA_CFLAGS}
+    CXX=${CMAKE_CXX_COMPILER}
+    CXXFLAGS=${GA_CXXFLAGS}
+    F77=${CMAKE_Fortran_COMPILER}
+    FFLAGS=${GA_FFLAGS} ./configure --with-tcgmsg
+                                ${GA_MPI}
+                                --enable-underscoring
+                                --disable-mpi-tests
+                                --prefix=${GA_INSTALL_DIR}
+                                ${GA_SCALAPACK}
+                                ${GA_BLAS}
+                                ${GA_LAPACK}
+                                ${ARMCI_NETWORK}
+                                ${GA_OFFLOAD}
+                                ${GA_SYSVSHMEM}
+            
+    BUILD_IN_SOURCE 1
+    #LOG_CONFIGURE 1
+    #LOG_BUILD 1
+    )
+
 else()
 
     ExternalProject_Add(GlobalArrays_External
