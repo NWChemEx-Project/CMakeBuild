@@ -19,6 +19,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
     option_w_default(USE_OPENMP ON)
     option_w_default(USE_CUTENSOR OFF)
     option_w_default(USE_GA_DEV OFF)
+    option_w_default(USE_GA_DEV_TAR OFF)
     option_w_default(CUDA_MAXREGCOUNT 64)
 
     if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -182,6 +183,9 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
         if(USE_GA_DEV)
             bundle_cmake_strings(CORE_CMAKE_STRINGS USE_GA_DEV)
         endif()  
+        if(USE_GA_DEV_TAR)
+            bundle_cmake_strings(CORE_CMAKE_STRINGS USE_GA_DEV_TAR)
+        endif()          
 
         ExternalProject_Add(${__project}_External
                 SOURCE_DIR ${${__project}_SRC_DIR}

@@ -60,6 +60,7 @@ ExternalProject_Add(GlobalArrays_External
                    -DARMCI_NETWORK=${ARMCI_NETWORK}
                    -DSTAGE_DIR=${STAGE_DIR}
                    -DUSE_GA_DEV=${USE_GA_DEV}
+                   -DUSE_GA_DEV_TAR=${USE_GA_DEV_TAR}
         BUILD_ALWAYS 1
         INSTALL_COMMAND ""
         CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}
