@@ -96,6 +96,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
     string(FIND "${LAPACKE_LIBRARIES}" "mkl" FINDLAPACKE_mkl_found)
     string(FIND "${LAPACKE_LIBRARIES}" "essl" FINDLAPACKE_essl_found)
 
+    #TODO: Check if we are using 4-byte int libs when using ScaLAPACK
     if(NOT "${FINDLAPACKE_mkl_found}" STREQUAL "-1")
         string(FIND "${LAPACKE_LIBRARIES}" "ilp64" _mkl_ilp64_found)
         if(NOT "${_mkl_ilp64_found}" STREQUAL "-1")
