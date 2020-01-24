@@ -51,6 +51,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
     option_w_default(BUILD_SHARED_LIBS OFF)
     option_w_default(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
     option_w_default(BUILD_TESTS ON)    #Should we build the tests?
+    option_w_default(BUILD_METHODS ON)
     option_w_default(NWX_DEBUG_CMAKE TRUE) #Enable lots of extra CMake printing?
     option_w_default(CMAKE_EXPORT_COMPILE_COMMANDS ON)
     option_w_default(CMAKE_VERBOSE_MAKEFILE ${NWX_DEBUG_CMAKE})
@@ -225,6 +226,30 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
             file(WRITE ${CMAKE_BINARY_DIR}/CTestTestfile.cmake
                     "subdirs(test_stage${CMAKE_INSTALL_PREFIX}/tests)")
         endif()
+        if(${BUILD_METHODS})
+            list(APPEND METHOD_DEPENDS "CMakeBuild" "${__project}")
+            ExternalProject_Add(${__project}_Methods_External
+                    SOURCE_DIR ${${__project}_METHODS_DIR}
+                    CMAKE_ARGS -DSUPER_PROJECT_ROOT=${SUPER_PROJECT_ROOT}
+                               -DNWX_DEBUG_CMAKE=${NWX_DEBUG_CMAKE}
+                               -DSTAGE_INSTALL_DIR=${STAGE_INSTALL_DIR}
+                               ${CORE_CMAKE_OPTIONS}
+
+                    BUILD_ALWAYS 1
+                    INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${METHODS_STAGE_DIR}
+                    CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}
+                                     ${CORE_CMAKE_STRINGS}
+                                     ${DEPENDENCY_PATHS}
+                                     -DNWX_DEPENDENCIES:LIST=${METHOD_DEPENDS}
+                    )
+            add_dependencies(${__project}_Methods_External ${__project}_External)
+
+            # This file will allow us to run ctest in the top-level build dir
+            # Basically it just defers to the actual top-level CTestTestfile.cmake in the
+            # build directory for this project
+            file(APPEND ${CMAKE_BINARY_DIR}/CTestTestfile.cmake
+                    "\nsubdirs(methods_stage${CMAKE_INSTALL_PREFIX}/methods)")
+        endif()        
     endforeach()
 
     # Install the staging directory
