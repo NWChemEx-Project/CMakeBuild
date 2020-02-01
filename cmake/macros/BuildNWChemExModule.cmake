@@ -14,6 +14,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
     option_w_default(CMAKE_CXX_STANDARD 17)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     option_w_default(BLAS_INT4 ON)
+    option_w_default(ENABLE_COVERAGE OFF)
     option_w_default(CMAKE_CXX_EXTENSIONS OFF)
     option_w_default(CMAKE_BUILD_TYPE Release)
     option_w_default(USE_OPENMP ON)
@@ -114,7 +115,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
         endif()            
     endif()
     
-    bundle_cmake_args(DEPENDENCY_CMAKE_OPTIONS BLAS_INT4)
+    bundle_cmake_args(DEPENDENCY_CMAKE_OPTIONS BLAS_INT4 ENABLE_COVERAGE)
 
     print_banner("Locating Dependencies and Creating Targets")
     ################################################################################
@@ -135,6 +136,11 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
             endif()
 
         endforeach()
+
+        if(ENABLE_COVERAGE)
+            set(TAMM_CXX_FLAGS "${TAMM_CXX_FLAGS} --coverage -O0")
+            list(APPEND TAMM_EXTRA_LIBS --coverage)
+        endif()
 
         set(${NWX_CXX_FLAGS} "${${NWX_CXX_FLAGS}} ${TAMM_CXX_FLAGS}")
         bundle_cmake_strings(CORE_CMAKE_STRINGS ${NWX_CXX_FLAGS})
