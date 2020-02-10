@@ -70,6 +70,6 @@ if(NOT FINDCBLAS_INCS_SET)
 endif()
 list(APPEND CBLAS_DEFINITIONS "-DCBLAS_HEADER=\"${FINDCBLAS_HEADER}\"")
 
-
+set(CBLAS_HEADER \\\"${FINDCBLAS_HEADER}\\\" CACHE STRING "cblas header" FORCE)
 find_package_handle_standard_args(CBLAS DEFAULT_MSG CBLAS_INCLUDE_DIRS
                                                     CBLAS_LIBRARIES)

@@ -11,7 +11,7 @@
 
 if(NOT DEFINED TALSH_ROOT_DIR)
     find_package(PkgConfig)
-    pkg_check_modules(PC_TALSH QUIET libtalsh)
+    pkg_check_modules(PC_TALSH QUIET talsh)
 endif()
 
 find_path(TALSH_INCLUDE_DIR talsh.h
@@ -38,3 +38,13 @@ find_package(OpenMP REQUIRED)
 
 set(TALSH_LIBRARIES ${TALSH_LIBRARY} ${CUDA_LIBRARIES} ${CUDA_CUBLAS_LIBRARIES} ${OpenMP_CXX_FLAGS})
 set(TALSH_INCLUDE_DIRS ${TALSH_INCLUDE_DIR} ${CUDA_INCLUDE_DIRS})
+
+set(TALSH_DEFINITIONS -DUSE_TALSH)
+
+if(USE_CUTENSOR)
+      set(TALSH_INCLUDE_DIRS ${TALSH_INCLUDE_DIRS} ${CUTENSOR_INSTALL_PREFIX}/include)
+      set(TALSH_DEFINITIONS -DUSE_TALSH -DUSE_CUTENSOR)
+endif()
+
+
+

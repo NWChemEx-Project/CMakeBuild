@@ -12,11 +12,18 @@ endforeach()
 #set(GA_SCALAPACK "--with-scalapack8=${GA_ScaLAPACK_LIBRARIES}")
 
 set(GA_BLAS "--with-blas8=${CBLAS_LIBS}")
+if(BLAS_INT4)
+    set(GA_BLAS "--with-blas4=${CBLAS_LIBS}")
+endif()
+
 set(GA_LAPACK "--with-lapack=${LAPACKE_LIBS}")
 
 is_valid(SCALAPACK_LIBRARIES SCALAPACK_LIBS_SET)
 if (SCALAPACK_LIBS_SET) 
-    set(GA_SCALAPACK "--with-scalapack8=${SCALAPACK_LIBRARIES}")
+    set(GA_SCALAPACK "--with-scalapack8=${SCALAPACK_LIBS}")
+    if(BLAS_INT4)
+        set(GA_SCALAPACK "--with-scalapack=${SCALAPACK_LIBS}")
+    endif()    
 else()
     set(GA_SCALAPACK "--without-scalapack")
 endif()
@@ -40,9 +47,16 @@ string (STRIP ${GA_FFLAGS} GA_FFLAGS)
 
 # Build GA
 set(GA_INSTALL_DIR ${STAGE_DIR}${CMAKE_INSTALL_PREFIX})
-ExternalProject_Add(GlobalArrays_External
-        URL https://github.com/GlobalArrays/ga/releases/download/v${PROJECT_VERSION}/ga-${PROJECT_VERSION}.tar.gz
-        CONFIGURE_COMMAND                      CC=${CMAKE_C_COMPILER}
+
+if(USE_GA_DEV)
+    ExternalProject_Add(GlobalArrays_External
+        #URL https://github.com/GlobalArrays/ga/releases/download/v${PROJECT_VERSION}/ga-${PROJECT_VERSION}.tar.gz
+        GIT_REPOSITORY https://github.com/GlobalArrays/ga.git
+        GIT_TAG develop
+        UPDATE_DISCONNECTED 1        
+        PATCH_COMMAND ./autogen.sh
+        CONFIGURE_COMMAND                      
+        CC=${CMAKE_C_COMPILER}
         CFLAGS=${GA_CFLAGS}
         CXX=${CMAKE_CXX_COMPILER}
         CXXFLAGS=${GA_CXXFLAGS}
@@ -62,4 +76,35 @@ ExternalProject_Add(GlobalArrays_External
         BUILD_IN_SOURCE 1
         #LOG_CONFIGURE 1
         #LOG_BUILD 1
-        )
+    )
+
+
+else()
+
+    ExternalProject_Add(GlobalArrays_External
+        #URL https://github.com/GlobalArrays/ga/releases/download/v${PROJECT_VERSION}/ga-${PROJECT_VERSION}.tar.gz
+        URL https://github.com/ajaypanyala/ga/releases/download/v5.7.1/ga-5.7.1.tar.gz        
+        CONFIGURE_COMMAND                      
+        CC=${CMAKE_C_COMPILER}
+        CFLAGS=${GA_CFLAGS}
+        CXX=${CMAKE_CXX_COMPILER}
+        CXXFLAGS=${GA_CXXFLAGS}
+        F77=${CMAKE_Fortran_COMPILER}
+        FFLAGS=${GA_FFLAGS} ./configure --with-tcgmsg
+                                    ${GA_MPI}
+                                    --enable-underscoring
+                                    --disable-mpi-tests
+                                    --prefix=${GA_INSTALL_DIR}
+                                    ${GA_SCALAPACK}
+                                    ${GA_BLAS}
+                                    ${GA_LAPACK}
+                                    ${ARMCI_NETWORK}
+                                    ${GA_OFFLOAD}
+                                    ${GA_SYSVSHMEM}
+                
+        BUILD_IN_SOURCE 1
+        #LOG_CONFIGURE 1
+        #LOG_BUILD 1
+    )
+
+endif()
