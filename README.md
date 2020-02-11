@@ -1,4 +1,4 @@
-[![Actions](https://github.com/hjjvandam/CMakeBuild/workflows/C_C++_CI/badge.svg)](https://github.com/NWChemEx-Project/CMakeBuild)
+[![Actions](https://github.com/NWChemEx-Project/CMakeBuild/workflows/C_C++_CI/badge.svg)](https://github.com/NWChemEx-Project/CMakeBuild)
 
 CMakeBuild Repository
 ==============================
