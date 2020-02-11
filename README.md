@@ -1,3 +1,7 @@
+[![Actions](https://github.com/hjjvandam/CMakeBuild/workflows/C_C++_CI/badge.svg)](https://github.com/NWChemEx-Project/CMakeBuild)
+  
+[![Codecov](https://codecov.io/github/hjjvandam/CMakeBuild/branch/master/graphs/sunburst.svg?token=cU3nWMb4TV)](https://codecov.io/github/NWChemEx-Project/CMakeBuild/branch/master)
+
 CMakeBuild Repository
 ==============================
 
