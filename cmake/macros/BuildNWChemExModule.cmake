@@ -187,6 +187,12 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
 
         if(USE_OPENMP)
             bundle_cmake_strings(CORE_CMAKE_STRINGS USE_OPENMP)
+            if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+                if("${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Darwin")
+                    bundle_cmake_strings(CORE_CMAKE_STRINGS OpenMP_C_FLAGS OpenMP_CXX_FLAGS)
+                    bundle_cmake_strings(CORE_CMAKE_STRINGS OpenMP_C_LIB_NAMES OpenMP_CXX_LIB_NAMES OpenMP_omp_LIBRARY)
+                endif()
+            endif()
         endif()  
         
         if(USE_GA_DEV)
