@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION ${CMAKE_VERSION})
-project(GlobalArrays VERSION 5.7 LANGUAGES C Fortran)
+project(GlobalArrays VERSION 5.7.2 LANGUAGES C Fortran)
 
 include(DependencyMacros)
 include(ExternalProject)
@@ -83,7 +83,7 @@ else()
 
     ExternalProject_Add(GlobalArrays_External
         #URL https://github.com/GlobalArrays/ga/releases/download/v${PROJECT_VERSION}/ga-${PROJECT_VERSION}.tar.gz
-        URL https://github.com/ajaypanyala/ga/releases/download/v5.7.1/ga-5.7.1.tar.gz        
+        URL https://github.com/ajaypanyala/ga/releases/download/v5.7.2/ga-5.7.2.tar.gz        
         CONFIGURE_COMMAND                      
         CC=${CMAKE_C_COMPILER}
         CFLAGS=${GA_CFLAGS}
