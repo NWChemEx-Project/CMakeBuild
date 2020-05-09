@@ -145,6 +145,10 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
             list(APPEND TAMM_EXTRA_LIBS --coverage)
         endif()
 
+        if(USE_CUDA)
+            set(TAMM_CXX_FLAGS "${TAMM_CXX_FLAGS} -DUSE_CUDA")
+        endif()
+
         if(USE_DPCPP)
             # if(USE_OPENMP)
             #     message(FATAL_ERROR "DPCPP build requires USE_OPENMP=OFF")
