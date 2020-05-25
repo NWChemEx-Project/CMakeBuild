@@ -49,6 +49,9 @@ string (STRIP ${GA_FFLAGS} GA_FFLAGS)
 set(GA_INSTALL_DIR ${STAGE_DIR}${CMAKE_INSTALL_PREFIX})
 
 if(USE_GA_DEV)
+    if(USE_GA_PROFILER)
+        set(GA_PROFILER_CONFIG "--enable-profiling")
+    endif()
     ExternalProject_Add(GlobalArrays_External
         #URL https://github.com/GlobalArrays/ga/releases/download/v${PROJECT_VERSION}/ga-${PROJECT_VERSION}.tar.gz
         GIT_REPOSITORY https://github.com/GlobalArrays/ga.git
@@ -63,6 +66,7 @@ if(USE_GA_DEV)
         F77=${CMAKE_Fortran_COMPILER}
         FFLAGS=${GA_FFLAGS} ./configure --with-tcgmsg
                                       ${GA_MPI}
+                                      ${GA_PROFILER_CONFIG}
                                       --enable-underscoring
                                       --disable-mpi-tests
                                       --prefix=${GA_INSTALL_DIR}

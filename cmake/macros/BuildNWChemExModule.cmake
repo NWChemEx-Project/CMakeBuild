@@ -21,6 +21,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
     option_w_default(USE_DPCPP OFF)
     option_w_default(USE_CUTENSOR OFF)
     option_w_default(USE_GA_DEV OFF)
+    option_w_default(USE_GA_PROFILER OFF)
     option_w_default(CUDA_MAXREGCOUNT 64)
 
     if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -209,6 +210,9 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
         
         if(USE_GA_DEV)
             bundle_cmake_strings(CORE_CMAKE_STRINGS USE_GA_DEV)
+            if(USE_GA_PROFILER)
+                bundle_cmake_strings(CORE_CMAKE_STRINGS USE_GA_PROFILER)
+            endif
         endif()        
 
         ExternalProject_Add(${__project}_External
