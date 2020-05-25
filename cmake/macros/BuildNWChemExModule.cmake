@@ -212,7 +212,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
             bundle_cmake_strings(CORE_CMAKE_STRINGS USE_GA_DEV)
             if(USE_GA_PROFILER)
                 bundle_cmake_strings(CORE_CMAKE_STRINGS USE_GA_PROFILER)
-            endif
+            endif()
         endif()        
 
         ExternalProject_Add(${__project}_External
