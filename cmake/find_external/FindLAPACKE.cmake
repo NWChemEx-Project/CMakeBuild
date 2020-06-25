@@ -31,7 +31,7 @@ set(FINDLAPACKE_is_mkl FALSE)
 
 is_valid(LAPACKE_LIBRARIES FINDLAPACKE_LIBS_SET)
 if(NOT FINDLAPACKE_LIBS_SET)
-    find_library(LAPACKE_LIBRARY NAMES lapacke)
+    find_library(LAPACKE_LIBRARY NAMES lapacke NO_CMAKE_SYSTEM_PATH)
     find_package_handle_standard_args(LAPACKE DEFAULT_MSG LAPACKE_LIBRARY)
     is_valid_and_true(LAPACKE_FOUND found_lapacke)
     if(found_lapacke)

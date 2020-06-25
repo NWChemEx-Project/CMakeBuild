@@ -23,9 +23,14 @@ find_path(ANTLRCPPRUNTIME_INCLUDE_DIR antlr4-runtime.h
 find_library(ANTLRCPPRUNTIME_LIBRARY
              NAMES antlr4-runtime
              HINTS ${PC_ANTLRCPPRUNTIME_LIBDIR}
-                   ${PC_ANTLRCPPRUNTIME_LIBRARY_DIRS})
+                   ${PC_ANTLRCPPRUNTIME_LIBRARY_DIRS}
+             NO_CMAKE_SYSTEM_PATH
+             )
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(AntlrCppRuntime DEFAULT_MSG
                                   ANTLRCPPRUNTIME_LIBRARY
                                   ANTLRCPPRUNTIME_INCLUDE_DIR)
+
+set(ANTLRCPPRUNTIME_LIBRARIES ${ANTLRCPPRUNTIME_LIBRARY})
+set(ANTLRCPPRUNTIME_INCLUDE_DIRS ${ANTLRCPPRUNTIME_INCLUDE_DIR})

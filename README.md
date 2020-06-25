@@ -1,7 +1,5 @@
-[![Actions](https://github.com/NWChemEx-Project/CMakeBuild/workflows/C_C++_CI/badge.svg)](https://github.com/NWChemEx-Project/CMakeBuild)
-
 CMakeBuild Repository
-==============================
+======================
 
 Building C++ projects is a laborious process that is somewhat simplified with
 CMake.  Nonetheless CMake still requires quite a bit of hand tuning and has

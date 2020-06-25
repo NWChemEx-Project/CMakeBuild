@@ -25,6 +25,7 @@ find_library(BLIS_LIBRARY NAMES libblis.a blis
              HINTS ${PC_BLIS_LIBDIR}
                    ${PC_BLIS_LIBRARY_DIRS}
              PATHS ${BLIS_ROOT_DIR}
+             NO_CMAKE_SYSTEM_PATH
         )
 
 include(FindPackageHandleStandardArgs)

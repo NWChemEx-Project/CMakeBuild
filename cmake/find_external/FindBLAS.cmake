@@ -16,7 +16,7 @@
 include(FindPackageHandleStandardArgs)
 is_valid(BLAS_LIBRARIES FINDBLAS_LIBS_SET)
 if(NOT FINDBLAS_LIBS_SET)
-    find_library(BLAS_LIBRARY NAMES blas)
+    find_library(BLAS_LIBRARY NAMES blas NO_CMAKE_SYSTEM_PATH)
     find_package_handle_standard_args(BLAS DEFAULT_MSG BLAS_LIBRARY)
     set(BLAS_LIBRARIES ${BLAS_LIBRARY})
 
