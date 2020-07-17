@@ -23,7 +23,7 @@ if(USE_CUDA)
         # foreach(__sm ${SMS})
         #     set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -gencode arch=compute_${__sm},code=sm_${__sm}")
         # endforeach()
-        set(CMAKE_CUDA_FLAGS "--maxrregcount ${CUDA_MAXREGCOUNT} --use_fast_math -gencode arch=compute_${NV_GPU_ARCH},code=sm_${NV_GPU_ARCH}")
+        set(CMAKE_CUDA_FLAGS "--maxrregcount ${CUDA_MAXREGCOUNT} --use_fast_math -gencode arch=compute_${NV_GPU_ARCH},code=sm_${NV_GPU_ARCH} -DUSE_CUDA")
     endif()
 endif()
 
