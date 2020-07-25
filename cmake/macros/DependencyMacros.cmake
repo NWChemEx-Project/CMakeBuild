@@ -9,6 +9,8 @@ include(UtilityMacros)
 include(AssertMacros)
 include(OptionMacros)
 
+enable_language(C)
+
 set(PROPERTY_NAMES INCLUDE_DIRECTORIES LINK_LIBRARIES COMPILE_DEFINITIONS)
 
 function(dependency_to_variables __name _INCLUDE_DIRECTORIES
