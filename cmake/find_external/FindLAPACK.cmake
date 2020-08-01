@@ -13,11 +13,18 @@
 #      use the supplied paths instead
 # 2. Specify LAPACK_LIBRARY
 #    - This will not look for LAPACK, but will look for its dependencies
+
+set(REFBLAS_HINTS ${STAGE_DIR}${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFIX})
+
 include(FindPackageHandleStandardArgs)
 
 is_valid(LAPACK_LIBRARIES FINDLAPACK_LIBS_SET)
 if(NOT FINDLAPACK_LIBS_SET)
-    find_library(LAPACK_LIBRARY NAMES lapack NO_CMAKE_SYSTEM_PATH)
+    find_library(LAPACK_LIBRARY NAMES lapack 
+                 HINTS ${REFBLAS_HINTS}
+                 PATHS ${REFBLAS_ROOT_DIR}
+                 PATH_SUFFIXES lib lib64 lib32 
+                 NO_DEFAULT_PATH)
     find_package_handle_standard_args(LAPACK DEFAULT_MSG LAPACK_LIBRARY)
 
     #Now we need to find a BLAS library that hopefully is compatible with our LAPACK

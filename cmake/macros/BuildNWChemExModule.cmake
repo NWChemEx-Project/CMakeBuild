@@ -118,7 +118,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
             set(TAMM_CXX_FLAGS "${TAMM_CXX_FLAGS} -m64 -DLAPACK_ILP64" CACHE STRING "TAMM_CXX_FLAGS" FORCE)
         endif()
     else()
-        list(APPEND TAMM_EXTRA_LIBS -ldl)       
+        list(APPEND TAMM_EXTRA_LIBS -ldl)        
     endif()
     
     bundle_cmake_args(DEPENDENCY_CMAKE_OPTIONS BLAS_INT4 ENABLE_COVERAGE)
@@ -221,6 +221,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
                 SOURCE_DIR ${${__project}_SRC_DIR}
                 CMAKE_ARGS -DNWX_DEBUG_CMAKE=${NWX_DEBUG_CMAKE}
                            -DNWX_INCLUDE_DIR=${${__project}_INCLUDE_DIR}
+                           -DSTAGE_DIR=${STAGE_DIR}
                            ${CORE_CMAKE_OPTIONS}
                 BUILD_ALWAYS 1
                 INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
@@ -240,6 +241,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
                     SOURCE_DIR ${${__project}_TEST_DIR}
                     CMAKE_ARGS -DSUPER_PROJECT_ROOT=${SUPER_PROJECT_ROOT}
                                -DNWX_DEBUG_CMAKE=${NWX_DEBUG_CMAKE}
+                               -DSTAGE_DIR=${STAGE_DIR}
                                -DSTAGE_INSTALL_DIR=${STAGE_INSTALL_DIR}
                                ${CORE_CMAKE_OPTIONS}
 
@@ -264,6 +266,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
                     SOURCE_DIR ${${__project}_METHODS_DIR}
                     CMAKE_ARGS -DSUPER_PROJECT_ROOT=${SUPER_PROJECT_ROOT}
                                -DNWX_DEBUG_CMAKE=${NWX_DEBUG_CMAKE}
+                               -DSTAGE_DIR=${STAGE_DIR}
                                -DSTAGE_INSTALL_DIR=${STAGE_INSTALL_DIR}
                                ${CORE_CMAKE_OPTIONS}
 

@@ -11,6 +11,7 @@ include(OptionMacros)
 
 enable_language(C)
 
+set(DEP_ABUILD "Eigen3" "LibInt2") #"HDF5" "HPTT" "GlobalArrays" "BLIS" "AntlrCppRuntime" "TALSH"
 set(PROPERTY_NAMES INCLUDE_DIRECTORIES LINK_LIBRARIES COMPILE_DEFINITIONS)
 
 function(dependency_to_variables __name _INCLUDE_DIRECTORIES
@@ -70,7 +71,20 @@ function(find_dependency __name)
         if(__dont_look_for)
             message(STATUS "Per user's request building bundled ${__name}")
         elseif(NWX_DEBUG_CMAKE)
-            find_package(${__name})
+            if(${__name} IN_LIST DEP_ABUILD)
+                set(DEP_STAGE_DIR ${STAGE_DIR}${CMAKE_INSTALL_PREFIX})
+                set(DEP_PATHS ${DEP_STAGE_DIR} ${CMAKE_INSTALL_PREFIX} 
+                              ${${__name}_ROOT} ${${__name}_ROOT_DIR})
+                # set(${__name}_DIR ${DEP_PATHS}) 
+                find_package(${__name} CONFIG
+                             HINTS ${DEP_PATHS}
+                            #  PATHS ${DEP_PATHS}
+                             NO_DEFAULT_PATH
+                            )        
+                # find_package(${__name} QUIET)       
+            else()
+                find_package(${__name})            
+            endif()
         else()
             find_package(${__name} QUIET)
         endif()

@@ -13,10 +13,17 @@
 #      the supplied paths instead
 # 2. Specify BLAS_LIBRARY
 #    - This will not look for BLAS, but will look for its dependencies
+
+set(REFBLAS_HINTS ${STAGE_DIR}${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFIX})
+
 include(FindPackageHandleStandardArgs)
 is_valid(BLAS_LIBRARIES FINDBLAS_LIBS_SET)
 if(NOT FINDBLAS_LIBS_SET)
-    find_library(BLAS_LIBRARY NAMES blas NO_CMAKE_SYSTEM_PATH)
+    find_library(BLAS_LIBRARY NAMES blas 
+                 HINTS ${REFBLAS_HINTS}
+                 PATHS ${REFBLAS_ROOT_DIR}
+                 PATH_SUFFIXES lib lib64 lib32 
+                 NO_DEFAULT_PATH)
     find_package_handle_standard_args(BLAS DEFAULT_MSG BLAS_LIBRARY)
     set(BLAS_LIBRARIES ${BLAS_LIBRARY})
 

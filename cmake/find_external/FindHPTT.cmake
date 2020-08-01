@@ -9,22 +9,23 @@
 #  HPTT_INCLUDE_DIR - The HPTT include directories
 #  HPTT_LIBRARY - The library needed to use HPTT
 
-if(NOT DEFINED HPTT_ROOT_DIR)
-    find_package(PkgConfig)
-    pkg_check_modules(PC_HPTT QUIET libhptt)
-endif()
+set(HPTT_HINTS ${STAGE_DIR}${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFIX})
 
 find_path(HPTT_INCLUDE_DIR hptt.h
-          HINTS ${PC_HPTT_INCLUDEDIR}
-                ${PC_HPTT_INCLUDE_DIRS}
+          HINTS ${HPTT_HINTS}
           PATHS ${HPTT_ROOT_DIR}
+          PATH_SUFFIXES include
+          DOC "HPTT header"          
+          NO_DEFAULT_PATH
           )
 
 find_library(HPTT_LIBRARY
              NAMES hptt
-             HINTS ${PC_HPTT_LIBDIR}
-                   ${PC_HPTT_LIBRARY_DIRS}
-	     PATHS ${HPTT_ROOT_DIR}
+             HINTS ${HPTT_HINTS}
+             PATHS ${HPTT_ROOT_DIR}
+             PATH_SUFFIXES lib lib64 lib32             
+             DOC "HPTT Library"
+             NO_DEFAULT_PATH
 	  )
 
 

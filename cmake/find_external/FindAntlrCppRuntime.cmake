@@ -9,22 +9,21 @@
 #  ANTLRCPPRUNTIME_INCLUDE_DIR - The Antlr CppRuntime include directories
 #  ANTLRCPPRUNTIME_LIBRARY - The library needed to use Antlr CppRuntime
 
-if(NOT DEFINED ANTLRCPPRUNTIME_ROOT_DIR)
-    find_package(PkgConfig)
-    pkg_check_modules(PC_ANTLRCPPRUNTIME QUIET libantlr4-runtime)
-endif()
+set(ANTLRCPPRUNTIME_HINTS ${STAGE_DIR}${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFIX})
 
-find_path(ANTLRCPPRUNTIME_INCLUDE_DIR antlr4-runtime.h
-          HINTS ${PC_ANTLRCPPRUNTIME_INCLUDEDIR}
-                ${PC_ANTLRCPPRUNTIME_INCLUDE_DIRS}
+find_path(ANTLRCPPRUNTIME_INCLUDE_DIR antlr4-runtime/antlr4-runtime.h
+          HINTS ${ANTLRCPPRUNTIME_HINTS}
           PATHS ${ANTLRCPPRUNTIME_ROOT_DIR}
-          PATH_SUFFIXES antlr4-runtime)
+          PATH_SUFFIXES include
+          NO_DEFAULT_PATH
+          )
 
 find_library(ANTLRCPPRUNTIME_LIBRARY
-             NAMES antlr4-runtime
-             HINTS ${PC_ANTLRCPPRUNTIME_LIBDIR}
-                   ${PC_ANTLRCPPRUNTIME_LIBRARY_DIRS}
-             NO_CMAKE_SYSTEM_PATH
+             NAMES libantlr4-runtime.a antlr4-runtime
+             HINTS ${ANTLRCPPRUNTIME_HINTS}
+             PATHS ${ANTLRCPPRUNTIME_ROOT_DIR}
+             PATH_SUFFIXES lib lib64 lib32
+             NO_DEFAULT_PATH
              )
 
 include(FindPackageHandleStandardArgs)

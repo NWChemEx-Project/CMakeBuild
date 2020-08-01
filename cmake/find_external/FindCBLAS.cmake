@@ -25,12 +25,18 @@
 # 3. Set BLAS_INCLUDE_DIR and/or BLAS_LIBRARY
 #    - This will look for includes/libraries for CBLAS, but not its dependencies
 
+set(REFBLAS_HINTS ${STAGE_DIR}${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFIX})
+
 include(FindPackageHandleStandardArgs)
 set(FINDCBLAS_is_mkl FALSE)
 set(FINDCBLAS_HEADER cblas.h)
 is_valid(CBLAS_LIBRARIES FINDCBLAS_LIBS_SET)
 if(NOT FINDCBLAS_LIBS_SET)
-    find_library(CBLAS_LIBRARY NAMES cblas NO_CMAKE_SYSTEM_PATH)
+    find_library(CBLAS_LIBRARY NAMES cblas 
+                 HINTS ${REFBLAS_HINTS}
+                 PATHS ${REFBLAS_ROOT_DIR}
+                 PATH_SUFFIXES lib lib64 lib32 
+                 NO_DEFAULT_PATH)
     find_package_handle_standard_args(CBLAS DEFAULT_MSG CBLAS_LIBRARY)
     is_valid_and_true(CBLAS_FOUND found_cblas)
     if(found_cblas)

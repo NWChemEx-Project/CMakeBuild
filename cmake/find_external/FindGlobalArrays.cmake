@@ -9,37 +9,36 @@
 #  GLOBALARRAYS_INCLUDE_DIR - The Global Arrays include directories
 #  GLOBALARRAYS_LIBRARIES - The libraries needed to use Global Arrays
 
-if(NOT DEFINED GLOBALARRAYS_ROOT_DIR)
-    find_package(PkgConfig)
-    pkg_check_modules(PC_GLOBALARRAYS QUIET ga)
-endif()
+set(GLOBALARRAYS_HINTS ${STAGE_DIR}${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFIX})
 
 find_path(GLOBALARRAYS_INCLUDE_DIR ga.h
-          HINTS ${PC_GLOBALARRAYS_INCLUDEDIR}
-                ${PC_GLOBALARRAYS_INCLUDE_DIRS}
+          HINTS ${GLOBALARRAYS_HINTS}
           PATHS ${GLOBALARRAYS_ROOT_DIR}
+          PATH_SUFFIXES include
+          NO_DEFAULT_PATH
          )
 
 find_path(GLOBALARRAYS_CONFIG ga-config
-         HINTS ${PC_GLOBALARRAYS_BINDIR}
-               ${PC_GLOBALARRAYS_BIN_DIRS}
+         HINTS ${GLOBALARRAYS_HINTS}
          PATHS ${GLOBALARRAYS_ROOT_DIR} 
          PATH_SUFFIXES bin
+         NO_DEFAULT_PATH
         )         
 
 find_library(GLOBALARRAYS_C_LIBRARY NAMES ga
-             HINTS ${PC_GLOBALARRAYS_LIBDIR}
-                   ${PC_GLOBALARRAYS_LIBRARY_DIRS}
+             HINTS ${GLOBALARRAYS_HINTS}
              PATHS ${GLOBALARRAYS_ROOT_DIR}
-             NO_CMAKE_SYSTEM_PATH
+             PATH_SUFFIXES lib lib32 lib64
+             NO_DEFAULT_PATH
         )
 
 find_library(GLOBALARRAYS_ARMCI_LIBRARY NAMES armci
-             HINTS ${PC_GLOBALARRAYS_LIBDIR}
-                   ${PC_GLOBALARRAYS_LIBRARY_DIRS}
+             HINTS ${GLOBALARRAYS_HINTS}
              PATHS ${GLOBALARRAYS_ROOT_DIR}
-             NO_CMAKE_SYSTEM_PATH
+             PATH_SUFFIXES lib lib32 lib64
+             NO_DEFAULT_PATH
         )
+
 find_package_handle_standard_args(GlobalArrays DEFULT_MSG GLOBALARRAYS_C_LIBRARY
         GLOBALARRAYS_ARMCI_LIBRARY)
 

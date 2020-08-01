@@ -7,25 +7,24 @@
 #  BLIS_FOUND - System has BLIS
 #  BLIS_INCLUDE_DIR - The BLIS include directories
 #  BLIS_LIBRARY - The libraries needed to use BLIS
+
 include(DependencyMacros)
 
-#Prefer BLIS_ROOT_DIR if the user specified it
-if(NOT DEFINED BLIS_ROOT_DIR)
-    find_package(PkgConfig)
-    pkg_check_modules(PC_BLIS QUIET blis)
-endif()
+set(BLIS_HINTS ${STAGE_DIR}${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFIX})
 
 find_path(BLIS_INCLUDE_DIR blis/blis.h
-          HINTS ${PC_BLIS_INCLUDEDIR}
-                ${PC_BLIS_INCLUDE_DIRS}
-          PATHS ${BLIS_ROOT_DIR}
-          PATH_SUFFIXES blis)
+            HINTS ${BLIS_HINTS}
+            PATHS ${BLIS_ROOT_DIR}
+            PATH_SUFFIXES include
+            NO_DEFAULT_PATH
+          )
 
-find_library(BLIS_LIBRARY NAMES libblis.a blis
-             HINTS ${PC_BLIS_LIBDIR}
-                   ${PC_BLIS_LIBRARY_DIRS}
+find_library(BLIS_LIBRARY 
+             NAMES libblis.a blis
+             HINTS ${BLIS_HINTS}
              PATHS ${BLIS_ROOT_DIR}
-             NO_CMAKE_SYSTEM_PATH
+             PATH_SUFFIXES lib lib32 lib64
+             NO_DEFAULT_PATH
         )
 
 include(FindPackageHandleStandardArgs)

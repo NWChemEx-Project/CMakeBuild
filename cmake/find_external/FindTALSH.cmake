@@ -9,23 +9,22 @@
 #  TALSH_INCLUDE_DIR - The TAL_SH include directories
 #  TALSH_LIBRARY - The library needed to use TAL_SH
 
-if(NOT DEFINED TALSH_ROOT_DIR)
-    find_package(PkgConfig)
-    pkg_check_modules(PC_TALSH QUIET talsh)
-endif()
+set(TALSH_HINTS ${STAGE_DIR}${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFIX})
 
 find_path(TALSH_INCLUDE_DIR talsh.h
-          HINTS ${PC_TALSH_INCLUDEDIR}
-                ${PC_TALSH_INCLUDE_DIRS}
+          HINTS ${TALSH_HINTS}
           PATHS ${TALSH_ROOT_DIR}
+          PATH_SUFFIXES include
+          NO_DEFAULT_PATH
           )
 
 find_library(TALSH_LIBRARY
              NAMES talsh
-             HINTS ${PC_TALSH_LIBDIR}
-                   ${PC_TALSH_LIBRARY_DIRS}
-	     PATHS ${TALSH_ROOT_DIR}
-	  )
+             HINTS ${TALSH_HINTS}
+             PATHS ${TALSH_ROOT_DIR}
+             PATH_SUFFIXES lib lib32 lib64
+             NO_DEFAULT_PATH
+	      )
 
 
 include(FindPackageHandleStandardArgs)
