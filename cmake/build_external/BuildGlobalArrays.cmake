@@ -15,7 +15,7 @@ include(DependencyMacros)
 enable_language(Fortran)
 
 # Now find or build GA's dependencies
-foreach(depend CBLAS LAPACKE NWX_MPI)
+foreach(depend BLAS LAPACK NWX_MPI)
     find_or_build_dependency(${depend})
     package_dependency(${depend} DEPENDENCY_PATHS)
 endforeach()
@@ -69,8 +69,8 @@ ExternalProject_Add(GlobalArrays_External
 )
 
 # Establish the dependencies
-add_dependencies(GlobalArrays_External CBLAS_External
-                                       LAPACKE_External
+add_dependencies(GlobalArrays_External BLAS_External
+                                       LAPACK_External
                                        NWX_MPI_External
 #                                       ScaLAPACK_External
         )

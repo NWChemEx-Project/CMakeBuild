@@ -13,6 +13,9 @@ install(FILES ${__MACRO_FILES}  DESTINATION ${MACRO_INSTALL})
 file(GLOB __FIND_FILES "${NWXBASE_CMAKE}/find_external/*.cmake")
 install(FILES ${__FIND_FILES}
         DESTINATION share/cmake/CMakeBuild/find_external)
+file(GLOB __FIND_LINALG_FILES "${NWXBASE_CMAKE}/find_external/linalg-modules/*.cmake")
+install(FILES ${__FIND_LINALG_FILES}
+        DESTINATION share/cmake/CMakeBuild/find_external/linalg-modules)
 
 file(GLOB __BUILD_FILES "${NWXBASE_CMAKE}/build_external/*.cmake")
 install(DIRECTORY ${NWXBASE_CMAKE}/build_external/

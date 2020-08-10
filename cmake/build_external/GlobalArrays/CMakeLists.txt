@@ -3,20 +3,31 @@ project(GlobalArrays VERSION 5.7.2 LANGUAGES C Fortran)
 
 include(DependencyMacros)
 include(ExternalProject)
-foreach(depend NWX_MPI CBLAS LAPACKE)#ScaLAPACK)
+
+
+if( BLAS_LIBRARIES )
+  set( blas_LIBRARIES ${BLAS_LIBRARIES} )
+endif()
+
+if( LAPACK_LIBRARIES )
+  set( lapack_LIBRARIES ${LAPACK_LIBRARIES} )
+endif()
+
+foreach(depend NWX_MPI BLAS LAPACK)#ScaLAPACK)
     find_dependency(${depend})
     makify_dependency(${depend} ${depend}_INCS ${depend}_LIBS)
 endforeach()
 
+
 #string(REPLACE ";" " " GA_ScaLAPACK_LIBRARIES "${ScaLAPACK_LIBRARIES}")
 #set(GA_SCALAPACK "--with-scalapack8=${GA_ScaLAPACK_LIBRARIES}")
 
-set(GA_BLAS "--with-blas8=${CBLAS_LIBS}")
+set(GA_BLAS "--with-blas8=${BLAS_LIBS}")
 if(BLAS_INT4)
-    set(GA_BLAS "--with-blas4=${CBLAS_LIBS}")
+    set(GA_BLAS "--with-blas4=${BLAS_LIBS}")
 endif()
 
-set(GA_LAPACK "--with-lapack=${LAPACKE_LIBS}")
+set(GA_LAPACK "--with-lapack=${LAPACK_LIBS}")
 
 is_valid(SCALAPACK_LIBRARIES SCALAPACK_LIBS_SET)
 if (SCALAPACK_LIBS_SET) 

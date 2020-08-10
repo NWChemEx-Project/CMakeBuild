@@ -39,6 +39,13 @@ find_library(GLOBALARRAYS_ARMCI_LIBRARY NAMES armci
              NO_DEFAULT_PATH
         )
 
+# find_library(GLOBALARRAYS_COMEX_LIBRARY NAMES comex
+#              HINTS ${GLOBALARRAYS_HINTS}
+#              PATHS ${GLOBALARRAYS_ROOT_DIR}
+#              PATH_SUFFIXES lib lib32 lib64
+#              NO_DEFAULT_PATH
+#            )
+
 find_package_handle_standard_args(GlobalArrays DEFULT_MSG GLOBALARRAYS_C_LIBRARY
         GLOBALARRAYS_ARMCI_LIBRARY)
 

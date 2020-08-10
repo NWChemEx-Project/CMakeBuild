@@ -1,71 +1,47 @@
+
 #
-# This file will build Netlib's BLAS 3.8.0 distribution
+# This file will build BLIS which is the default BLAS library we use.
 #
 
-include(ExternalProject)
 enable_language(C Fortran)
 
-#Settings for the current version of BLAS
-set(BLAS_VERSION 3.8.0)
-set(BLAS_URL http://www.netlib.org/blas/blas-${BLAS_VERSION}.tgz)
-set(BLAS_MD5 3E6E783ECEFC3B0B461722A939A16D9B)
-
-#This is the root of the source tree created by External Project
-set(BLAS_PREFIX ${CMAKE_BINARY_DIR}/NWX_BLAS_External)
-#This is where the BLAS tar-ball will be downloaded to
-set(BLAS_DOWNLOAD ${BLAS_PREFIX}/src)
-#This is where BLAS will be extracted to
-if(APPLE)
-    set(BLAS_SRC_DIR  ${BLAS_DOWNLOAD}/BLAS) 
+is_valid_and_true(BLIS_CONFIG __set)
+if (NOT __set)
+    message(STATUS "BLIS_CONFIG not set, will auto-detect")
+    set(BLIS_CONFIG_HW "auto")
 else()
-    set(BLAS_SRC_DIR  ${BLAS_DOWNLOAD}/BLAS/BLAS-${BLAS_VERSION})
+    message(STATUS "BLIS_CONFIG set to ${BLIS_CONFIG}")
+    set(BLIS_CONFIG_HW ${BLIS_CONFIG})
 endif()
-#This is where we need to put the Makefile settings
-set(MAKEFILE_DEST ${BLAS_SRC_DIR}/make.inc)
-#This is the name of the created library
-set(BLAS_LIBRARY "libblas${CMAKE_STATIC_LIBRARY_SUFFIX}")
-#This is the full set of compiler flags
-set(BLAS_FLAGS ${CMAKE_Fortran_FLAGS_RELEASE})
+
+string_concat(CMAKE_CXX_FLAGS_RELEASE "" " " BLIS_FLAGS)
+
 if(CMAKE_POSITION_INDEPENDENT_CODE)
-    list(APPEND BLAS_FLAGS -fPIC)
+    set(FPIC_LIST "-fPIC")
+    string_concat(FPIC_LIST "" " " BLIS_FLAGS)
 endif()
-clean_flags(BLAS_FLAGS BLAS_FLAGS)
 
-#BLAS wants it's options in Makefile.inc
-set(BLAS_MAKEFILE ${CMAKE_BINARY_DIR}/make.inc)
-file(WRITE ${BLAS_MAKEFILE} "SHELL = /bin/sh\n")
-file(APPEND ${BLAS_MAKEFILE} "PLAT = _${CMAKE_SYSTEM_NAME}\n" )
-file(APPEND ${BLAS_MAKEFILE} "FORTRAN  = ${CMAKE_Fortran_COMPILER}\n")
-file(APPEND ${BLAS_MAKEFILE} "OPTS     = ${BLAS_FLAGS}\n")
-file(APPEND ${BLAS_MAKEFILE} "DRVOPTS  = ${BLAS_FLAGS}\n")
-file(APPEND ${BLAS_MAKEFILE} "NOOPT    = \n")
-file(APPEND ${BLAS_MAKEFILE} "LOADER   = ${CMAKE_Fortran_COMPILER}\n")
-file(APPEND ${BLAS_MAKEFILE} "LOADOPTS = \n")
-file(APPEND ${BLAS_MAKEFILE} "ARCH     = ${CMAKE_AR}\n")
-file(APPEND ${BLAS_MAKEFILE} "ARCHFLAGS= cr\n")
-file(APPEND ${BLAS_MAKEFILE} "RANLIB   = echo\n")
-file(APPEND ${BLAS_MAKEFILE} "BLASLIB  = ${BLAS_LIBRARY}\n")
+set(BLIS_TAR https://github.com/flame/blis/archive/0.7.0.tar.gz)
 
-set(BLAS_INSTALL ${STAGE_DIR}${CMAKE_INSTALL_PREFIX}/lib/${BLAS_LIBRARY})
+set(BLIS_OPT_FLAGS -march=native)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+    set(BLIS_OPT_FLAGS -xHost)
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "ppc64le")
+    set(BLIS_OPT_FLAGS -mtune=native)
+endif()
+
+set(BLIS_OPT_FLAGS "${BLIS_FLAGS} ${BLIS_OPT_FLAGS}")
+
+set(BLIS_INT_FLAGS -i 32 -b 32 --enable-cblas)
+
 ExternalProject_Add(BLAS_External
-        PREFIX ${BLAS_PREFIX}
-        DOWNLOAD_NO_PROGRESS TRUE
-        DOWNLOAD_DIR ${BLAS_DOWNLOAD}
-        SOURCE_DIR ${BLAS_DOWNLOAD}/BLAS
-        URL ${BLAS_URL}
-        URL_MD5 ${BLAS_MD5}
-        BINARY_DIR ${BLAS_SRC_DIR}
-        CONFIGURE_COMMAND ${CMAKE_COMMAND} -E copy ${BLAS_MAKEFILE}
-                                                   ${MAKEFILE_DEST}
-        INSTALL_COMMAND ${CMAKE_COMMAND} -E copy
-                                         ${BLAS_SRC_DIR}/${BLAS_LIBRARY}
-                                         ${BLAS_INSTALL}
+        URL ${BLIS_TAR}
+        CONFIGURE_COMMAND ./configure --prefix=${CMAKE_INSTALL_PREFIX}
+                                      CXX=${CMAKE_CXX_COMPILER}
+                                      CC=${CMAKE_C_COMPILER}
+                                      CFLAGS=${BLIS_OPT_FLAGS}
+                                      ${BLIS_INT_FLAGS}
+                                      ${BLIS_CONFIG_HW}
+        INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}        
+        BUILD_IN_SOURCE 1
 )
-
-#This is primarily for testing our BLAS build, actual code should use CBLAS as
-#this header will likely only exist if we built BLAS
-include(FortranCInterface)
-set(FC_MANGLE_INSTALL ${STAGE_DIR}${CMAKE_INSTALL_PREFIX}/include)
-FortranCInterface_HEADER(${FC_MANGLE_INSTALL}/FCMangleBLAS.h
-        MACRO_NAMESPACE
-        "FCBLAS_")

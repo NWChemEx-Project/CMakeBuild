@@ -14,6 +14,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
     option_w_default(CMAKE_CXX_STANDARD 17)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     option_w_default(BLAS_INT4 ON)
+    option_w_default(BLAS_VENDOR ReferenceBLAS)
     option_w_default(ENABLE_COVERAGE OFF)
     option_w_default(CMAKE_CXX_EXTENSIONS OFF)
     option_w_default(CMAKE_BUILD_TYPE Release)
@@ -97,31 +98,8 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
         bundle_cmake_args(DEPENDENCY_CMAKE_OPTIONS USE_SCALAPACK)
         set(TAMM_CXX_FLAGS "${TAMM_CXX_FLAGS} -DSCALAPACK")
     endif()
-
-    string(FIND "${LAPACKE_LIBRARIES}" "mkl" FINDLAPACKE_mkl_found)
-    string(FIND "${LAPACKE_LIBRARIES}" "essl" FINDLAPACKE_essl_found)
-
-    #TODO: Check if we are using 4-byte int libs when using ScaLAPACK
-    if(NOT "${FINDLAPACKE_mkl_found}" STREQUAL "-1")
-        string(FIND "${LAPACKE_LIBRARIES}" "ilp64" _mkl_ilp64_found)
-        if(NOT "${_mkl_ilp64_found}" STREQUAL "-1")
-            message(STATUS "DETECTED INTEL MKL ILP64 LIBS")
-            set(BLAS_INT4 OFF CACHE BOOL "BLAS INT SIZE" FORCE)
-            set(TAMM_CXX_FLAGS "${TAMM_CXX_FLAGS} -m64 -DMKL_ILP64" CACHE STRING "TAMM_CXX_FLAGS" FORCE)
-        endif()              
-    elseif(NOT "${FINDLAPACKE_essl_found}" STREQUAL "-1")
-        string(FIND "${LAPACKE_LIBRARIES}" "essl6464" _essl_ilp64_found)
-        string(FIND "${LAPACKE_LIBRARIES}" "esslsmp6464" _esslsmp_ilp64_found)
-        if(NOT "${_essl_ilp64_found}" STREQUAL "-1" OR NOT "${_esslsmp_ilp64_found}" STREQUAL "-1")
-            message(STATUS "DETECTED IBM ESSL ILP64 LIBS")
-            set(BLAS_INT4 OFF CACHE BOOL "BLAS INT SIZE" FORCE)
-            set(TAMM_CXX_FLAGS "${TAMM_CXX_FLAGS} -m64 -DLAPACK_ILP64" CACHE STRING "TAMM_CXX_FLAGS" FORCE)
-        endif()
-    else()
-        list(APPEND TAMM_EXTRA_LIBS -ldl)        
-    endif()
     
-    bundle_cmake_args(DEPENDENCY_CMAKE_OPTIONS BLAS_INT4 ENABLE_COVERAGE)
+    bundle_cmake_args(DEPENDENCY_CMAKE_OPTIONS BLAS_INT4 BLAS_VENDOR ENABLE_COVERAGE)
 
     print_banner("Locating Dependencies and Creating Targets")
     ################################################################################
@@ -129,6 +107,12 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
     # Add the subprojects, their dependencies, and their tests
     #
     ################################################################################
+
+    if(${BLAS_VENDOR} STREQUAL "ReferenceBLAS")
+        list(APPEND TAMM_EXTRA_LIBS -ldl)
+    endif()
+
+    bundle_cmake_strings(CORE_CMAKE_STRINGS BLAS_VENDOR)
 
     foreach(__project ${NWX_PROJECTS})
         foreach(depend ${${__project}_DEPENDENCIES})
@@ -292,8 +276,8 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
             DESTINATION ${CMAKE_INSTALL_PREFIX} USE_SOURCE_PERMISSIONS)
 
     if(${PROJECT_NAME} STREQUAL "tamm")
-        if(TARGET Libint2::cxx)
-            get_target_property(LI_CD Libint2::cxx INTERFACE_COMPILE_DEFINITIONS)
+        if(TARGET Libint2::libint2_cxx)
+            get_target_property(LI_CD Libint2::libint2_cxx INTERFACE_COMPILE_DEFINITIONS)
             string(REPLACE "=" " " LI_CD ${LI_CD})
             separate_arguments(LI_CD UNIX_COMMAND ${LI_CD})
             list (GET LI_CD 1 LI_BASIS_SET_PATH)

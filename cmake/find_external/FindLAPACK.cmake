@@ -1,44 +1,202 @@
-#
-# Attempts to find a LAPACK distribution.  This module will override the one
-# that comes with CMake.
-#
-# After this module runs the following variables are set:
-#   LAPACK_LIBRARY   : The LAPACK library(s)
-#   LAPACK_LIBRARIES : The LAPACK library(s) plus those of any dependencies
-#   LAPACK_FOUND     : True if we found a LAPACK library
-#
-# Users can override paths found by this module in several ways:
-# 1. Specify LAPACK_LIBRARIES
-#    - This will prevent attempts to find LAPACK or its dependencies and will
-#      use the supplied paths instead
-# 2. Specify LAPACK_LIBRARY
-#    - This will not look for LAPACK, but will look for its dependencies
+cmake_minimum_required( VERSION 3.11 ) # Require CMake 3.11+
 
-set(REFBLAS_HINTS ${STAGE_DIR}${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFIX})
+include( CMakePushCheckState )
+include( CheckLibraryExists )
+include( CheckSymbolExists )
+include( CMakeFindDependencyMacro )
+include( FindPackageHandleStandardArgs )
 
-include(FindPackageHandleStandardArgs)
 
-is_valid(LAPACK_LIBRARIES FINDLAPACK_LIBS_SET)
-if(NOT FINDLAPACK_LIBS_SET)
-    find_library(LAPACK_LIBRARY NAMES lapack 
-                 HINTS ${REFBLAS_HINTS}
-                 PATHS ${REFBLAS_ROOT_DIR}
-                 PATH_SUFFIXES lib lib64 lib32 
-                 NO_DEFAULT_PATH)
-    find_package_handle_standard_args(LAPACK DEFAULT_MSG LAPACK_LIBRARY)
+include( ${CMAKE_CURRENT_LIST_DIR}/CommonFunctions.cmake )
 
-    #Now we need to find a BLAS library that hopefully is compatible with our LAPACK
-    find_package(BLAS)
-
-    #Here we test that it is, which as you can see we actually don't...
-    set(LAPACK_LIBRARIES ${LAPACK_LIBRARY} ${BLAS_LIBRARIES})
-
-    #Now if we built LAPACK we need to find the standard Fortran libraries,
-    #specifically the ones our LAPACK was compiled with
-    find_package(StandardFortran REQUIRED)
-
-    #Here's where we test that it worked, which as you can see we don't
-    list(APPEND LAPACK_LIBRARIES ${STANDARDFORTRAN_LIBRARIES})
+# SANITY CHECK
+if( "ilp64" IN_LIST LAPACK_FIND_COMPONENTS AND "lp64" IN_LIST LAPACK_FIND_COMPONENTS )
+  message( FATAL_ERROR "LAPACK cannot link to both ILP64 and LP64 iterfaces" )
 endif()
 
-find_package_handle_standard_args(LAPACK DEFAULT_MSG LAPACK_LIBRARIES)
+
+# Get list of required / optional components
+foreach( _comp ${LAPACK_FIND_COMPONENTS} )
+  if( LAPACK_FIND_REQUIRED_${_comp} )
+    list( APPEND LAPACK_REQUIRED_COMPONENTS ${_comp} )
+  else()
+    list( APPEND LAPACK_OPTIONAL_COMPONENTS ${_comp} )
+  endif()
+endforeach()
+
+fill_out_prefix( lapack )
+
+if( NOT LAPACK_PREFERENCE_LIST )
+  set( LAPACK_PREFERENCE_LIST "ReferenceLAPACK" )
+endif()
+
+if( NOT lapack_LIBRARIES )
+
+  if( NOT TARGET BLAS::blas )
+    find_dependency( BLAS 
+      COMPONENTS          ${LAPACK_REQUIRED_COMPONENTS} 
+      OPTIONAL_COMPONENTS ${LAPACK_OPTIONAL_COMPONENTS} 
+    )
+  else()
+    message( STATUS "LAPACK will use predetermined BLAS::blas" )
+  endif()
+
+  message( STATUS "Checking if BLAS::blas contains a LAPACK implementation...")
+  # Check if BLAS LINKS to LAPACK
+  cmake_push_check_state( RESET )
+  set( CMAKE_REQUIRED_LIBRARIES BLAS::blas )
+  set( CMAKE_REQUIRED_QUIET     ON         )
+  
+  check_library_exists( "" dsyev_ "" blas_HAS_DSYEV_UNDERSCORE    )
+  check_library_exists( "" dsyev  "" blas_HAS_DSYEV_NO_UNDERSCORE )
+  
+  cmake_pop_check_state()
+
+  if( blas_HAS_DSYEV_UNDERSCORE OR blas_HAS_DSYEV_NO_UNDERSCORE )
+    set( blas_HAS_LAPACK TRUE )
+    message( STATUS "Checking if BLAS::blas contains a LAPACK implementation... Yes!")
+  else()
+    message( STATUS "Checking if BLAS::blas contains a LAPACK implementation... No!")
+  endif()
+
+  unset( blas_HAS_DSYEV_UNDERSCORE    )
+  unset( blas_HAS_DSYEV_NO_UNDERSCORE )
+
+  if( blas_HAS_LAPACK )
+    set( lapack_LIBRARIES       BLAS::blas              )
+    set( LAPACK_VENDOR          ${BLAS_VENDOR}          )
+    if( BLAS_USES_ILP64 )
+      set( LAPACK_ilp64_FOUND TRUE )
+    else()
+      set( LAPACK_lp64_FOUND TRUE )
+    endif()
+  else()
+
+    if( BLAS_USES_ILP64 )
+      message( FATAL_ERROR "ReferenceLAPACK cannot be compiled ILP64" )
+    endif()
+
+    list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/linalg-modules )
+    foreach( lapack_type ${LAPACK_PREFERENCE_LIST} )
+
+      string( TOLOWER ${lapack_type} lapack_lower_case )
+      #set( ${lapack_lower_case}_PREFIX         ${lapack_PREFIX}         )
+      #set( ${lapack_lower_case}_INCLUDE_DIR    ${lapack_INCLUDE_DIR}    )
+      #set( ${lapack_lower_case}_LIBRARY_DIR    ${lapack_LIBRARY_DIR}    )
+      #set( ${lapack_lower_case}_PREFERS_STATIC ${lapack_PREFERS_STATIC} )
+      copy_meta_data( lapack ${lapack_lower_case} )
+
+      find_package( ${lapack_type} 
+        COMPONENTS          ${LAPACK_REQUIRED_COMPONENTS} 
+        OPTIONAL_COMPONENTS ${LAPACK_OPTIONAL_COMPONENTS} 
+      )
+
+      if( ${lapack_type}_FOUND )
+
+        set( LAPACK_VENDOR ${lapack_type} )
+
+        if( ${lapack_type} MATCHES "ReferenceLAPACK" ) 
+          set( lapack_LIBRARIES ReferenceLAPACK::lapack )
+        endif()
+
+        # Propagate integers
+        if( "ilp64" IN_LIST LAPACK_FIND_COMPONENTS )
+          set( LAPACK_ilp64_FOUND ${${lapack_type}_ilp64_FOUND} )
+        else()
+          set( LAPACK_lp64_FOUND ${${lapack_type}_lp64_FOUND} )
+        endif()
+
+        break()
+
+      endif()
+
+    endforeach()
+
+    list(REMOVE_AT CMAKE_MODULE_PATH -1)
+
+    # Append BLAS to LAPACK
+    if( lapack_LIBRARIES )
+      list( APPEND lapack_LIBRARIES BLAS::blas )
+    endif()
+
+  endif()
+else()
+
+  message( STATUS "LAPACK LIBRARIES WERE SET BY USER: ${lapack_LIBRARIES}" )
+
+endif()
+
+if( NOT LAPACK_ilp64_FOUND )
+  set( LAPACK_ilp64_FOUND FALSE )
+endif()
+if( NOT LAPACK_lp64_FOUND )
+  set( LAPACK_lp64_FOUND FALSE )
+endif()
+
+
+if( LAPACK_ilp64_FOUND )
+  set( LAPACK_USES_ILP64 TRUE )
+else()
+  set( LAPACK_USES_ILP64 FALSE )
+endif()
+
+
+
+# Handle implicit LAPACK linkage
+if( lapack_LIBRARIES MATCHES "[Ii][Mm][Pp][Ll][Ii][Cc][Ii][Tt]" )
+  unset( lapack_LIBRARIES )
+endif()
+
+# Check function existance and linkage / name mangling
+cmake_push_check_state( RESET )
+if( lapack_LIBRARIES )
+  set( CMAKE_REQUIRED_LIBRARIES ${lapack_LIBRARIES} )
+endif()
+set( CMAKE_REQUIRED_QUIET ON )
+
+check_library_exists( "" dsyev       "" LAPACK_NO_UNDERSCORE   ) 
+check_library_exists( "" dsyev_      "" LAPACK_USES_UNDERSCORE ) 
+
+set( TEST_USES_UNDERSCORE_STR "Performing Test LAPACK_USES_UNDERSCORE" )
+set( TEST_NO_UNDERSCORE_STR   "Performing Test LAPACK_NO_UNDERSCORE"   )
+
+message( STATUS  ${TEST_USES_UNDERSCORE_STR} )
+if( LAPACK_USES_UNDERSCORE )
+  message( STATUS "${TEST_USES_UNDERSCORE_STR} -- found" )
+else()
+  message( STATUS "${TEST_USES_UNDERSCORE_STR} -- not found" )
+endif()
+
+message( STATUS  ${TEST_NO_UNDERSCORE_STR} )
+if( LAPACK_NO_UNDERSCORE )
+  message( STATUS "${TEST_NO_UNDERSCORE_STR} -- found" )
+else()
+  message( STATUS "${TEST_NO_UNDERSCORE_STR} -- not found" )
+endif()
+
+unset( TEST_USES_UNDERSCORE_STR )
+unset( TEST_NO_UNDERSCORE_STR )
+
+
+cmake_pop_check_state()
+
+if( LAPACK_NO_UNDERSCORE OR LAPACK_USES_UNDERSCORE )
+  set( LAPACK_LINK_OK TRUE )
+endif()
+
+
+find_package_handle_standard_args( LAPACK
+  REQUIRED_VARS LAPACK_LINK_OK
+  HANDLE_COMPONENTS
+)
+
+if( LAPACK_FOUND AND NOT TARGET LAPACK::lapack )
+
+  set( LAPACK_LIBRARIES ${lapack_LIBRARIES} )
+  
+  add_library( LAPACK::lapack INTERFACE IMPORTED )
+  set_target_properties( LAPACK::lapack PROPERTIES
+    INTERFACE_LINK_LIBRARIES "${LAPACK_LIBRARIES}"
+  )
+
+endif()
