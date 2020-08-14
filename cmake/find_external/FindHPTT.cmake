@@ -11,7 +11,7 @@
 
 set(HPTT_HINTS ${STAGE_DIR}${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFIX})
 
-find_path(HPTT_INCLUDE_DIR hptt.h
+find_path(HPTT_INCLUDE_DIR hptt/hptt.h
           HINTS ${HPTT_HINTS}
           PATHS ${HPTT_ROOT_DIR}
           PATH_SUFFIXES include
