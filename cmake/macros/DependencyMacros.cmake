@@ -11,7 +11,7 @@ include(OptionMacros)
 
 enable_language(C)
 
-set(DEP_ABUILD "Eigen3" "LibInt2") #"HDF5" "HPTT" "GlobalArrays" "BLIS" "AntlrCppRuntime" "TALSH"
+set(DEP_ABUILD "Eigen3" "LibInt2" "HPTT" "HDF5" "TALSH") # "GlobalArrays" "BLIS" "AntlrCppRuntime"
 set(PROPERTY_NAMES INCLUDE_DIRECTORIES LINK_LIBRARIES COMPILE_OPTIONS COMPILE_DEFINITIONS)
 
 include( ${CMAKE_CURRENT_LIST_DIR}/../find_external/CommonFunctions.cmake )
@@ -24,23 +24,26 @@ function(dependency_to_variables __name _INCLUDE_DIRECTORIES
     string(TOUPPER ${__name} __NAME)
     foreach(__var ${PROPERTY_NAMES})
         get_property(__value TARGET ${__name}_External
-                                       PROPERTY INTERFACE_${__var})
+                             PROPERTY INTERFACE_${__var})
         list( REMOVE_DUPLICATES __value )
 
-        set( __value_list )
-        foreach( __val ${__value} )
-            if( TARGET ${__val} )
-              get_true_target_property( __tmp ${__val} INTERFACE_${__var} )
-              is_valid(__tmp _tmp_set)
-              if(_tmp_set)
-                list(APPEND __value_list ${__tmp} )
-              else()
+        set( __value_list ${__value})
+        if (NOT "${__name}" IN_LIST DEP_ABUILD)
+            set( __value_list )
+            foreach( __val ${__value} )
+                if( TARGET ${__val} )
+                get_true_target_property( __tmp ${__val} INTERFACE_${__var} )
+                is_valid(__tmp _tmp_set)
+                if(_tmp_set)
+                    list(APPEND __value_list ${__tmp} )
+                else()
+                    list(APPEND __value_list ${__val} )
+                endif()
+                else()
                 list(APPEND __value_list ${__val} )
-              endif()
-            else()
-              list(APPEND __value_list ${__val} )
-            endif()
-        endforeach()
+                endif()
+            endforeach()
+        endif()
 
         set(input_var ${_${__var}}) # Name of the variable user gave us
         list(APPEND ${input_var} ${__value_list})
@@ -144,12 +147,18 @@ function(find_dependency __name)
                     set(${name_var}_COMPILE_DEFINITIONS "${_li_cd}")     
                 endif() 
 
+                if(${__NAME} STREQUAL "HDF5")
+                    set(${name_var}_LIBRARIES hdf5-static)
+                    target_include_directories(${_tname} SYSTEM INTERFACE
+                            ${${name_var}_INCLUDE_DIR})                    
+                endif()
+
                 is_valid(${name_var}_LIBRARIES __has_libs)
                 if(__has_libs)
                     target_link_libraries(${_tname} INTERFACE
                             ${${name_var}_LIBRARIES})
                 endif() 
-                               
+
 
                 # is_valid(${name_var}_DEFINITIONS __has_defs)
                 # if(__has_defs)
