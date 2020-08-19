@@ -1,7 +1,8 @@
 
 
 ExternalProject_Add(TALSH_External
-    GIT_REPOSITORY https://github.com/DmitryLyakh/TAL_SH.git
+    GIT_REPOSITORY https://github.com/ajaypanyala/TAL_SH.git
+    GIT_TAG refactor 
     UPDATE_DISCONNECTED 1
     CMAKE_ARGS ${DEPENDENCY_CMAKE_OPTIONS}
     -DTALSH_GPU=ON -DTALSH_GPU_ARCH=${NV_GPU_ARCH} -DWITH_CUTENSOR=${USE_CUTENSOR} 
