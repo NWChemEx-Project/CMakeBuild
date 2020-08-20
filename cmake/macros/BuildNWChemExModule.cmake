@@ -113,6 +113,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
     endif()
 
     bundle_cmake_strings(CORE_CMAKE_STRINGS BLAS_VENDOR)
+    set(DEPENDENCY_ROOT_DIRS)
 
     foreach(__project ${NWX_PROJECTS})
         foreach(depend ${${__project}_DEPENDENCIES})
@@ -125,6 +126,10 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
                 package_dependency(${depend} DEPENDENCY_PATHS)
             endif()
 
+            is_valid(${depend}_ROOT __deproot_set)
+            if(__deproot_set)
+                bundle_cmake_args(DEPENDENCY_ROOT_DIRS ${depend}_ROOT)
+            endif()
         endforeach()
 
         if(ENABLE_COVERAGE)
@@ -207,6 +212,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
                            -DNWX_INCLUDE_DIR=${${__project}_INCLUDE_DIR}
                            -DSTAGE_DIR=${STAGE_DIR}
                            ${CORE_CMAKE_OPTIONS}
+                           ${DEPENDENCY_ROOT_DIRS}
                 BUILD_ALWAYS 1
                 INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
                 CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}

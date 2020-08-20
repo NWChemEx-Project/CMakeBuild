@@ -1,6 +1,6 @@
 # - Try to find the math library libm
 #
-#  In order to aid find_package the user may set LIBM_ROOT_DIR
+#  In order to aid find_package the user may set LIBM_ROOT
 #  to the root of the installed math library.
 #
 #   Once done this will define
@@ -11,7 +11,7 @@
 
 find_path(LIBM_INCLUDE_DIRS
   NAMES math.h
-  PATHS ${LIBM_ROOT_DIR}/include/
+  PATHS ${LIBM_ROOT}/include/
 )
 
 find_library(LIBM_LIBRARIES m)

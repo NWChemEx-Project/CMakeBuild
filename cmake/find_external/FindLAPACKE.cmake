@@ -35,7 +35,7 @@ is_valid(LAPACKE_LIBRARIES FINDLAPACKE_LIBS_SET)
 if(NOT FINDLAPACKE_LIBS_SET)
     find_library(LAPACKE_LIBRARY NAMES lapacke 
                  HINTS ${REFBLAS_HINTS}
-                 PATHS ${REFBLAS_ROOT_DIR}
+                 PATHS ${REFBLAS_ROOT}
                  PATH_SUFFIXES lib lib64 lib32 
                  NO_DEFAULT_PATH)
     find_package_handle_standard_args(LAPACKE DEFAULT_MSG LAPACKE_LIBRARY)

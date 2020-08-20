@@ -110,7 +110,7 @@ function(find_dependency __name)
             if(${__name} IN_LIST DEP_ABUILD)
                 set(DEP_STAGE_DIR ${STAGE_DIR}${CMAKE_INSTALL_PREFIX})
                 set(DEP_PATHS ${DEP_STAGE_DIR} ${CMAKE_INSTALL_PREFIX} 
-                              ${${__name}_ROOT} ${${__name}_ROOT_DIR})
+                              ${${__name}_ROOT})
                 # set(${__name}_DIR ${DEP_PATHS}) 
                 find_package(${__name} CONFIG
                              HINTS ${DEP_PATHS}
@@ -152,6 +152,10 @@ function(find_dependency __name)
                     target_include_directories(${_tname} SYSTEM INTERFACE
                             ${${name_var}_INCLUDE_DIR})                    
                 endif()
+
+                # if(${__NAME} STREQUAL "MSGSL")
+                #     set(${name_var}_LIBRARIES Microsoft.GSL::GSL)
+                # endif()                
 
                 is_valid(${name_var}_LIBRARIES __has_libs)
                 if(__has_libs)

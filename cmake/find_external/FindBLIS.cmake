@@ -1,6 +1,6 @@
 # - Try to find BLIS
 #
-#  In order to aid find_package the user may set BLIS_ROOT_DIR to the root of
+#  In order to aid find_package the user may set BLIS_ROOT to the root of
 #  the installed BLIS.
 #
 #  Once done this will define
@@ -15,7 +15,7 @@ set(BLIS_HINTS ${STAGE_DIR}${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFIX})
 
 find_path(BLIS_INCLUDE_DIR blis/blis.h
             HINTS ${BLIS_HINTS}
-            PATHS ${BLIS_ROOT_DIR}
+            PATHS ${BLIS_ROOT}
             PATH_SUFFIXES include
             NO_DEFAULT_PATH
           )
@@ -23,7 +23,7 @@ find_path(BLIS_INCLUDE_DIR blis/blis.h
 find_library(BLIS_LIBRARY 
              NAMES libblis.a blis
              HINTS ${BLIS_HINTS}
-             PATHS ${BLIS_ROOT_DIR}
+             PATHS ${BLIS_ROOT}
              PATH_SUFFIXES lib lib32 lib64
              NO_DEFAULT_PATH
         )

@@ -34,7 +34,7 @@ is_valid(CBLAS_LIBRARIES FINDCBLAS_LIBS_SET)
 if(NOT FINDCBLAS_LIBS_SET)
     find_library(CBLAS_LIBRARY NAMES cblas 
                  HINTS ${REFBLAS_HINTS}
-                 PATHS ${REFBLAS_ROOT_DIR}
+                 PATHS ${REFBLAS_ROOT}
                  PATH_SUFFIXES lib lib64 lib32 
                  NO_DEFAULT_PATH)
     find_package_handle_standard_args(CBLAS DEFAULT_MSG CBLAS_LIBRARY)

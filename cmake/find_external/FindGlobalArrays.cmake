@@ -1,6 +1,6 @@
 # - Try to find Global Arrays
 #
-#  The user may specify GLOBALARRAYS_ROOT_DIR to aid find_packge in
+#  The user may specify GLOBALARRAYS_ROOT to aid find_packge in
 #  finding an already installed Global Arrays
 #
 #  Once done this will define
@@ -13,35 +13,35 @@ set(GLOBALARRAYS_HINTS ${STAGE_DIR}${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFI
 
 find_path(GLOBALARRAYS_INCLUDE_DIR ga.h
           HINTS ${GLOBALARRAYS_HINTS}
-          PATHS ${GLOBALARRAYS_ROOT_DIR}
+          PATHS ${GLOBALARRAYS_ROOT}
           PATH_SUFFIXES include
           NO_DEFAULT_PATH
          )
 
 find_path(GLOBALARRAYS_CONFIG ga-config
          HINTS ${GLOBALARRAYS_HINTS}
-         PATHS ${GLOBALARRAYS_ROOT_DIR} 
+         PATHS ${GLOBALARRAYS_ROOT} 
          PATH_SUFFIXES bin
          NO_DEFAULT_PATH
         )         
 
 find_library(GLOBALARRAYS_C_LIBRARY NAMES ga
              HINTS ${GLOBALARRAYS_HINTS}
-             PATHS ${GLOBALARRAYS_ROOT_DIR}
+             PATHS ${GLOBALARRAYS_ROOT}
              PATH_SUFFIXES lib lib32 lib64
              NO_DEFAULT_PATH
         )
 
 find_library(GLOBALARRAYS_ARMCI_LIBRARY NAMES armci
              HINTS ${GLOBALARRAYS_HINTS}
-             PATHS ${GLOBALARRAYS_ROOT_DIR}
+             PATHS ${GLOBALARRAYS_ROOT}
              PATH_SUFFIXES lib lib32 lib64
              NO_DEFAULT_PATH
         )
 
 # find_library(GLOBALARRAYS_COMEX_LIBRARY NAMES comex
 #              HINTS ${GLOBALARRAYS_HINTS}
-#              PATHS ${GLOBALARRAYS_ROOT_DIR}
+#              PATHS ${GLOBALARRAYS_ROOT}
 #              PATH_SUFFIXES lib lib32 lib64
 #              NO_DEFAULT_PATH
 #            )

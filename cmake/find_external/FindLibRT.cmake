@@ -1,6 +1,6 @@
 # - Try to find POSIX.1b Realtime Extensions library
 #
-#  In order to aid find_package the user may set LIBRT_ROOT_DIR to the root of
+#  In order to aid find_package the user may set LIBRT_ROOT to the root of
 #  the installed realtime library.
 #
 #   Once done this will define
@@ -11,7 +11,7 @@
 
 find_path(LIBRT_INCLUDE_DIRS
   NAMES time.h
-  PATHS ${LIBRT_ROOT_DIR}/include/
+  PATHS ${LIBRT_ROOT}/include/
 )
 
 find_library(LIBRT_LIBRARIES rt)
