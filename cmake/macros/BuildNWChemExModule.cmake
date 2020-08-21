@@ -151,19 +151,19 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
         set(${NWX_CXX_FLAGS} "${${NWX_CXX_FLAGS}} ${TAMM_CXX_FLAGS}")
         bundle_cmake_strings(CORE_CMAKE_STRINGS ${NWX_CXX_FLAGS})
 
-        if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-            find_library(stdfs_LIBRARY 
-                NAMES c++fs 
-                PATHS ${CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES} 
-                DOC "LIBC++ FS Library" 
-            )
-        else()
-            find_library(stdfs_LIBRARY 
-                NAMES stdc++fs 
-                PATHS ${CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES} 
-                DOC "GNU FS Library" 
-            )
-        endif()
+        # if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        #     find_library(stdfs_LIBRARY 
+        #         NAMES c++fs 
+        #         PATHS ${CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES} 
+        #         DOC "LIBC++ FS Library" 
+        #     )
+        # else()
+        find_library(stdfs_LIBRARY 
+            NAMES stdc++fs 
+            PATHS ${CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES} 
+            DOC "GNU FS Library" 
+        )
+        # endif()
         message(STATUS "STDFS LIB: ${stdfs_LIBRARY}")
         if(stdfs_LIBRARY)
             list(APPEND TAMM_EXTRA_LIBS ${stdfs_LIBRARY})
