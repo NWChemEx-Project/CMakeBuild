@@ -73,6 +73,11 @@ else()
   set( intelmkl_ILP64_SGIMPT_BLACS_LIBRARY_NAME   "mkl_blacs_sgimpt_ilp64"   )
 endif()
 
+if( intelmkl_PREFERS_STATIC AND USE_DPCPP)
+  set( intelmkl_SYCL_LIBRARY_NAME       "libmkl_sycl.a"         )
+else()
+  set( intelmkl_SYCL_LIBRARY_NAME       "mkl_sycl"              )
+endif()
 
 # Defaults
 if( NOT intelmkl_PREFERED_THREAD_LEVEL )
@@ -147,7 +152,15 @@ find_library( intelmkl_CORE_LIBRARY
   DOC "Intel(R) MKL CORE Library"
 )
 
-
+if(USE_DPCPP)
+find_library( intelmkl_SYCL_LIBRARY
+  NAMES ${intelmkl_SYCL_LIBRARY_NAME}
+  HINTS ${intelmkl_PREFIX}
+  PATHS ${intelmkl_LIBRARY_DIR} ${CMAKE_C_IMPLICIT_LINK_DIRECTORIES}
+  PATH_SUFFIXES lib/intel64 lib/ia32
+  DOC "Intel(R) MKL SYCL Library"
+)
+endif()
 
 # Check version
 if( EXISTS ${intelmkl_INCLUDE_DIR}/mkl_version.h )
@@ -300,14 +313,14 @@ if( intelmkl_LIBRARY AND intelmkl_THREAD_LIBRARY AND intelmkl_CORE_LIBRARY )
   #  set( IntelMKL_LIBRARIES "-Wl,--no-as-needed" ${intelmkl_LIBRARY} ${intelmkl_THREAD_LIBRARY} ${intelmkl_CORE_LIBRARY} )
   #endif()
 
-
+  
   if( intelmkl_PREFERS_STATIC )
 
     if( "scalapack" IN_LIST IntelMKL_FIND_COMPONENTS )
       set( IntelMKL_LIBRARIES ${intelmkl_SCALAPACK_LIBRARY} )
     endif()
 
-    list( APPEND IntelMKL_LIBRARIES  "-Wl,--start-group" ${intelmkl_LIBRARY} ${intelmkl_THREAD_LIBRARY} ${intelmkl_CORE_LIBRARY} )
+    list( APPEND IntelMKL_LIBRARIES  "-Wl,--start-group" ${intelmkl_LIBRARY} ${intelmkl_THREAD_LIBRARY} ${intelmkl_CORE_LIBRARY} ${intelmkl_SYCL_LIBRARY})
 
     if( "blacs" IN_LIST IntelMKL_FIND_COMPONENTS )
       list( APPEND IntelMKL_LIBRARIES ${intelmkl_BLACS_LIBRARY} )
@@ -322,7 +335,7 @@ if( intelmkl_LIBRARY AND intelmkl_THREAD_LIBRARY AND intelmkl_CORE_LIBRARY )
       list( APPEND IntelMKL_LIBRARIES ${intelmkl_SCALAPACK_LIBRARY} )
     endif()
 
-    list( APPEND IntelMKL_LIBRARIES  ${intelmkl_LIBRARY} ${intelmkl_THREAD_LIBRARY} ${intelmkl_CORE_LIBRARY} )
+    list( APPEND IntelMKL_LIBRARIES  ${intelmkl_LIBRARY} ${intelmkl_THREAD_LIBRARY} ${intelmkl_CORE_LIBRARY} ${intelmkl_SYCL_LIBRARY})
 
     if( "blacs" IN_LIST IntelMKL_FIND_COMPONENTS )
       list( APPEND IntelMKL_LIBRARIES ${intelmkl_BLACS_LIBRARY} )
@@ -335,7 +348,8 @@ if( intelmkl_LIBRARY AND intelmkl_THREAD_LIBRARY AND intelmkl_CORE_LIBRARY )
     find_package( OpenMP QUIET )
     set( IntelMKL_LIBRARIES ${IntelMKL_LIBRARIES} OpenMP::OpenMP_C )
   elseif( intelmkl_PREFERED_THREAD_LEVEL MATCHES "sequential" )
-    set( IntelMKL_LIBRARIES ${IntelMKL_LIBRARIES} "pthread" )
+    find_package( Threads )
+    set( IntelMKL_LIBRARIES ${IntelMKL_LIBRARIES} Threads::Threads )
   elseif( intelmkl_PREFERED_THREAD_LEVEL MATCHES "tbb" )
     find_package( TBB QUIET )
     set( IntelMKL_LIBRARIES ${IntelMKL_LIBRARIES} tbb )
