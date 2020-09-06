@@ -75,7 +75,7 @@ endif()
 
 if( intelmkl_PREFERS_STATIC AND USE_DPCPP)
   set( intelmkl_SYCL_LIBRARY_NAME       "libmkl_sycl.a"         )
-else()
+elseif(USE_DPCPP)
   set( intelmkl_SYCL_LIBRARY_NAME       "mkl_sycl"              )
 endif()
 
@@ -153,14 +153,19 @@ find_library( intelmkl_CORE_LIBRARY
 )
 
 if(USE_DPCPP)
-find_library( intelmkl_SYCL_LIBRARY
-  NAMES ${intelmkl_SYCL_LIBRARY_NAME}
-  HINTS ${intelmkl_PREFIX}
-  PATHS ${intelmkl_LIBRARY_DIR} ${CMAKE_C_IMPLICIT_LINK_DIRECTORIES}
-  PATH_SUFFIXES lib/intel64 lib/ia32
-  DOC "Intel(R) MKL SYCL Library"
-)
-endif()
+  find_library( intelmkl_SYCL_LIBRARY
+    NAMES ${intelmkl_SYCL_LIBRARY_NAME}
+    HINTS ${intelmkl_PREFIX}
+    PATHS ${intelmkl_LIBRARY_DIR} ${CMAKE_C_IMPLICIT_LINK_DIRECTORIES}
+    PATH_SUFFIXES lib/intel64 lib/ia32
+    DOC "Intel(R) MKL SYCL Library"
+  )
+  find_package(IntelSYCL REQUIRED)
+  #set(intel_SYCL_TARGET Intel::SYCL)
+  set(intel_SYCL_LIBRARIES ${intelmkl_SYCL_LIBRARY} ${INTEL_SYCL_LIBRARIES})
+  # list(APPEND IntelMKL_C_COMPILE_FLAGS ${INTEL_SYCL_FLAGS})
+  list(APPEND IntelMKL_INCLUDE_DIR ${INTEL_SYCL_INCLUDE_DIRS})
+endif() 
 
 # Check version
 if( EXISTS ${intelmkl_INCLUDE_DIR}/mkl_version.h )
@@ -320,7 +325,7 @@ if( intelmkl_LIBRARY AND intelmkl_THREAD_LIBRARY AND intelmkl_CORE_LIBRARY )
       set( IntelMKL_LIBRARIES ${intelmkl_SCALAPACK_LIBRARY} )
     endif()
 
-    list( APPEND IntelMKL_LIBRARIES  "-Wl,--start-group" ${intelmkl_LIBRARY} ${intelmkl_THREAD_LIBRARY} ${intelmkl_CORE_LIBRARY} ${intelmkl_SYCL_LIBRARY})
+    list( APPEND IntelMKL_LIBRARIES  "-Wl,--start-group" ${intelmkl_LIBRARY} ${intelmkl_THREAD_LIBRARY} ${intelmkl_CORE_LIBRARY} ${intel_SYCL_LIBRARIES})
 
     if( "blacs" IN_LIST IntelMKL_FIND_COMPONENTS )
       list( APPEND IntelMKL_LIBRARIES ${intelmkl_BLACS_LIBRARY} )
@@ -335,7 +340,7 @@ if( intelmkl_LIBRARY AND intelmkl_THREAD_LIBRARY AND intelmkl_CORE_LIBRARY )
       list( APPEND IntelMKL_LIBRARIES ${intelmkl_SCALAPACK_LIBRARY} )
     endif()
 
-    list( APPEND IntelMKL_LIBRARIES  ${intelmkl_LIBRARY} ${intelmkl_THREAD_LIBRARY} ${intelmkl_CORE_LIBRARY} ${intelmkl_SYCL_LIBRARY})
+    list( APPEND IntelMKL_LIBRARIES  ${intelmkl_LIBRARY} ${intelmkl_THREAD_LIBRARY} ${intelmkl_CORE_LIBRARY} ${intel_SYCL_LIBRARIES})
 
     if( "blacs" IN_LIST IntelMKL_FIND_COMPONENTS )
       list( APPEND IntelMKL_LIBRARIES ${intelmkl_BLACS_LIBRARY} )
