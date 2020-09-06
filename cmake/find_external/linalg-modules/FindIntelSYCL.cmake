@@ -21,7 +21,7 @@ set(original_cmake_prefix_path ${CMAKE_PREFIX_PATH})
 if(dpcpp_root_hints)
     list(INSERT CMAKE_PREFIX_PATH 0 ${dpcpp_root_hints})
 else()
-    message("DPCPP_ROOT prefix path hint is not defiend")
+    message("DPCPP_ROOT prefix path hint is not defined")
 endif()
 
 set(OPENCLROOT "${dpcpp_root_hints}/include/sycl/CL/")
@@ -34,9 +34,9 @@ if(MULTI_GPU_SUPPORT)
 endif()
 
 
-if (NOT COMPUTE_RUNTIME_NAME)
-    message("Not OpenCL or L0")
-endif()
+# if (NOT COMPUTE_RUNTIME_NAME)
+#     message("Not OpenCL or L0")
+# endif()
 
 include(CheckCXXCompilerFlag)
 include(FindPackageHandleStandardArgs)
@@ -50,7 +50,7 @@ get_filename_component(INTEL_SYCL_BINARY_DIR ${CMAKE_CXX_COMPILER} PATH)
 find_path(INTEL_SYCL_INCLUDE_DIRS
     NAMES CL/sycl/version.hpp
     PATHS
-      ${sycl_root_hints}
+      ${dpcpp_root_hints}
       "${INTEL_SYCL_BINARY_DIR}/.."
     PATH_SUFFIXES
         include
@@ -64,7 +64,7 @@ find_path(INTEL_SYCL_INCLUDE_DIRS
 find_library(INTEL_SYCL_LIBRARIES
     NAMES "sycl"
     PATHS
-        ${sycl_root_hints}
+        ${dpcpp_root_hints}
         "${INTEL_SYCL_BINARY_DIR}/.."
     PATH_SUFFIXES lib
     NO_DEFAULT_PATH)
@@ -72,7 +72,7 @@ find_library(INTEL_SYCL_LIBRARIES
 find_library(INTEL_OpenCL_LIBRARIES
     NAMES "OpenCL"
     PATHS
-        ${sycl_root_hints}
+        ${dpcpp_root_hints}
         "${INTEL_SYCL_BINARY_DIR}/.."
     PATH_SUFFIXES lib
     NO_DEFAULT_PATH)
