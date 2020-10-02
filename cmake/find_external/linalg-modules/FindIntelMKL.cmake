@@ -20,6 +20,7 @@
 #      intelmkl_PREFERED_THREAD_LEVEL   - ( sequential, openmp, tbb ) default: openmp
 #      intelmkl_PREFERED_THREAD_LIBRARY - ( intel, gnu, pgi )         default: depends on compiler
 
+include(UtilityMacros)
 
 # SANITY CHECK
 if( "ilp64" IN_LIST IntelMKL_FIND_COMPONENTS AND "lp64" IN_LIST IntelMKL_FIND_COMPONENTS )

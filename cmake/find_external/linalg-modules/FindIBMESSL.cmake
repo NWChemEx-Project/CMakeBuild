@@ -1,3 +1,5 @@
+include(UtilityMacros)
+
 if( "ilp64" IN_LIST IBMESSL_FIND_COMPONENTS AND "lp64" IN_LIST IBMESSL_FIND_COMPONENTS )
   message( FATAL_ERROR "IBMESSL cannot link to both ILP64 and LP64 iterfaces" )
 endif()

@@ -88,7 +88,8 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
         option_w_default(${__project}_DEPENDENCIES "")
     endforeach()
 
-    set(NWX_CORE_OPTIONS CMAKE_CXX_COMPILER CMAKE_C_COMPILER
+    set(SUPER_PROJECT_BINARY_DIR ${CMAKE_BINARY_DIR})
+    set(NWX_CORE_OPTIONS CMAKE_CXX_COMPILER CMAKE_C_COMPILER SUPER_PROJECT_BINARY_DIR
         CMAKE_Fortran_COMPILER CMAKE_BUILD_TYPE BUILD_SHARED_LIBS ${NWX_CXX_FLAGS}
         CMAKE_INSTALL_PREFIX CMAKE_CXX_STANDARD CMAKE_VERSION PROJECT_VERSION
         CMAKE_POSITION_INDEPENDENT_CODE CMAKE_VERBOSE_MAKEFILE CMAKE_CXX_EXTENSIONS
@@ -264,6 +265,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
             ExternalProject_Add(${__project}_Methods_External
                     SOURCE_DIR ${${__project}_METHODS_DIR}
                     CMAKE_ARGS -DSUPER_PROJECT_ROOT=${SUPER_PROJECT_ROOT}
+                               -DSUPER_PROJECT_BINARY_DIR=${SUPER_PROJECT_BINARY_DIR}
                                -DNWX_DEBUG_CMAKE=${NWX_DEBUG_CMAKE}
                                -DSTAGE_DIR=${STAGE_DIR}
                                -DSTAGE_INSTALL_DIR=${STAGE_INSTALL_DIR}
