@@ -98,7 +98,7 @@ else()
 
     ExternalProject_Add(GlobalArrays_External
         #URL https://github.com/GlobalArrays/ga/releases/download/v${PROJECT_VERSION}/ga-${PROJECT_VERSION}.tar.gz
-        URL https://github.com/ajaypanyala/ga/releases/download/v5.7.2/ga-5.7.2.tar.gz        
+        URL https://github.com/ajaypanyala/ga/releases/download/v5.7.3/ga-5.7.3.tar.gz
         CONFIGURE_COMMAND                      
         CC=${CMAKE_C_COMPILER}
         CFLAGS=${GA_CFLAGS}
