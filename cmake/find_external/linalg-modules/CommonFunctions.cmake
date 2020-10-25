@@ -42,6 +42,13 @@
 #
 #==================================================================
 
+function(is_valid __variable __out)
+  set(${__out} FALSE PARENT_SCOPE)
+  if(DEFINED ${__variable} AND (NOT "${${__variable}}" STREQUAL ""))
+      set(${__out} TRUE PARENT_SCOPE)
+  endif()
+endfunction()
+
 function( fill_out_prefix name )
 
   if( ${name}_PREFIX AND NOT ${name}_INCLUDE_DIR )

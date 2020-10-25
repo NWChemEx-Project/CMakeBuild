@@ -13,17 +13,23 @@
 include(CTest)
 enable_testing()
 
+enable_language(C CXX Fortran)
+
 if(USE_CUDA)
     include(CheckLanguage)
     check_language(CUDA)
     if(CMAKE_CUDA_COMPILER)
         enable_language(CUDA)
+        set(CMAKE_CUDA_ARCHITECTURES ${NV_GPU_ARCH})
         # set(SMS 35 50 52 53 60 61 62 70 72)
         # set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --use_fast_math")
         # foreach(__sm ${SMS})
         #     set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -gencode arch=compute_${__sm},code=sm_${__sm}")
         # endforeach()
-        set(CMAKE_CUDA_FLAGS "--maxrregcount ${CUDA_MAXREGCOUNT} --use_fast_math -gencode arch=compute_${NV_GPU_ARCH},code=sm_${NV_GPU_ARCH} -DUSE_CUDA")
+        set(CMAKE_CUDA_FLAGS "--maxrregcount ${CUDA_MAXREGCOUNT} --use_fast_math -DUSE_CUDA")
+        if(${CMAKE_VERSION} VERSION_LESS "3.18.0")
+            set(CMAKE_CUDA_FLAGS "--maxrregcount ${CUDA_MAXREGCOUNT} --use_fast_math -gencode arch=compute_${NV_GPU_ARCH},code=sm_${NV_GPU_ARCH} -DUSE_CUDA")
+        endif()
     endif()
 endif()
 
@@ -162,7 +168,11 @@ function(nwchemex_set_up_cuda_target __name __testcudalib __flags __lflags __ins
     target_include_directories(${__name} PRIVATE ${NWX_INCLUDE_DIR} ${CUDA_TOOLKIT_INCLUDE})
     set_property(TARGET ${__name} PROPERTY CXX_STANDARD ${CMAKE_CXX_STANDARD})
     set_property(TARGET ${__name} PROPERTY LINK_FLAGS "${__lflags}") 
-    set_property(TARGET ${__name} PROPERTY CUDA_SEPARABLE_COMPILATION ON)
+    # set_property(TARGET ${__name} PROPERTY CUDA_SEPARABLE_COMPILATION ON)
+    target_compile_options( ${__name}
+    PRIVATE
+      $<$<COMPILE_LANGUAGE:CUDA>: -Xptxas -v > 
+    )    
 endfunction()
 
 function(add_mpi_cuda_unit_test __name __cudasrcs __np __testargs)
@@ -192,7 +202,11 @@ function(add_mpi_cuda_unit_test __name __cudasrcs __np __testargs)
 
     add_library(${__testcudalib} ${__cudasrcs})
     target_include_directories(${__testcudalib} PRIVATE ${nwx_cuda_incs} ${CUDA_TOOLKIT_INCLUDE})
-    set_property(TARGET ${__testcudalib} PROPERTY CUDA_SEPARABLE_COMPILATION ON)
+    target_compile_options( ${__testcudalib}
+    PRIVATE
+      $<$<COMPILE_LANGUAGE:CUDA>: -Xptxas -v > 
+    )    
+    # set_property(TARGET ${__testcudalib} PROPERTY CUDA_SEPARABLE_COMPILATION ON)
     
     add_executable(${__name} ${__file_copy})
     #set_property(TARGET ${__name} PROPERTY LINKER_LANGUAGE CXX)

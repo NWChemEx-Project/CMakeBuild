@@ -37,10 +37,10 @@ if(USE_OPENMP)
   set(BLIS_W_OPENMP openmp)
 endif()
 
-set(BLIS_INT_FLAGS -i 64 -b 64 -t ${BLIS_W_OPENMP})# --enable-cblas
+set(BLIS_INT_FLAGS -i 64 -b 64 -t ${BLIS_W_OPENMP} --disable-blas)# --enable-cblas
 
 if(BLAS_INT4)
-    set(BLIS_INT_FLAGS -i 32 -b 32 -t ${BLIS_W_OPENMP})# --enable-cblas
+    set(BLIS_INT_FLAGS -i 32 -b 32 -t ${BLIS_W_OPENMP} --disable-blas)# --enable-cblas
 endif()
 
 ExternalProject_Add(BLIS_External

@@ -14,7 +14,7 @@ if(CMAKE_POSITION_INDEPENDENT_CODE)
     string_concat(FPIC_LIST "" " " BLIS_FLAGS)
 endif()
 
-set(BLIS_TAR https://github.com/flame/blis/archive/0.7.0.tar.gz)
+set(BLIS_TAR https://github.com/ajaypanyala/blis/archive/0.7.1.tar.gz)
 
 set(BLIS_OPT_FLAGS -march=native)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
@@ -25,10 +25,10 @@ endif()
 
 set(BLIS_OPT_FLAGS "${BLIS_FLAGS} ${BLIS_OPT_FLAGS}")
 
-set(BLIS_INT_FLAGS -i 64 -b 64 -t openmp)# --enable-cblas
+set(BLIS_INT_FLAGS -i 64 -b 64 -t openmp --disable-blas)# --enable-cblas
 
 if(BLAS_INT4)
-    set(BLIS_INT_FLAGS -i 32 -b 32 -t openmp)# --enable-cblas
+    set(BLIS_INT_FLAGS -i 32 -b 32 -t openmp --disable-blas)# --enable-cblas
 endif()
 
 ExternalProject_Add(BLIS_External

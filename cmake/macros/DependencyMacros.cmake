@@ -11,10 +11,10 @@ include(OptionMacros)
 
 enable_language(C)
 
-set(DEP_ABUILD "Eigen3" "LibInt2" "HPTT" "HDF5" "TALSH") # "GlobalArrays" "BLIS" "AntlrCppRuntime"
+set(DEP_ABUILD "Eigen3" "LibInt2" "HPTT" "HDF5" "TALSH" "GlobalArrays") # "GlobalArrays" "BLIS" "AntlrCppRuntime"
 set(PROPERTY_NAMES INCLUDE_DIRECTORIES LINK_LIBRARIES COMPILE_OPTIONS COMPILE_DEFINITIONS)
 
-include( ${CMAKE_CURRENT_LIST_DIR}/../find_external/CommonFunctions.cmake )
+include( ${CMAKE_CURRENT_LIST_DIR}/../find_external/linalg-modules/CommonFunctions.cmake )
 
 function(dependency_to_variables __name _INCLUDE_DIRECTORIES
                                         _LINK_LIBRARIES
