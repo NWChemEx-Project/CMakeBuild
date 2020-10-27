@@ -20,6 +20,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
     option_w_default(CMAKE_BUILD_TYPE Release)
     option_w_default(USE_OPENMP ON)
     option_w_default(USE_DPCPP OFF)
+    option_w_default(ENABLE_DPCPP ${USE_DPCPP})
     option_w_default(USE_CUTENSOR OFF)
     option_w_default(USE_GA_AT OFF)
     option_w_default(USE_GA_DEV OFF)
@@ -109,7 +110,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
         bundle_cmake_args(DEPENDENCY_CMAKE_OPTIONS USE_SCALAPACK)
         set(TAMM_CXX_FLAGS "${TAMM_CXX_FLAGS} -DSCALAPACK")
     endif()
-    
+
     bundle_cmake_args(DEPENDENCY_CMAKE_OPTIONS BLAS_INT4 BLAS_VENDOR ENABLE_COVERAGE)
 
     print_banner("Locating Dependencies and Creating Targets")
@@ -157,7 +158,6 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
             #     message(FATAL_ERROR "DPCPP build requires USE_OPENMP=OFF")
             # endif()
             set(TAMM_CXX_FLAGS "${TAMM_CXX_FLAGS} -DUSE_DPCPP") #-fsycl
-            option_w_default(ENABLE_DPCPP ON)
         endif()      
 
         set(${NWX_CXX_FLAGS} "${${NWX_CXX_FLAGS}} ${TAMM_CXX_FLAGS}")
