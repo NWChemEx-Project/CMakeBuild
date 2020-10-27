@@ -157,7 +157,7 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
             #     message(FATAL_ERROR "DPCPP build requires USE_OPENMP=OFF")
             # endif()
             set(TAMM_CXX_FLAGS "${TAMM_CXX_FLAGS} -DUSE_DPCPP") #-fsycl
-            option(ENABLE_DPCPP ON)
+            option_w_default(ENABLE_DPCPP ON)
         endif()      
 
         set(${NWX_CXX_FLAGS} "${${NWX_CXX_FLAGS}} ${TAMM_CXX_FLAGS}")
