@@ -93,35 +93,78 @@ if (GLOBALARRAYS_FOUND)
     endif()  
     if(NOT __libverbs) 
       string(COMPARE EQUAL "-libverbs" ${__lib} __libverbs) 
+    endif()    
+    if(NOT __lifport) 
+      string(COMPARE EQUAL "-lifport" ${__lib} __lifport) 
+    endif()
+    if(NOT __lifcoremt) 
+      string(COMPARE EQUAL "-lifcoremt" ${__lib} __lifcoremt) 
+    endif()
+    if(NOT __limf) 
+      string(COMPARE EQUAL "-limf" ${__lib} __limf) 
+    endif()
+    if(NOT __lsvml) 
+      string(COMPARE EQUAL "-lsvml" ${__lib} __lsvml) 
+    endif()
+    if(NOT __lipgo) 
+      string(COMPARE EQUAL "-lipgo" ${__lib} __lipgo) 
+    endif()       
+    if(NOT __lirc) 
+      string(COMPARE EQUAL "-lirc" ${__lib} __lirc) 
     endif()        
+    if(NOT __lirc_s) 
+      string(COMPARE EQUAL "-lirc_s" ${__lib} __lirc_s) 
+    endif()                    
   endforeach()
 
-  if(__lifcoremt_pic)
-    enable_language(Fortran)
-    find_library(GA_IFCOREMT_LIBRARY
-      NAMES libifcoremt_pic.so libifcoremt_pic.a 
-      HINTS ${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES}
-    )
-    set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${GA_IFCOREMT_LIBRARY})
-  endif()
+  enable_language(Fortran)
+  function(ga_find_flibs __flibvar __flib_name)
+    if(${__flibvar})
+      find_library(GA_Fortran_LIBRARY
+        NAMES "${__flib_name}.so" "${__flib_name}.a"
+        HINTS ${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES}
+      )
+      set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${GA_Fortran_LIBRARY} PARENT_SCOPE)
+    endif()
+  endfunction()
 
-  if(__lgfortran)
-    enable_language(Fortran)
-    find_library(GA_STANDARDFORTRAN_LIBRARY
-      NAMES libgfortran.so libgfortran.a
-      HINTS ${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES}
-    )
-    set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${GA_STANDARDFORTRAN_LIBRARY})
-  endif()
+  ga_find_flibs(__lifcoremt_pic "libifcoremt_pic")
+  ga_find_flibs(__lgfortran "libgfortran")
+  ga_find_flibs(__lquadmath "libquadmath")
+  ga_find_flibs(__lifcoremt "libifcoremt")
+  ga_find_flibs(__lifport "libifport")
+  ga_find_flibs(__limf "libimf")
+  ga_find_flibs(__lsvml "libsvml")
+  ga_find_flibs(__lipgo "libipgo")
+  ga_find_flibs(__lirc "libirc")
+  ga_find_flibs(__lirc_s "libirc_s")
 
-  if(__lquadmath)
-    enable_language(Fortran)
-    find_library(GA_QMATH_LIBRARY
-      NAMES  libquadmath.so libquadmath.a
-      HINTS ${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES}
-    )
-    set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${GA_QMATH_LIBRARY})
-  endif()
+  # if(__lifcoremt_pic)
+  #   enable_language(Fortran)
+  #   find_library(GA_IFCOREMT_LIBRARY
+  #     NAMES libifcoremt_pic.so libifcoremt_pic.a 
+  #     HINTS ${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES}
+  #   )
+  #   set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${GA_IFCOREMT_LIBRARY})
+  # endif()
+
+  # if(__lgfortran)
+  #   enable_language(Fortran)
+  #   find_library(GA_STANDARDFORTRAN_LIBRARY
+  #     NAMES libgfortran.so libgfortran.a
+  #     HINTS ${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES}
+  #   )
+  #   set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${GA_STANDARDFORTRAN_LIBRARY})
+  # endif()
+
+  # if(__lquadmath)
+  #   enable_language(Fortran)
+  #   find_library(GA_QMATH_LIBRARY
+  #     NAMES  libquadmath.so libquadmath.a
+  #     HINTS ${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES}
+  #   )
+  #   set(GLOBALARRAYS_LIBRARIES ${GLOBALARRAYS_LIBRARIES} ${GA_QMATH_LIBRARY})
+  # endif()
 
   if(__lpthread)
     set(THREADS_PREFER_PTHREAD_FLAG ON)
