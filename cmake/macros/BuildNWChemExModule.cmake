@@ -160,6 +160,11 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
             set(TAMM_CXX_FLAGS "${TAMM_CXX_FLAGS} -DUSE_DPCPP") #-fsycl
         endif()      
 
+        if(USE_GA_AT)
+            bundle_cmake_strings(CORE_CMAKE_STRINGS USE_GA_AT)
+            set(TAMM_CXX_FLAGS "${TAMM_CXX_FLAGS} -DUSE_GA_AT")
+        endif()
+
         set(${NWX_CXX_FLAGS} "${${NWX_CXX_FLAGS}} ${TAMM_CXX_FLAGS}")
         bundle_cmake_strings(CORE_CMAKE_STRINGS ${NWX_CXX_FLAGS})
 
@@ -210,10 +215,6 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
                 endif()
             endif()
         endif()  
-
-        if(USE_GA_AT)
-            bundle_cmake_strings(CORE_CMAKE_STRINGS USE_GA_AT)
-        endif()
 
         if(USE_GA_DEV)
             bundle_cmake_strings(CORE_CMAKE_STRINGS USE_GA_DEV)
