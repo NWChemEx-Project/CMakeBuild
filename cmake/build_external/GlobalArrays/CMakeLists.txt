@@ -73,7 +73,7 @@ if(USE_GA_DEV)
         CC=${CMAKE_C_COMPILER}
         CFLAGS=${GA_CFLAGS}
         CXX=${CMAKE_CXX_COMPILER}
-        CXXFLAGS=${GA_CXXFLAGS}
+        # CXXFLAGS=${GA_CXXFLAGS}
         F77=${CMAKE_Fortran_COMPILER}
         FFLAGS=${GA_FFLAGS} ./configure --with-tcgmsg
                                       ${GA_MPI}
@@ -103,7 +103,7 @@ else()
         CC=${CMAKE_C_COMPILER}
         CFLAGS=${GA_CFLAGS}
         CXX=${CMAKE_CXX_COMPILER}
-        CXXFLAGS=${GA_CXXFLAGS}
+        # CXXFLAGS=${GA_CXXFLAGS}
         F77=${CMAKE_Fortran_COMPILER}
         FFLAGS=${GA_FFLAGS} ./configure --with-tcgmsg
                                     ${GA_MPI}
