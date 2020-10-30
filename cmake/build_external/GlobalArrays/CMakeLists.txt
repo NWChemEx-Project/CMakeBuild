@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION ${CMAKE_VERSION})
-project(GlobalArrays VERSION 5.7.2 LANGUAGES C Fortran)
+project(GlobalArrays VERSION 5.7.3 LANGUAGES C CXX Fortran)
 
 include(DependencyMacros)
 include(ExternalProject)

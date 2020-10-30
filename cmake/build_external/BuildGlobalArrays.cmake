@@ -13,6 +13,24 @@ if(USE_GA_AT)
         package_dependency(${depend} DEPENDENCY_PATHS)
     endforeach()
 
+    if("${BLAS_VENDOR}" STREQUAL "IntelMKL")
+        set(BLA_VENDOR_MKL ON)
+        set(BLA_LAPACK_INT       "MKL_INT")
+        set(BLA_LAPACK_COMPLEX8  "MKL_Complex8")
+        set(BLA_LAPACK_COMPLEX16 "MKL_Complex16")        
+    elseif("${BLAS_VENDOR}" STREQUAL "IBMESSL")
+        set(BLA_VENDOR_ESSL ON)
+        set(BLA_LAPACK_INT "int32_t")
+        set(BLA_LAPACK_COMPLEX8  "std::complex<float>")
+        set(BLA_LAPACK_COMPLEX16 "std::complex<double>")        
+    elseif("${BLAS_VENDOR}" STREQUAL "ReferenceBLAS")
+        set(USE_BLIS ON)
+        set(BLA_VENDOR_REFERENCE ON)
+        set(BLA_LAPACK_INT "int32_t")
+        set(BLA_LAPACK_COMPLEX8  "std::complex<float>")
+        set(BLA_LAPACK_COMPLEX16 "std::complex<double>")
+    endif()
+    
     ##########################################################
     # Determine aggregate remote memory copy interface (ARMCI)
     ##########################################################
@@ -61,13 +79,29 @@ if(USE_GA_AT)
                             ${DEPENDENCY_PATHS}
     )
 
+    set(GA_INSTALL_DIR ${STAGE_DIR}${CMAKE_INSTALL_PREFIX})
+
+    CONFIGURE_FILE( ${CMAKE_CURRENT_LIST_DIR}/GlobalArrays/ga_linalg.h.in
+                    ${CMAKE_CURRENT_BINARY_DIR}/ga_linalg.h )
+
+    set(GENH_LOC ${GA_INSTALL_DIR}/include/ga_linalg.h)
+ 
+    add_custom_command(
+        OUTPUT ${GENH_LOC}
+        COMMAND ${CMAKE_COMMAND} -E make_directory  ${GA_INSTALL_DIR}/include
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/ga_linalg.h
+            ${GENH_LOC}
+        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/ga_linalg.h                                      
+    )
+
+    add_custom_target(
+        GenerateLAH ALL
+        DEPENDS ${GENH_LOC}
+    )                     
+
     # Establish the dependencies
     add_dependencies(GlobalArrays_External BLAS_External
-                                        LAPACK_External
-                                        NWX_MPI_External
-    #                                   ScaLAPACK_External
-            )
-
+                     LAPACK_External NWX_MPI_External GenerateLAH)
 else()
 
     # Get index user choose
@@ -108,7 +142,7 @@ else()
         GIT_REPOSITORY ${GA_REPO}
         GIT_TAG develop
         UPDATE_DISCONNECTED 1
-        CMAKE_ARGS ${DEPENDENCY_CMAKE_OPTIONS} -DENABLE_CXX=ON -DENABLE_BLAS=ON -DBLAS_VENDOR=${BLAS_VENDOR} ${GA_BLASROOT} ${GA_LAPACKROOT}
+        CMAKE_ARGS ${DEPENDENCY_CMAKE_OPTIONS} -DENABLE_BLAS=ON -DBLAS_VENDOR=${BLAS_VENDOR} ${GA_BLASROOT} ${GA_LAPACKROOT}
         ${GA_DPCPP} -DGA_RUNTIME=${ARMCI_NETWORK} -DENABLE_PROFILING=${USE_GA_PROFILER} ${GA_CMB_EXTRA_LIBS} ${Clang_GCCROOT}
         INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
         CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}

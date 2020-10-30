@@ -137,6 +137,9 @@ function(find_dependency __name)
             #By convention CMake variables are supposed to be all caps, 
             #but some projects instead use the same name
             foreach(name_var ${__NAME} ${__name})
+                if(${__NAME} STREQUAL "INTELSYCL")
+                    set(name_var INTEL_SYCL)
+                endif()
                 #CMake's lack of consistent naming makes a loop ineffective here
                 is_valid(${name_var}_INCLUDE_DIRS __has_includes)
                 if(__has_includes)
