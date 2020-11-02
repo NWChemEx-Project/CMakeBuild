@@ -97,7 +97,6 @@ function(nwchemex_add_library __name __srcs __headers __flags __lflags)
     set(__srcs_copy ${${__srcs}})
     make_full_paths(__srcs_copy)
     is_valid(__srcs_copy HAS_LIBRARY)
-    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
     if(HAS_LIBRARY)
         add_library(${__name} ${__srcs_copy})
         nwchemex_set_up_target(${__name}
@@ -133,7 +132,6 @@ function(nwchemex_add_pymodule __name __srcs __headers __flags __lflags __init)
 endfunction()
 
 function(nwchemex_add_test __name __test_file)
-    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
     set(__file_copy ${__test_file})
     make_full_paths(__file_copy)
     add_executable(${__name} ${__file_copy})
@@ -183,14 +181,12 @@ function(add_mpi_cuda_unit_test __name __cudasrcs __np __testargs)
         set(_dest_install_folder "tests")
     endif()
 
+    list(APPEND CMAKE_INSTALL_RPATH ${CMAKE_CURRENT_BINARY_DIR})
+
     set(__test_file ${__name}.cpp)
-    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
     set(__file_copy ${__test_file})
     make_full_paths(__file_copy)
     
-    #set(CMAKE_CUDA_STANDARD 11)
-    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
     foreach(__depend ${NWX_DEPENDENCIES})
         find_dependency(${__depend})
         get_property(_tmp_incs TARGET ${__depend}_External
@@ -205,7 +201,7 @@ function(add_mpi_cuda_unit_test __name __cudasrcs __np __testargs)
     target_compile_options( ${__testcudalib}
     PRIVATE
       $<$<COMPILE_LANGUAGE:CUDA>: -Xptxas -v > 
-    )    
+    )
     # set_property(TARGET ${__testcudalib} PROPERTY CUDA_SEPARABLE_COMPILATION ON)
     
     add_executable(${__name} ${__file_copy})
@@ -233,7 +229,6 @@ function(add_mpi_unit_test __name __np __testargs)
     endif()
 
     set(__test_file ${__name}.cpp)
-    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
     set(__file_copy ${__test_file})
     make_full_paths(__file_copy)
     add_executable(${__name} ${__file_copy})

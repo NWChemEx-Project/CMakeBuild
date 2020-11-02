@@ -97,10 +97,13 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
         CMAKE_POSITION_INDEPENDENT_CODE CMAKE_VERBOSE_MAKEFILE CMAKE_CXX_EXTENSIONS
         CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY CMAKE_EXPORT_COMPILE_COMMANDS)
 
+    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
     #Make a list of all CMake variables that should be passed to all dependencies
     bundle_cmake_args(CORE_CMAKE_OPTIONS ${NWX_CORE_OPTIONS})
 
-    bundle_cmake_list(CORE_CMAKE_LISTS CMAKE_PREFIX_PATH CMAKE_INSTALL_RPATH CMAKE_MODULE_PATH)
+    bundle_cmake_list(CORE_CMAKE_LISTS CMAKE_PREFIX_PATH CMAKE_MODULE_PATH
+                                       CMAKE_INSTALL_RPATH_USE_LINK_PATH)
 
     bundle_cmake_strings(CORE_CMAKE_STRINGS ${NWX_CXX_FLAGS})
 
