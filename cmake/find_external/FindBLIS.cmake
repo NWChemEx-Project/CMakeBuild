@@ -13,6 +13,11 @@
 
 set(BLIS_HINTS ${STAGE_DIR}${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFIX})
 
+set( blis_LIBRARY_NAME libblis.a blis )
+if(BUILD_SHARED_LIBS)
+  set( blis_LIBRARY_NAME blis )
+endif()
+
 find_path(BLIS_INCLUDE_DIR blis/blis.h
             HINTS ${BLIS_HINTS}
             PATHS ${BLIS_ROOT}
@@ -21,7 +26,7 @@ find_path(BLIS_INCLUDE_DIR blis/blis.h
           )
 
 find_library(BLIS_LIBRARY 
-             NAMES libblis.a blis
+             NAMES ${blis_LIBRARY_NAME}
              HINTS ${BLIS_HINTS}
              PATHS ${BLIS_ROOT}
              PATH_SUFFIXES lib lib32 lib64
