@@ -178,13 +178,17 @@ function(build_nwchemex_module SUPER_PROJECT_ROOT)
         #         DOC "LIBC++ FS Library" 
         #     )
         # else()
-        find_library(stdfs_LIBRARY 
-            NAMES stdc++fs 
-            PATHS ${CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES} 
-            DOC "GNU FS Library" 
-        )
-        # endif()
-        message(STATUS "STDFS LIB: ${stdfs_LIBRARY}")
+        if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+            if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "9.1")
+                find_library(stdfs_LIBRARY 
+                    NAMES stdc++fs 
+                    PATHS ${CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES} 
+                    DOC "GNU FS Library" 
+                )
+                message(STATUS "STDFS LIB: ${stdfs_LIBRARY}")
+            endif()
+        endif()
+        
         if(stdfs_LIBRARY)
             list(APPEND TAMM_EXTRA_LIBS ${stdfs_LIBRARY})
         endif()
