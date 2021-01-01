@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION ${CMAKE_VERSION})
-project(GlobalArrays VERSION 5.7.3 LANGUAGES C CXX Fortran)
+project(GlobalArrays VERSION 5.8 LANGUAGES C CXX Fortran)
 
 include(DependencyMacros)
 include(ExternalProject)
@@ -13,38 +13,38 @@ if( LAPACK_LIBRARIES )
   set( lapack_LIBRARIES ${LAPACK_LIBRARIES} )
 endif()
 
-foreach(depend NWX_MPI BLAS LAPACK)#ScaLAPACK)
-    find_dependency(${depend})
-    makify_dependency(${depend} ${depend}_INCS ${depend}_LIBS)
+set(_GA_DEPS LAPACK BLAS MPI)
+if (USE_SCALAPACK)
+  list(INSERT _GA_DEPS 0 ScaLAPACK)
+endif()
+
+foreach(depend ${_GA_DEPS})
+  cmsb_find_dependency(${depend})
+  makify_dependency(${depend} ${depend}_INCS ${depend}_LIBS)
 endforeach()
-
-
-#string(REPLACE ";" " " GA_ScaLAPACK_LIBRARIES "${ScaLAPACK_LIBRARIES}")
-#set(GA_SCALAPACK "--with-scalapack8=${GA_ScaLAPACK_LIBRARIES}")
 
 set(GA_BLAS "--with-blas8=${BLAS_LIBS}")
 if(BLAS_INT4)
-    set(GA_BLAS "--with-blas4=${BLAS_LIBS}")
+  set(GA_BLAS "--with-blas4=${BLAS_LIBS}")
 endif()
 
 set(GA_LAPACK "--with-lapack=${LAPACK_LIBS}")
 
-is_valid(SCALAPACK_LIBRARIES SCALAPACK_LIBS_SET)
-if (SCALAPACK_LIBS_SET) 
-    set(GA_SCALAPACK "--with-scalapack8=${SCALAPACK_LIBS}")
-    if(BLAS_INT4)
-        set(GA_SCALAPACK "--with-scalapack=${SCALAPACK_LIBS}")
-    endif()    
+if (USE_SCALAPACK) 
+  set(GA_SCALAPACK "--with-scalapack8=${ScaLAPACK_LIBS}")
+  if(BLAS_INT4)
+    set(GA_SCALAPACK "--with-scalapack=${ScaLAPACK_LIBS}")
+  endif()
 else()
-    set(GA_SCALAPACK "--without-scalapack")
+  set(GA_SCALAPACK "--without-scalapack")
 endif()
 
-set(GA_MPI "--with-mpi=${NWX_MPI_INCS} ${NWX_MPI_LIBS}")
+set(GA_MPI "--with-mpi=${MPI_INCS} ${MPI_LIBS}")
 
 set(GA_SYSVSHMEM "ARMCI_DEFAULT_SHMMAX_UBOUND=131072")
 
 if (USE_OFFLOAD)
-    set(GA_OFFLOAD "INTEL_64ALIGN=1")
+  set(GA_OFFLOAD "INTEL_64ALIGN=1")
 endif()
 
 set(GA_CXXFLAGS "${CMAKE_CXX_FLAGS} -fPIC")
@@ -84,7 +84,7 @@ if(USE_GA_DEV)
                                       ${GA_SCALAPACK}
                                       ${GA_BLAS}
                                       ${GA_LAPACK}
-                                      ${ARMCI_NETWORK}
+                                      ${GA_RUNTIME}
                                       ${GA_OFFLOAD}
                                       ${GA_SYSVSHMEM}
                  
@@ -97,8 +97,7 @@ if(USE_GA_DEV)
 else()
 
     ExternalProject_Add(GlobalArrays_External
-        #URL https://github.com/GlobalArrays/ga/releases/download/v${PROJECT_VERSION}/ga-${PROJECT_VERSION}.tar.gz
-        URL https://github.com/ajaypanyala/ga/releases/download/v5.7.3/ga-5.7.3.tar.gz
+        URL https://github.com/GlobalArrays/ga/releases/download/v${PROJECT_VERSION}/ga-${PROJECT_VERSION}.tar.gz
         CONFIGURE_COMMAND                      
         CC=${CMAKE_C_COMPILER}
         CFLAGS=${GA_CFLAGS}
@@ -113,7 +112,7 @@ else()
                                     ${GA_SCALAPACK}
                                     ${GA_BLAS}
                                     ${GA_LAPACK}
-                                    ${ARMCI_NETWORK}
+                                    ${GA_RUNTIME}
                                     ${GA_OFFLOAD}
                                     ${GA_SYSVSHMEM}
                 

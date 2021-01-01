@@ -3,26 +3,20 @@ project(CMakeBuild VERSION ${PROJECT_VERSION} LANGUAGES NONE)
 
 # We are going to abuse the include directory variable to find out the path to
 # cmake directory
-set(NWXBASE_CMAKE ${NWX_INCLUDE_DIR}/cmake)
-set(NWXBASE_MACROS ${NWXBASE_CMAKE}/macros)
+set(CMSB_CMAKE ${CMSB_INCLUDE_DIR}/cmake)
+set(CMSB_MACROS ${CMSB_CMAKE}/macros)
 set(MACRO_INSTALL share/cmake/CMakeBuild/macros)
 
-file(GLOB __MACRO_FILES "${NWXBASE_MACROS}/*.cmake")
+file(GLOB __MACRO_FILES "${CMSB_MACROS}/*.cmake")
 install(FILES ${__MACRO_FILES}  DESTINATION ${MACRO_INSTALL})
 
-file(GLOB __FIND_FILES "${NWXBASE_CMAKE}/find_external/*.cmake")
-install(FILES ${__FIND_FILES}
-        DESTINATION share/cmake/CMakeBuild/find_external)
-file(GLOB __FIND_LINALG_FILES "${NWXBASE_CMAKE}/find_external/linalg-modules/*.cmake")
-install(FILES ${__FIND_LINALG_FILES}
-        DESTINATION share/cmake/CMakeBuild/find_external/linalg-modules)
-
-file(GLOB __BUILD_FILES "${NWXBASE_CMAKE}/build_external/*.cmake")
-install(DIRECTORY ${NWXBASE_CMAKE}/build_external/
+install(DIRECTORY ${CMSB_CMAKE}/build_external/
         DESTINATION share/cmake/CMakeBuild/build_external)
 
+install(DIRECTORY ${CMSB_CMAKE}/find_external/
+        DESTINATION share/cmake/CMakeBuild/find_external)
 
-configure_file("${NWXBASE_CMAKE}/CMakeBuildConfig.cmake.in"
+configure_file("${CMSB_CMAKE}/CMakeBuildConfig.cmake.in"
                CMakeBuildConfig.cmake @ONLY
 )
 install(FILES ${CMAKE_BINARY_DIR}/CMakeBuildConfig.cmake
@@ -30,12 +24,12 @@ install(FILES ${CMAKE_BINARY_DIR}/CMakeBuildConfig.cmake
 )
 
 configure_file(
-        "${NWXBASE_CMAKE}/cmake_uninstall.cmake.in"
+        "${CMSB_CMAKE}/cmake_uninstall.cmake.in"
         "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
         IMMEDIATE @ONLY)
 
-install(FILES ${NWXBASE_CMAKE}/NWChemExTargetConfig.cmake.in
-        ${NWXBASE_CMAKE}/cmake_uninstall.cmake.in
+install(FILES ${CMSB_CMAKE}/CMSBTargetConfig.cmake.in
+        ${CMSB_CMAKE}/cmake_uninstall.cmake.in
         DESTINATION share/cmake/CMakeBuild)
 
 add_custom_target(uninstall

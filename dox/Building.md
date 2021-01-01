@@ -1,9 +1,7 @@
 Configuring and Building the Project
 ====================================
 
-The current project uses
-:link:[CMakeBuild](https://github.com/NWChemEx-Project/CMakeBuild) for
-its build infrastructure.  CMakeBuild is a collection of infrastructure meant 
+CMakeBuild is a collection of infrastructure meant 
 to provide a uniform and reproducible build environment for C++ projects.  It
 also is meant to greatly simplify the process of writing build files for 
 those C++ projects.  Hence the build instructions here are generic; however, 
@@ -97,15 +95,12 @@ not used by that project CMake will warn you in the configuration logs). Note
 | :------------:      | :----------------------------------------------------- |
 | CMAKE_Lang_COMPILER | The `Lang` compiler that will be used                  |
 | CMAKE_Lang_FLAGS    | Flags that will be passed to `Lang` compiler           |
-| MPI_Lang_COMPILER   | MPI wrapper compiler (should wrap CMAKE_Lang_COMPILER) |
 | CMAKE_BUILD_TYPE    | Debug, Release, or RelWithDebInfo                      |
 | CMAKE_PREFIX_PATH   | A list of places CMake will look for dependencies      |
 | CMAKE_INSTALL_PREFIX | The install directory                                 |
 | BUILD_SHARED_LIBS   | If false static libraries will be built                |
-| CMAKE_CXX_STANDARD  | Set CXX Standard, default=14                           |
+| CMAKE_CXX_STANDARD  | Set CXX Standard, default=17                           |
 --------------------------------------------------------------------------------
-
-:memo: It will greatly behoove you to always pass full paths.
 
 CMakeBuild Specific Options
 -----------------------------
@@ -118,12 +113,8 @@ following table can be any dependency in [this list](SupportedDependencies.md)):
 | Variable Name  | Description                                                 |
 | :------------: | :---------------------------------------------------------- |
 | BUILD_TESTS    | If true tests for the project will be built (default: true) |
-| BUILD_XXX      | TRUE forces building XXX, FALSE errs if XXX not found       |
-| NWX_CMAKE_DEBUG | TRUE turns on (lots) of extra CMake printing               | 
+| BUILD_XXX      | TRUE forces building XXX, FALSE errors if XXX not found     |
+| CMSB_CMAKE_DEBUG | TRUE turns on (lots) of extra CMake printing              | 
 --------------------------------------------------------------------------------
 
-Troubleshooting
----------------
 
-Nothing will ever go wrong so there's no need to write this section (right?).
-Okay...call this section a TODO.

@@ -19,7 +19,6 @@ leverage CMakeBuild for their projects.
 - [Building a Project that Uses CMakeBuild](dox/Building.md)
 - [Using CMakeBuild in Your Project](dox/QuickStart.md)
   - [Current List of Supported Dependencies](dox/SupportedDependencies.md)
-  - [BLAS and LAPACK](dox/SoYouWannaFindBLAS.md)
 
 ### Developer-centric
 

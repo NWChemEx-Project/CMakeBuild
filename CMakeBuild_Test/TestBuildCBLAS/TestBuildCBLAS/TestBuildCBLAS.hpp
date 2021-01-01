@@ -1,3 +1,0 @@
-struct TestBuildCBLAS {
-    bool passed();
-};

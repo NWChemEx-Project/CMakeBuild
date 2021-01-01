@@ -22,11 +22,6 @@ Optionally a package may set:
                            back.  Setting this is needed for it to properly use
                            the REQUIRED keyword.                                        
 
-Of course, many packages do not adhere to these standards complicating
-automation.  Currently our solution is to write `FindNWX_<Name>.cmake` files
-for packages not adhering to them and to prefer our projects us the *NWX* 
-versions instead of the normal ones.
-
 Enabling Additional Dependencies
 --------------------------------
 
@@ -107,7 +102,7 @@ set(ABC_LIBRARIES ${ABC_LIBRARY} ...)
 #Set the flags needed to compile against aBc
 set(ABC_DEFINITIONS ...)
 ~~~
-Once written your file goes in `NWChemBase/cmake/external_find/FindaBc.cmake`
+Once written your file goes in `cmake/find_external/FindaBc.cmake`
 
 ### Enabling CMakeBuild to Build a Dependency
 
@@ -116,7 +111,7 @@ to build dependencies for the user.  That is, if we are unable to locate a
 required dependency on the system, we instead build it.  CMake doesn't have a
 particular convention for how this done so we have taken the liberty of defining
 a process for you.  We assume the following is in 
-`CMakeBuild/cmake/external_build/BuildXXX.cmake`.
+`cmake/build_external/BuildXXX.cmake`.
 
 ~~~cmake
 #include(ExternalProject) and include(DependancyMacros) are already sourced

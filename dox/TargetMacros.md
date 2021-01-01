@@ -3,7 +3,7 @@ Target Macros
 
 These are macros for creating new targets (libraries, executables, or tests).
 
-nwchemex_set_up_target
+cmsb_set_up_target
 ----------------------
 
 This function primarily serves as code factorization by being the boilerplate
@@ -13,7 +13,7 @@ of the dependency include and library directories to the flags.
 ### Syntax:
 
 ```cmake
-nwchemex_set_up_target(NAME FLAGS LFLAGS INCLUDES INSTALL)
+cmsb_set_up_target(NAME FLAGS LFLAGS INCLUDES INSTALL)
 ```
 
 Arguments:
@@ -25,9 +25,9 @@ Arguments:
 - `INSTALL` path relative to `CMAKE_INSTALL_PREFIX` to put the target
 
 CMake Cache Variables:
-- `NWX_INCLUDE_DIR` the path to the root of a module's source tree.
-  - Set by `build_nwxbase_module`
-- `NWX_DEPENDENCIES` a list of `find_package` exposed dependencies  
+- `CMSB_INCLUDE_DIR` the path to the root of a module's source tree.
+  - Set by `build_cmsb_module`
+- `CMSB_DEPENDENCIES` a list of `find_package` exposed dependencies  
 
 ### Example
 
@@ -36,19 +36,19 @@ This example sets up a target `AProgram` so that it is compiled with the flag
 
 ```cmake
 add_executable(AProgram aprogram.cpp)
-nwchemex_set_up_target(AProgram "-Wall" "" "bin")
+cmsb_set_up_target(AProgram "-Wall" "" "bin")
 ```
 
-nwchemex_add_executable
+cmsb_add_executable
 -----------------------
 
-This macro wraps `nwchemex_set_up_target` so that the resulting target will 
+This macro wraps `cmsb_set_up_target` so that the resulting target will 
 be an executable.
 
 ### Syntax
 
 ```cmake
-nwchemex_add_executable(NAME SOURCES FLAGS LFLAGS)
+cmsb_add_executable(NAME SOURCES FLAGS LFLAGS)
 ```
 
 Arguments:
@@ -70,20 +70,20 @@ This example makes an executable called `AProject` which has one source file
 set(AProjectSRCs src1.cpp)
 set(AProjectFLAGS "-Wall" "-O3")
 set(AProjectLFLAGS "-lblas" "-llapack")
-nwchemex_add_executable(AProject AProjectSRCs AProjectFLAGS AProjectLFLAGS) 
+cmsb_add_executable(AProject AProjectSRCs AProjectFLAGS AProjectLFLAGS) 
 ```
 
-nwchemex_add_library
+cmsb_add_library
 -----------------------
 
-This macro wraps `nwchemex_set_up_target` so that the resulting target will 
+This macro wraps `cmsb_set_up_target` so that the resulting target will 
 be a library.  Whether the library is static or shared is controlled by the 
 CMake variable `BUILD_SHARED_LIBS`
 
 ### Syntax
 
 ```cmake
-nwchemex_add_library(NAME SOURCES HEADERS FLAGS LFLAGS)
+cmsb_add_library(NAME SOURCES HEADERS FLAGS LFLAGS)
 ```
 
 Arguments:
@@ -112,13 +112,13 @@ set(AProjectSRCS src1.cpp)
 set(AProjectHEADERS src1.hpp)
 set(AProjectFLAGS "-Wall" "-O3")
 set(AProjectLFLAGS "-lblas" "-llapack")
-nwchemex_add_library(AProject AProjectSRCS 
+cmsb_add_library(AProject AProjectSRCS 
                               AProjectHEADERS 
                               AProjectFLAGS 
                               AProjectLFLAGS) 
 ```
 
-nwchemex_add_test
+cmsb_add_test
 -----------------
 
 This is the guts of what it takes to define a test (which requires 
@@ -128,7 +128,7 @@ code factorization.
 ### Syntax
 
 ```cmake
-nwchemex_add_test(NAME TEST_FILE)
+cmsb_add_test(NAME TEST_FILE)
 ```
 
 Arguments:
@@ -141,13 +141,13 @@ This example makes a test called "ATest" whose contents are within a source
 file "ATest.cpp".
 
 ```cmake
-nwchemex_add_test(ATest ATest.cpp)
+cmsb_add_test(ATest ATest.cpp)
 ```
 
 add_cxx_unit_test
 -----------------
 
-Specializes `nwchemex_add_test` to unit tests formed from a single source 
+Specializes `cmsb_add_test` to unit tests formed from a single source 
 file.  The resulting test will have the label "UnitTest".
 
 ### Syntax
@@ -194,7 +194,7 @@ file `ATest.cmake`.
 ```cmake
 add_cmake_macro_test(ATest)
 ``` 
-add_nwxbase_test
+add_cmsb_test
 --------------------
 
 This function is meant to be used by the CMakeBuild project to simulate runs 
@@ -220,7 +220,7 @@ resulting directory tree.
 ### Syntax
 
 ```cmake
-add_nwxbase_test(NAME)
+add_cmsb_test(NAME)
 ```
 
 Arguments:
@@ -234,5 +234,5 @@ subdirectory `ATest`.  The subdirectory `ATest` includes a CMakeLists.txt and
 source files to build a library and an executable that will be used as a test.
 
 ```cmake
-add_nwxbase_test(ATest)
+add_cmsb_test(ATest)
 ``` 

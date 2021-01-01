@@ -5,13 +5,13 @@
 ################################################################################
 
 #
-# Prints the specified message iff NWX_DEBUG_CMAKE==TRUE
+# Prints the specified message iff CMSB_DEBUG_CMAKE=TRUE
 #
 # Syntax: debug_message(<message_to_print>)
 #     message_to_print : The actual message to print (i.e. not saved in a
 #                        variable).
 function(debug_message __msg)
-    if(NWX_DEBUG_CMAKE)#Set in options section
+    if(CMSB_DEBUG_CMAKE)#Set in options section
         message(STATUS "${__msg}")
     endif()
 endfunction()

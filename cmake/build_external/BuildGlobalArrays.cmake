@@ -8,7 +8,11 @@ enable_language(Fortran)
 
 if(USE_GA_AT)
     # Now find or build GA's dependencies
-    foreach(depend BLAS LAPACK NWX_MPI)
+    if(USE_SCALAPACK)
+        find_or_build_dependency(ScaLAPACK)
+        package_dependency(ScaLAPACK DEPENDENCY_PATHS)
+    endif()
+    foreach(depend LAPACK BLAS MPI)
         find_or_build_dependency(${depend})
         package_dependency(${depend} DEPENDENCY_PATHS)
     endforeach()
@@ -20,13 +24,19 @@ if(USE_GA_AT)
         set(BLA_LAPACK_COMPLEX16 "MKL_Complex16")        
     elseif("${BLAS_VENDOR}" STREQUAL "IBMESSL")
         set(BLA_VENDOR_ESSL ON)
-        set(BLA_LAPACK_INT "int32_t")
+        set(BLA_LAPACK_INT "int64_t")
+        if(BLAS_INT4)
+            set(BLA_LAPACK_INT "int32_t")
+        endif()
         set(BLA_LAPACK_COMPLEX8  "std::complex<float>")
         set(BLA_LAPACK_COMPLEX16 "std::complex<double>")        
-    elseif("${BLAS_VENDOR}" STREQUAL "ReferenceBLAS")
+    elseif("${BLAS_VENDOR}" STREQUAL "BLIS")
         set(USE_BLIS ON)
-        set(BLA_VENDOR_REFERENCE ON)
-        set(BLA_LAPACK_INT "int32_t")
+        set(BLA_VENDOR_BLIS ON)
+        set(BLA_LAPACK_INT "int64_t")
+        if(BLAS_INT4)
+            set(BLA_LAPACK_INT "int32_t")
+        endif()
         set(BLA_LAPACK_COMPLEX8  "std::complex<float>")
         set(BLA_LAPACK_COMPLEX16 "std::complex<double>")
     endif()
@@ -36,39 +46,39 @@ if(USE_GA_AT)
     ##########################################################
 
     #Possible choices
-    set(ARMCI_NETWORK_OPTIONS MPI-PR OPENIB MPI-TS)
+    set(GA_RUNTIME_OPTIONS MPI-PR OPENIB MPI-TS)
     # (BGML DCMF OPENIB GEMINI DMAPP PORTALS GM VIA
     #  LAPI MPI-SPAWN MPI-PT MPI-MT MPI-PR MPI-TS MPI3 OFI
     #  OFA SOCKETS MELLANOX)
 
     # Get index user choose
-    is_valid_and_true(ARMCI_NETWORK __set)
+    is_valid_and_true(GA_RUNTIME __set)
     if (NOT __set)
         message(STATUS "ARMCI network not set, defaulting to MPI-PR")
-        set(ARMCI_NETWORK "--with-mpi-pr")
+        set(GA_RUNTIME "--with-mpi-pr")
     else()
-        list(FIND ARMCI_NETWORK_OPTIONS ${ARMCI_NETWORK} _index)
+        list(FIND GA_RUNTIME_OPTIONS ${GA_RUNTIME} _index)
         if(${_index} EQUAL -1)
             message(WARNING "Unrecognized ARMCI Network, defaulting to MPI-PR")
-            set(ARMCI_NETWORK "--with-mpi-pr")
+            set(GA_RUNTIME "--with-mpi-pr")
         elseif(${_index} EQUAL 4)
-            message(WARNING "We discourage the use of ARMCI_NETWORK=DMAPP")
-            message(WARNING "Please consider using ARMCI_NETWORK=MPI-PR instead")
-            set(ARMCI_NETWORK "--with-dmapp")
+            message(WARNING "We discourage the use of GA_RUNTIME=DMAPP")
+            message(WARNING "Please consider using GA_RUNTIME=MPI-PR instead")
+            set(GA_RUNTIME "--with-dmapp")
         else()
-            string(TOLOWER ${ARMCI_NETWORK} armci_network)
-            set(ARMCI_NETWORK "--with-${armci_network}")
+            string(TOLOWER ${GA_RUNTIME} _ga_runtime)
+            set(GA_RUNTIME "--with-${_ga_runtime}")
         endif()
     endif()
 
-    message(STATUS ${CMAKE_BINARY_DIR}/stage)
+    # message(STATUS ${CMAKE_BINARY_DIR}/stage)
     # Add the mock CMake-ified GA project
     ExternalProject_Add(GlobalArrays_External
             SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/GlobalArrays
             CMAKE_ARGS ${DEPENDENCY_CMAKE_OPTIONS}
                     -DSUPER_PROJECT_ROOT=${SUPER_PROJECT_ROOT}
-                    -DNWX_DEBUG_CMAKE=${NWX_DEBUG_CMAKE}
-                    -DARMCI_NETWORK=${ARMCI_NETWORK}
+                    -DCMSB_DEBUG_CMAKE=${CMSB_DEBUG_CMAKE}
+                    -DGA_RUNTIME=${GA_RUNTIME}
                     -DSTAGE_DIR=${STAGE_DIR}
                     -DUSE_GA_DEV=${USE_GA_DEV}
                     -DUSE_GA_PROFILER=${USE_GA_PROFILER}
@@ -100,15 +110,20 @@ if(USE_GA_AT)
     )                     
 
     # Establish the dependencies
-    add_dependencies(GlobalArrays_External BLAS_External
-                     LAPACK_External NWX_MPI_External GenerateLAH)
+    if(USE_SCALAPACK)
+        add_dependencies(GlobalArrays_External ScaLAPACK_External LAPACK_External 
+                         BLAS_External MPI_External GenerateLAH)
+    else()
+        add_dependencies(GlobalArrays_External LAPACK_External 
+                         BLAS_External MPI_External GenerateLAH)
+    endif()
 else()
 
     # Get index user choose
-    is_valid_and_true(ARMCI_NETWORK __set)
+    is_valid_and_true(GA_RUNTIME __set)
     if (NOT __set)
         message(STATUS "ARMCI network not set, defaulting to MPI_PROGRESS_RANK")
-        set(ARMCI_NETWORK MPI_PROGRESS_RANK)
+        set(GA_RUNTIME MPI_PROGRESS_RANK)
     endif()
 
     set(GA_REPO "https://github.com/GlobalArrays/ga.git")
@@ -121,38 +136,96 @@ else()
     endif()
 
     if(DEFINED TAMM_EXTRA_LIBS)
-        set(GA_CMB_EXTRA_LIBS "-DGA_EXTRA_LIBS=${TAMM_EXTRA_LIBS}")
+        set(GA_CMSB_EXTRA_LIBS "-DGA_EXTRA_LIBS=${TAMM_EXTRA_LIBS}")
     endif()
 
-    if(${BLAS_VENDOR} STREQUAL "ReferenceBLAS")
-        find_or_build_dependency(BLAS)
-        find_or_build_dependency(LAPACK)
-        # We not support externally provided Ref. BLAS for now.
-        set(GA_BLASROOT "-DReferenceBLASROOT=${CMAKE_INSTALL_PREFIX}")
+
+    set(LINALG_REQUIRED_COMPONENTS "ilp64")
+    if(BLAS_INT4)
+        set(LINALG_REQUIRED_COMPONENTS "lp64")
+    endif()
+
+    if("${BLAS_VENDOR}" STREQUAL "IntelMKL")
+        set(LINALG_THREAD_LAYER "sequential")
+        if(USE_OPENMP)
+            set(LINALG_THREAD_LAYER "openmp")
+        endif()
+    elseif("${BLAS_VENDOR}" STREQUAL "IBMESSL")
+        if(USE_OPENMP)
+            set(LINALG_THREAD_LAYER "smp")
+        endif()
+    endif()
+
+    if(LINALG_THREAD_LAYER)
+      set(GA_LINALG_THREAD_LAYER "-DLINALG_THREAD_LAYER=${LINALG_THREAD_LAYER}")
+    endif()
+
+    if(${BLAS_VENDOR} STREQUAL "BLIS" OR ${BLAS_VENDOR} STREQUAL "IBMESSL")
+        list(INSERT CMAKE_MODULE_PATH 0 "${CMSB_MACROS}/../find_external/find_linalg/linalg-modules")
+
+        if(${BLAS_VENDOR} STREQUAL "BLIS")
+            if(USE_SCALAPACK)
+                include(BuildScaLAPACK)
+            else()
+                include(BuildLAPACK)
+                #include(BuildBLAS)
+            endif()
+
+            # We not support externally provided Ref. BLAS for now.
+            set(GA_BLASROOT   "-DBLISROOT=${CMAKE_INSTALL_PREFIX}")
+        elseif(${BLAS_VENDOR} STREQUAL "IBMESSL")
+            if(USE_SCALAPACK)
+                include(BuildScaLAPACK)
+            else()
+                include(BuildLAPACK)
+            endif()
+        endif()
+
+        list(REMOVE_AT CMAKE_MODULE_PATH 0)
         set(GA_LAPACKROOT "-DReferenceLAPACKROOT=${CMAKE_INSTALL_PREFIX}")
+        set(_ga_scalapack_option "-DReferenceScaLAPACKROOT=${CMAKE_INSTALL_PREFIX}")
+    endif()
+
+    if(USE_SCALAPACK)
+        set(GA_ScaLAPACK "-DENABLE_SCALAPACK=ON")
+        set(GA_ScaLAPACKROOT ${_ga_scalapack_option})
     endif()
 
     if(USE_DPCPP)
         set(GA_DPCPP "-DENABLE_DPCPP=ON")
     endif()
 
-    message(STATUS ${CMAKE_BINARY_DIR}/stage)
+    message(STATUS "GlobalArrays CMake Options: ${DEPENDENCY_CMAKE_OPTIONS} \
+    -DENABLE_BLAS=ON -DBLAS_VENDOR=${BLAS_VENDOR} ${GA_BLASROOT} ${GA_LAPACKROOT} \
+    ${GA_DPCPP} -DGA_RUNTIME=${GA_RUNTIME} -DENABLE_PROFILING=${USE_GA_PROFILER} \
+    ${GA_CMSB_EXTRA_LIBS} ${Clang_GCCROOT} ${GA_LINALG_THREAD_LAYER} \
+    -DLINALG_REQUIRED_COMPONENTS=${LINALG_REQUIRED_COMPONENTS} \
+    ${GA_ScaLAPACK}  ${GA_ScaLAPACKROOT}")
+
     ExternalProject_Add(GlobalArrays_External
         # # URL https://github.com/GlobalArrays/ga/releases/download/v${PROJECT_VERSION}/ga-${PROJECT_VERSION}.tar.gz
         GIT_REPOSITORY ${GA_REPO}
         GIT_TAG develop
         UPDATE_DISCONNECTED 1
         CMAKE_ARGS ${DEPENDENCY_CMAKE_OPTIONS} -DENABLE_BLAS=ON -DBLAS_VENDOR=${BLAS_VENDOR} ${GA_BLASROOT} ${GA_LAPACKROOT}
-        ${GA_DPCPP} -DGA_RUNTIME=${ARMCI_NETWORK} -DENABLE_PROFILING=${USE_GA_PROFILER} ${GA_CMB_EXTRA_LIBS} ${Clang_GCCROOT}
+        ${GA_DPCPP} -DGA_RUNTIME=${GA_RUNTIME} -DENABLE_PROFILING=${USE_GA_PROFILER} ${GA_CMSB_EXTRA_LIBS} ${Clang_GCCROOT}
+        ${GA_LINALG_THREAD_LAYER} -DLINALG_REQUIRED_COMPONENTS=${LINALG_REQUIRED_COMPONENTS}
+        ${GA_ScaLAPACK}  ${GA_ScaLAPACKROOT}
         INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
         CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}
                         ${CORE_CMAKE_STRINGS}
     )
 
     # # Establish the dependencies
-    if(${BLAS_VENDOR} STREQUAL "ReferenceBLAS")
-        add_dependencies(GlobalArrays_External BLAS_External
-                                            LAPACK_External)
+    if(${BLAS_VENDOR} STREQUAL "BLIS" OR ${BLAS_VENDOR} STREQUAL "IBMESSL")
+        if(${BLAS_VENDOR} STREQUAL "BLIS")
+            add_dependencies(GlobalArrays_External BLAS_External LAPACK_External)
+        elseif(${BLAS_VENDOR} STREQUAL "IBMESSL")
+            add_dependencies(GlobalArrays_External LAPACK_External)
+        endif()
+        if(USE_SCALAPACK)
+            add_dependencies(GlobalArrays_External ScaLAPACK_External)
+        endif()
     endif()
 
 endif()

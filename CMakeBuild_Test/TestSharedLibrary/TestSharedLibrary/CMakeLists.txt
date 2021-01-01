@@ -3,7 +3,7 @@ project(TestSharedLibrary VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 include(TargetMacros)
 set(TestSharedLibrarySRCS TestSharedLibrary.cpp)
 set(TestSharedLibraryHEADERS TestSharedLibrary.hpp)
-nwchemex_add_library(TestSharedLibrary
+cmsb_add_library(TestSharedLibrary
                      TestSharedLibrarySRCS
                      TestSharedLibraryHEADERS
                      "" "")

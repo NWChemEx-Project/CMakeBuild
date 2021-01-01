@@ -51,7 +51,7 @@ Arguments:
 
 - `name`: The name of the dependency to print (without the "_External" suffix)
 
-### find_dependency
+### cmsb_find_dependency
 
 This macro attempts to find a dependency with a given name.  If it finds that
 dependency it creates a new target `<name>_External` where `<name>` is the 
@@ -61,7 +61,7 @@ for linking to via the usual CMake mechanisms.
 #### Syntax
 
 ```cmake
-find_dependency(depend_name)
+cmsb_find_dependency(depend_name)
 ```
 Arguments:
 
@@ -73,7 +73,7 @@ Arguments:
 #### Example
 
 ```cmake
-find_dependency(Eigen3 Eigen3_FOUND)
+cmsb_find_dependency(Eigen3 Eigen3_FOUND)
 message(STATUS "Eigen3 found: ${Eigen3_FOUND}")           
 ```
 

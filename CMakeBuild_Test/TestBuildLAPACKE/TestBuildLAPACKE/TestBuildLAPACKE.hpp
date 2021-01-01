@@ -1,3 +1,0 @@
-struct TestBuildLAPACKE {
-    bool passed();
-};

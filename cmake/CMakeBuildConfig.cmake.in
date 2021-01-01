@@ -52,18 +52,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKEBUILD_MODULE_PATH}/macros
                               ${CMAKEBUILD_MODULE_PATH}/find_external
                               ${CMAKEBUILD_MODULE_PATH}/build_external)
 
-#Find the testing infrastructure
-#If we installed NWX_Catch it is up 3 directories, so add that to search path
-#get_filename_component(__root_dir ${CMAKEBUILD_MODULE_PATH} DIRECTORY)
-#get_filename_component(__root_dir ${__root_dir} DIRECTORY)
-#get_filename_component(__root_dir ${__root_dir} DIRECTORY)
-list(APPEND CMAKE_PREFIX_PATH ${__root_dir})
-
-#find_package(NWX_Catch REQUIRED)
-
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(CMAKEBUILD DEFAULT_MSG
                                   ${CMAKEBUILD_MODULES})
-#list(APPEND CMAKEBUILD_INCLUDE_DIRS ${NWX_CATCH_INCLUDE_DIRS})
-#list(APPEND CMAKEBUILD_LIBRARIES ${NWX_CATCH_LIBRARIES})
 set(CMakeBuild_FOUND ${CMAKEBUILD_FOUND})
-include(BuildNWChemExModule)
+include(BuildCMSBModule)

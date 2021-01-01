@@ -3,8 +3,7 @@ CMake Build Basics
 
 This page is designed to detail the basic steps required to build a C++ project
 using CMake.  It is targeted at users who want to understand how CMake works in
-order to contribute to CMakeBuild (or simply because there's a lack of good
-tutorials on the internets).
+order to contribute to CMakeBuild.
 
 Contents
 --------
@@ -172,14 +171,14 @@ To check if a variable is defined, use: `if(DEFINED variable_name)`.
 
 You can look for a particular dependency with:
 ~~~cmake
-#CMake will crash if it doesn't find blas
-find_package(BLAS REQUIRED)
+#CMake will crash if it doesn't find mpi
+find_package(MPI REQUIRED)
   
 #This is an error because find_package is case-sensitive
-find_package(blas REQUIRED)
+find_package(mpi REQUIRED)
   
-#This will find LAPACK, but not note that it did
-find_package(LAPACK QUIET)
+#This will find MPI, but not note that it did
+find_package(MPI QUIET)
 ~~~
 
 There are many more CMake commands, options, (and pitfalls) but for the most 

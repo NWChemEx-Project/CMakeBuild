@@ -25,11 +25,11 @@ os.mkdir(src_dir)
 os.mkdir(test_dir)
 
 with open(os.path.join(root_dir, "CMakeLists.txt"), 'w') as f:
-    f.write("cmake_minimum_required(VERSION 3.6)\n")
+    f.write("cmake_minimum_required(VERSION 3.18.0)\n")
     f.write("project({:s} VERSION 1.0.0 LANGUAGES CXX)\n".format(test_name))
     f.write("find_package(CMakeBuild)\n")
     f.write("set({:s}_DEPENDENCIES )\n".format(test_name))
-    f.write("build_nwchemex_module(${CMAKE_CURRENT_LIST_DIR})\n")
+    f.write("build_cmsb_module(${CMAKE_CURRENT_LIST_DIR})\n")
 
 with open(os.path.join(src_dir, "CMakeLists.txt"), 'w') as f:
     f.write("cmake_minimum_required(VERSION ${CMAKE_VERSION})\n")
@@ -38,7 +38,7 @@ with open(os.path.join(src_dir, "CMakeLists.txt"), 'w') as f:
     f.write("include(TargetMacros)\n")
     f.write("set({0:s}SRCS {0:s}.cpp)\n".format(test_name))
     f.write("set({0:s}HEADERS {0:s}.hpp)\n".format(test_name))
-    f.write("nwchemex_add_library({0:s} {0:s}SRCS {0:s}HEADERS \"\" "
+    f.write("cmsb_add_library({0:s} {0:s}SRCS {0:s}HEADERS \"\" "
             "\"\")\n".format(test_name))
 with open(os.path.join(src_dir, "{:s}.hpp".format(test_name)), 'w') as f:
     f.write("struct {:s} ".format(test_name))
