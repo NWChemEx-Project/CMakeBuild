@@ -28,7 +28,6 @@ contribute to CMakeBuild:
 - [Building Basic CMake Projects](dox/BuildBasics.md)
 - [Understanding CMake Superbuilds](dox/CMakeSuperBuild.md)
 - [Finding Dependencies](dox/FindingDependencies.md)
-- [Finding BLAS/LAPACK](dox/SoYouWannaFindBLAS.md)
 - [CMakeBuild Model](dox/CMakeBuildModel.md)
 - [CMakeBuild Macros and Functions](dox/MacroDocumentation.md)
 
