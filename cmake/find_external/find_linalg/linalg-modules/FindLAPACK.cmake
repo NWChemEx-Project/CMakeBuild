@@ -46,7 +46,6 @@ if( NOT LAPACK_LIBRARIES )
   set( LAPACK_LIBRARIES           BLAS::BLAS                  )
   set( LAPACK_INCLUDE_DIR         ${BLAS_INCLUDE_DIRS}        )
   set( LAPACK_COMPILE_DEFINITIONS ${BLAS_COMPILE_DEFINITIONS} )
-
   check_dpstrf_exists( LAPACK_LIBRARIES 
     BLAS_HAS_LAPACK LAPACK_FORTRAN_LOWER LAPACK_FORTRAN_UNDERSCORE
   )
@@ -147,6 +146,9 @@ else()
   unset( LAPACK_COMPILE_DEFINITIONS )
 
 endif()
+
+
+
 
 find_package_handle_standard_args( LAPACK
   REQUIRED_VARS LAPACK_LINK_OK

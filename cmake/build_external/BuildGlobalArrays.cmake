@@ -17,12 +17,12 @@ if(USE_GA_AT)
         package_dependency(${depend} DEPENDENCY_PATHS)
     endforeach()
 
-    if("${BLAS_VENDOR}" STREQUAL "IntelMKL")
+    if("${LINALG_VENDOR}" STREQUAL "IntelMKL")
         set(BLA_VENDOR_MKL ON)
         set(BLA_LAPACK_INT       "MKL_INT")
         set(BLA_LAPACK_COMPLEX8  "MKL_Complex8")
         set(BLA_LAPACK_COMPLEX16 "MKL_Complex16")        
-    elseif("${BLAS_VENDOR}" STREQUAL "IBMESSL")
+    elseif("${LINALG_VENDOR}" STREQUAL "IBMESSL")
         set(BLA_VENDOR_ESSL ON)
         set(BLA_LAPACK_INT "int64_t")
         if(BLAS_INT4)
@@ -30,7 +30,7 @@ if(USE_GA_AT)
         endif()
         set(BLA_LAPACK_COMPLEX8  "std::complex<float>")
         set(BLA_LAPACK_COMPLEX16 "std::complex<double>")        
-    elseif("${BLAS_VENDOR}" STREQUAL "BLIS")
+    elseif("${LINALG_VENDOR}" STREQUAL "BLIS")
         set(USE_BLIS ON)
         set(BLA_VENDOR_BLIS ON)
         set(BLA_LAPACK_INT "int64_t")
@@ -145,12 +145,12 @@ else()
         set(LINALG_REQUIRED_COMPONENTS "lp64")
     endif()
 
-    if("${BLAS_VENDOR}" STREQUAL "IntelMKL")
+    if("${LINALG_VENDOR}" STREQUAL "IntelMKL")
         set(LINALG_THREAD_LAYER "sequential")
         if(USE_OPENMP)
             set(LINALG_THREAD_LAYER "openmp")
         endif()
-    elseif("${BLAS_VENDOR}" STREQUAL "IBMESSL")
+    elseif("${LINALG_VENDOR}" STREQUAL "IBMESSL")
         if(USE_OPENMP)
             set(LINALG_THREAD_LAYER "smp")
         endif()
@@ -160,20 +160,21 @@ else()
       set(GA_LINALG_THREAD_LAYER "-DLINALG_THREAD_LAYER=${LINALG_THREAD_LAYER}")
     endif()
 
-    if(${BLAS_VENDOR} STREQUAL "BLIS" OR ${BLAS_VENDOR} STREQUAL "IBMESSL")
+    set(GA_LINALG_ROOT   "-DLINALG_PREFIX=${LINALG_PREFIX}")
+
+    if(${LINALG_VENDOR} STREQUAL "BLIS" OR ${LINALG_VENDOR} STREQUAL "IBMESSL")
         list(INSERT CMAKE_MODULE_PATH 0 "${CMSB_MACROS}/../find_external/find_linalg/linalg-modules")
 
-        if(${BLAS_VENDOR} STREQUAL "BLIS")
+        if(${LINALG_VENDOR} STREQUAL "BLIS")
             if(USE_SCALAPACK)
                 include(BuildScaLAPACK)
             else()
                 include(BuildLAPACK)
                 #include(BuildBLAS)
             endif()
-
+            set(GA_LINALG_ROOT   "-DLINALG_PREFIX=${CMAKE_INSTALL_PREFIX}")
             # We not support externally provided Ref. BLAS for now.
-            set(GA_BLASROOT   "-DBLISROOT=${CMAKE_INSTALL_PREFIX}")
-        elseif(${BLAS_VENDOR} STREQUAL "IBMESSL")
+        elseif(${LINALG_VENDOR} STREQUAL "IBMESSL")
             if(USE_SCALAPACK)
                 include(BuildScaLAPACK)
             else()
@@ -182,13 +183,12 @@ else()
         endif()
 
         list(REMOVE_AT CMAKE_MODULE_PATH 0)
-        set(GA_LAPACKROOT "-DReferenceLAPACKROOT=${CMAKE_INSTALL_PREFIX}")
-        set(_ga_scalapack_option "-DReferenceScaLAPACKROOT=${CMAKE_INSTALL_PREFIX}")
+        list(APPEND  GA_LINALG_ROOT "-DLAPACK_PREFIX=${CMAKE_INSTALL_PREFIX}")
     endif()
 
     if(USE_SCALAPACK)
         set(GA_ScaLAPACK "-DENABLE_SCALAPACK=ON")
-        set(GA_ScaLAPACKROOT ${_ga_scalapack_option})
+        list(APPEND  GA_LINALG_ROOT "-DSCALAPACK_PREFIX=${CMAKE_INSTALL_PREFIX}")
     endif()
 
     if(USE_DPCPP)
@@ -196,31 +196,31 @@ else()
     endif()
 
     message(STATUS "GlobalArrays CMake Options: ${DEPENDENCY_CMAKE_OPTIONS} \
-    -DENABLE_BLAS=ON -DBLAS_VENDOR=${BLAS_VENDOR} ${GA_BLASROOT} ${GA_LAPACKROOT} \
+    -DENABLE_BLAS=ON -DLINALG_VENDOR=${LINALG_VENDOR} ${GA_LINALG_ROOT} \
     ${GA_DPCPP} -DGA_RUNTIME=${GA_RUNTIME} -DENABLE_PROFILING=${USE_GA_PROFILER} \
     ${GA_CMSB_EXTRA_LIBS} ${Clang_GCCROOT} ${GA_LINALG_THREAD_LAYER} \
     -DLINALG_REQUIRED_COMPONENTS=${LINALG_REQUIRED_COMPONENTS} \
-    ${GA_ScaLAPACK}  ${GA_ScaLAPACKROOT}")
+    ${GA_ScaLAPACK}")
 
     ExternalProject_Add(GlobalArrays_External
         # # URL https://github.com/GlobalArrays/ga/releases/download/v${PROJECT_VERSION}/ga-${PROJECT_VERSION}.tar.gz
         GIT_REPOSITORY ${GA_REPO}
         GIT_TAG develop
         UPDATE_DISCONNECTED 1
-        CMAKE_ARGS ${DEPENDENCY_CMAKE_OPTIONS} -DENABLE_BLAS=ON -DBLAS_VENDOR=${BLAS_VENDOR} ${GA_BLASROOT} ${GA_LAPACKROOT}
+        CMAKE_ARGS ${DEPENDENCY_CMAKE_OPTIONS} -DENABLE_BLAS=ON -DLINALG_VENDOR=${LINALG_VENDOR} ${GA_LINALG_ROOT}
         ${GA_DPCPP} -DGA_RUNTIME=${GA_RUNTIME} -DENABLE_PROFILING=${USE_GA_PROFILER} ${GA_CMSB_EXTRA_LIBS} ${Clang_GCCROOT}
         ${GA_LINALG_THREAD_LAYER} -DLINALG_REQUIRED_COMPONENTS=${LINALG_REQUIRED_COMPONENTS}
-        ${GA_ScaLAPACK}  ${GA_ScaLAPACKROOT}
+        ${GA_ScaLAPACK}
         INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
         CMAKE_CACHE_ARGS ${CORE_CMAKE_LISTS}
                         ${CORE_CMAKE_STRINGS}
     )
 
     # # Establish the dependencies
-    if(${BLAS_VENDOR} STREQUAL "BLIS" OR ${BLAS_VENDOR} STREQUAL "IBMESSL")
-        if(${BLAS_VENDOR} STREQUAL "BLIS")
+    if(${LINALG_VENDOR} STREQUAL "BLIS" OR ${LINALG_VENDOR} STREQUAL "IBMESSL")
+        if(${LINALG_VENDOR} STREQUAL "BLIS")
             add_dependencies(GlobalArrays_External BLAS_External LAPACK_External)
-        elseif(${BLAS_VENDOR} STREQUAL "IBMESSL")
+        elseif(${LINALG_VENDOR} STREQUAL "IBMESSL")
             add_dependencies(GlobalArrays_External LAPACK_External)
         endif()
         if(USE_SCALAPACK)

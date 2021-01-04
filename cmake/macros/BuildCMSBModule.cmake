@@ -14,7 +14,7 @@ function(build_cmsb_module SUPER_PROJECT_ROOT)
     option_w_default(CMAKE_CXX_STANDARD 17)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     option_w_default(BLAS_INT4 OFF)
-    option_w_default(BLAS_VENDOR BLIS)
+    option_w_default(LINALG_VENDOR BLIS)
     option_w_default(ENABLE_COVERAGE OFF)
     option_w_default(CMAKE_CXX_EXTENSIONS OFF)
     option_w_default(CMAKE_BUILD_TYPE Release)
@@ -74,7 +74,7 @@ function(build_cmsb_module SUPER_PROJECT_ROOT)
     string(TOUPPER ${CMAKE_BUILD_TYPE} CMSB_CMAKE_BUILD_TYPE)
     set(CMSB_CXX_FLAGS CMAKE_CXX_FLAGS_${CMSB_CMAKE_BUILD_TYPE})
 
-    if(NOT BLAS_INT4 AND USE_SCALAPACK AND NOT "${BLAS_VENDOR}" STREQUAL "IntelMKL")
+    if(NOT BLAS_INT4 AND USE_SCALAPACK AND NOT "${LINALG_VENDOR}" STREQUAL "IntelMKL")
         message( FATAL_ERROR "ReferenceScaLAPACK with ILP64 interface is currently not supported. Please set -DBLAS_INT4=ON" )
     endif()
 
@@ -131,7 +131,7 @@ function(build_cmsb_module SUPER_PROJECT_ROOT)
 
     set(TAMM_CXX_FLAGS "${TAMM_CXX_FLAGS} -DOMPI_SKIP_MPICXX")
 
-    bundle_cmake_args(DEPENDENCY_CMAKE_OPTIONS BLAS_INT4 BLAS_VENDOR ENABLE_COVERAGE)
+    bundle_cmake_args(DEPENDENCY_CMAKE_OPTIONS BLAS_INT4 LINALG_VENDOR LINALG_PREFIX ENABLE_COVERAGE)
 
     print_banner("Locating Dependencies and Creating Targets")
     ################################################################################
@@ -140,11 +140,11 @@ function(build_cmsb_module SUPER_PROJECT_ROOT)
     #
     ################################################################################
 
-    if(${BLAS_VENDOR} STREQUAL "BLIS")
+    if(${LINALG_VENDOR} STREQUAL "BLIS")
         list(APPEND TAMM_EXTRA_LIBS -ldl)
     endif()
 
-    bundle_cmake_strings(CORE_CMAKE_STRINGS BLAS_VENDOR)
+    bundle_cmake_strings(CORE_CMAKE_STRINGS LINALG_VENDOR)
     set(DEPENDENCY_ROOT_DIRS)
 
     foreach(__project ${CMSB_PROJECTS})
@@ -180,8 +180,8 @@ function(build_cmsb_module SUPER_PROJECT_ROOT)
         if(USE_GA_AT)
             bundle_cmake_strings(CORE_CMAKE_STRINGS USE_GA_AT)
             set(TAMM_CXX_FLAGS "${TAMM_CXX_FLAGS} -DUSE_GA_AT")
-            if(NOT "${BLAS_VENDOR}" STREQUAL "IntelMKL")
-                message(FATAL_ERROR "USE_GA_AT=ON only works with BLAS_VENDOR=IntelMKL")
+            if(NOT "${LINALG_VENDOR}" STREQUAL "IntelMKL")
+                message(FATAL_ERROR "USE_GA_AT=ON only works with LINALG_VENDOR=IntelMKL")
             endif()
         endif()
 
