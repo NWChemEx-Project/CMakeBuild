@@ -204,9 +204,10 @@ else()
 
     ExternalProject_Add(GlobalArrays_External
         # # URL https://github.com/GlobalArrays/ga/releases/download/v${PROJECT_VERSION}/ga-${PROJECT_VERSION}.tar.gz
-        GIT_REPOSITORY ${GA_REPO}
-        GIT_TAG develop
-        UPDATE_DISCONNECTED 1
+        # GIT_REPOSITORY ${GA_REPO}
+        # GIT_TAG develop
+        # UPDATE_DISCONNECTED 1
+        URL /hpc/home/panyala/code/ga-fork
         CMAKE_ARGS ${DEPENDENCY_CMAKE_OPTIONS} -DENABLE_BLAS=ON -DLINALG_VENDOR=${LINALG_VENDOR} ${GA_LINALG_ROOT}
         ${GA_DPCPP} -DGA_RUNTIME=${GA_RUNTIME} -DENABLE_PROFILING=${USE_GA_PROFILER} ${GA_CMSB_EXTRA_LIBS} ${Clang_GCCROOT}
         ${GA_LINALG_THREAD_LAYER} -DLINALG_REQUIRED_COMPONENTS=${LINALG_REQUIRED_COMPONENTS}
