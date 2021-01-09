@@ -26,6 +26,7 @@ function(build_cmsb_module SUPER_PROJECT_ROOT)
     option_w_default(USE_GA_DEV OFF)
     option_w_default(USE_GA_PROFILER OFF)
     option_w_default(CUDA_MAXREGCOUNT 64)
+    option_w_default(BUILD_SHARED_LIBS OFF)
 
 
     if(USE_DPCPP)
@@ -36,6 +37,8 @@ function(build_cmsb_module SUPER_PROJECT_ROOT)
         if(USE_OPENMP)
           message(FATAL_ERROR "DPCPP build requires USE_OPENMP=OFF")
         endif()
+        message(STATUS "DPCPP Option Enabled: Setting BUILD_SHARED_LIBS to : ON")
+        set(BUILD_SHARED_LIBS ON)
     endif()
 
     if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -80,7 +83,6 @@ function(build_cmsb_module SUPER_PROJECT_ROOT)
 
     print_banner("Configuration Options")
     
-    option_w_default(BUILD_SHARED_LIBS OFF)
     option_w_default(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
     option_w_default(BUILD_TESTS ON)    #Should we build the tests?
     option_w_default(BUILD_METHODS ON)
