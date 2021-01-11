@@ -43,6 +43,8 @@ if(BLAS_INT4)
     set(BLIS_INT_FLAGS -i 32 -b 32 --enable-cblas)
 endif()
 
+set(BLIS_MISC_OPTIONS --without-memkind)
+
 ExternalProject_Add(BLAS_External
         URL ${BLIS_TAR}
         CONFIGURE_COMMAND ./configure --prefix=${CMAKE_INSTALL_PREFIX}
@@ -50,6 +52,7 @@ ExternalProject_Add(BLAS_External
                                       CC=${CMAKE_C_COMPILER}
                                       CFLAGS=${BLIS_OPT_FLAGS}
                                       ${BLIS_INT_FLAGS}
+                                      ${BLIS_MISC_OPTIONS}
                                       ${BLIS_CONFIG_HW}
         INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install #DESTDIR=${STAGE_DIR} 
         BUILD_IN_SOURCE 1
