@@ -140,9 +140,10 @@ else()
     endif()
 
 
-    set(LINALG_REQUIRED_COMPONENTS "ilp64")
     if(BLAS_INT4)
         set(LINALG_REQUIRED_COMPONENTS "lp64")
+    else()
+        set(LINALG_REQUIRED_COMPONENTS "ilp64")
     endif()
 
     if("${LINALG_VENDOR}" STREQUAL "IntelMKL")
@@ -166,6 +167,8 @@ else()
         list(INSERT CMAKE_MODULE_PATH 0 "${CMSB_MACROS}/../find_external/find_linalg/linalg-modules")
 
         set(BLAS_PREFERENCE_LIST ${LINALG_VENDOR})
+        set(LAPACK_PREFERENCE_LIST ReferenceLAPACK)
+
         set(LINALG_PREFER_STATIC ON)
         if(BUILD_SHARED_LIBS)
           set(LINALG_PREFER_STATIC OFF)
@@ -180,21 +183,18 @@ else()
         set(ScaLAPACK_REQUIRED_COMPONENTS  ${LINALG_REQUIRED_COMPONENTS})
 
         if(${LINALG_VENDOR} STREQUAL "BLIS")
-            if(USE_SCALAPACK)
-                include(BuildScaLAPACK)
-            else()
-                include(BuildLAPACK)
-                #include(BuildBLAS)
-            endif()
             set(GA_LINALG_ROOT   "-DLINALG_PREFIX=${CMAKE_INSTALL_PREFIX}")
-            # We not support externally provided Ref. BLAS for now.
-        elseif(${LINALG_VENDOR} STREQUAL "IBMESSL")
-            if(USE_SCALAPACK)
-                include(BuildScaLAPACK)
-            else()
-                include(BuildLAPACK)
-            endif()
         endif()
+
+        if(USE_SCALAPACK)
+            set(ScaLAPACK_PREFERENCE_LIST ReferenceScaLAPACK)
+            find_or_build_dependency(ScaLAPACK)
+            list(APPEND  GA_LINALG_ROOT "-DScaLAPACK_PREFIX=${CMAKE_INSTALL_PREFIX}")
+        else()
+            find_or_build_dependency(LAPACK)
+            #include(BuildBLAS)
+        endif()
+
 
         list(REMOVE_AT CMAKE_MODULE_PATH 0)
         list(APPEND  GA_LINALG_ROOT "-DLAPACK_PREFIX=${CMAKE_INSTALL_PREFIX}")
@@ -202,7 +202,6 @@ else()
 
     if(USE_SCALAPACK)
         set(GA_ScaLAPACK "-DENABLE_SCALAPACK=ON")
-        list(APPEND  GA_LINALG_ROOT "-DScaLAPACK_PREFIX=${CMAKE_INSTALL_PREFIX}")
     endif()
 
     if(USE_DPCPP)
