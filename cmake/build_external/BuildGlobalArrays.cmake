@@ -164,8 +164,6 @@ else()
     set(GA_LINALG_ROOT   "-DLINALG_PREFIX=${LINALG_PREFIX}")
 
     if(${LINALG_VENDOR} STREQUAL "BLIS" OR ${LINALG_VENDOR} STREQUAL "IBMESSL")
-        list(INSERT CMAKE_MODULE_PATH 0 "${CMSB_MACROS}/../find_external/find_linalg/linalg-modules")
-
         set(BLAS_PREFERENCE_LIST ${LINALG_VENDOR})
         set(LAPACK_PREFERENCE_LIST ReferenceLAPACK)
 
@@ -195,8 +193,6 @@ else()
             #include(BuildBLAS)
         endif()
 
-
-        list(REMOVE_AT CMAKE_MODULE_PATH 0)
         list(APPEND  GA_LINALG_ROOT "-DLAPACK_PREFIX=${CMAKE_INSTALL_PREFIX}")
     endif()
 

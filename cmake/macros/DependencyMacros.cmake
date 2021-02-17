@@ -14,8 +14,6 @@ enable_language(C)
 set(DEP_ABUILD "GauXC" "Eigen3" "LibInt2" "HPTT" "HDF5" "TALSH" "GlobalArrays") # "GlobalArrays" "BLIS" "AntlrCppRuntime"
 if(USE_GA_AT)
     set(DEP_ABUILD "Eigen3" "LibInt2" "HPTT" "HDF5" "TALSH")
-    set(CMSB_LA_MODULES ${CMSB_MACROS}/../find_external/find_linalg)
-    list(APPEND CMAKE_MODULE_PATH "${CMSB_LA_MODULES}" "${CMSB_LA_MODULES}/linalg-modules")
 
     set(LINALG_REQUIRED_COMPONENTS "ilp64")
     if(BLAS_INT4)

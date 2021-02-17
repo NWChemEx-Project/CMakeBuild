@@ -7,6 +7,17 @@ set(CMSB_CMAKE ${CMSB_INCLUDE_DIR}/cmake)
 set(CMSB_MACROS ${CMSB_CMAKE}/macros)
 set(MACRO_INSTALL share/cmake/CMakeBuild/macros)
 
+include( FetchContent )
+FetchContent_Declare(linalg-cmake-modules
+  GIT_REPOSITORY https://github.com/ajaypanyala/linalg-cmake-modules.git
+  GIT_TAG 9cd2f8f7ac71ecefaf6b449ee17e84fdbee8fcd6
+)
+FetchContent_GetProperties( linalg-cmake-modules )
+if( NOT linalg-cmake-modules_POPULATED )
+  FetchContent_Populate( linalg-cmake-modules )
+  list( APPEND CMAKE_MODULE_PATH ${linalg-cmake-modules_SOURCE_DIR} )
+endif()
+
 file(GLOB __MACRO_FILES "${CMSB_MACROS}/*.cmake")
 install(FILES ${__MACRO_FILES}  DESTINATION ${MACRO_INSTALL})
 

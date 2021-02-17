@@ -45,8 +45,6 @@
 
     set(_BLAS_PREFIX   "-DBLAS_PREFIX=${LINALG_PREFIX}")
     if(${LINALG_VENDOR} STREQUAL "BLIS" OR ${LINALG_VENDOR} STREQUAL "IBMESSL")
-        list(INSERT CMAKE_MODULE_PATH 0 "${CMSB_MACROS}/../find_external/find_linalg/linalg-modules")
-
         set(LAPACK_PREFERENCE_LIST ReferenceLAPACK)
         if(USE_SCALAPACK)
             set(ScaLAPACK_PREFERENCE_LIST ReferenceScaLAPACK)
@@ -60,7 +58,6 @@
         if(${LINALG_VENDOR} STREQUAL "BLIS")
             set(_BLAS_PREFIX   "-DBLAS_PREFIX=${CMAKE_INSTALL_PREFIX}")
         endif()
-        list(REMOVE_AT CMAKE_MODULE_PATH 0)
     endif()
 
 
