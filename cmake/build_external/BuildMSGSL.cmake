@@ -2,6 +2,7 @@
 
 ExternalProject_Add(MSGSL_External
     GIT_REPOSITORY https://github.com/Microsoft/GSL.git
+    GIT_TAG main
     UPDATE_DISCONNECTED 1
     CMAKE_ARGS ${DEPENDENCY_CMAKE_OPTIONS} -DGSL_TEST=OFF
     INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
