@@ -332,7 +332,7 @@ function(build_cmsb_module SUPER_PROJECT_ROOT)
             string(REPLACE "=" " " LI_CD ${LI_CD})
             separate_arguments(LI_CD UNIX_COMMAND ${LI_CD})
             list (GET LI_CD 1 LI_BASIS_SET_PATH)
-            install(DIRECTORY ${CMAKE_SOURCE_DIR}/methods/basis/
+            install(DIRECTORY ${CMSB_BASISSET_DIR}
                     DESTINATION ${LI_BASIS_SET_PATH}/basis USE_SOURCE_PERMISSIONS)
         endif()
     endif()

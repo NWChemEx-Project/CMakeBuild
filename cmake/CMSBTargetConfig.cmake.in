@@ -65,15 +65,7 @@ set(${__NAME}_INCLUDE_DIRS ${${__NAME}_INCLUDE_DIR})
 set(${__NAME}_COMPILE_OPTIONS ${${__NAME}_COMPILE_OPTIONS})
 set(${__NAME}_COMPILE_DEFINITIONS ${${__NAME}_COMPILE_DEFINITIONS})
 
-#set(CBLAS_INCLUDE_DIRS "@CBLAS_INCLUDE_DIRS@")
-#set(LAPACKE_INCLUDE_DIRS "@LAPACKE_INCLUDE_DIRS@")
-#set(CBLAS_LIBRARIES "@CBLAS_LIBRARIES@")
-#set(LAPACKE_LIBRARIES "@LAPACKE_LIBRARIES@")
-#set(SCALAPACK_LIBRARIES "@SCALAPACK_LIBRARIES@")
-#set(TAMM_CXX_FLAGS "@TAMM_CXX_FLAGS@")
 #set(TAMM_EXTRA_LIBS "@TAMM_EXTRA_LIBS@")
-#set(CBLAS_HEADER @CBLAS_HEADER@)
-#set(LAPACKE_HEADER @LAPACKE_HEADER@)
 #set(USE_BLIS @USE_BLIS@)
 #set(USE_CUTENSOR @USE_CUTENSOR@)
 #set(USE_OPENMP @USE_OPENMP@)
@@ -87,18 +79,18 @@ set(HDF5_ROOT @HDF5_ROOT@)
 #USE_TALSH,LAPACK_ILP64
 
 #Find the dependencies
-include(DependencyMacros)
-set(__depends @CMSB_DEPENDENCIES@)
-foreach(__depend_i ${__depends})
-    cmsb_find_dependency(${__depend_i})
-    dependency_to_variables(${__depend_i} ${__NAME}_INCLUDE_DIRS
-                                          ${__NAME}_LIBRARIES
-                                          ${__NAME}_COMPILE_OPTIONS
-                                          ${__NAME}_COMPILE_DEFINITIONS)
-endforeach()
+#include(DependencyMacros)
+#set(__depends @CMSB_DEPENDENCIES@)
+#foreach(__depend_i ${__depends})
+#    cmsb_find_dependency(${__depend_i})
+#    dependency_to_variables(${__depend_i} ${__NAME}_INCLUDE_DIRS
+#                                          ${__NAME}_LIBRARIES
+#                                          ${__NAME}_COMPILE_OPTIONS
+#                                          ${__NAME}_COMPILE_DEFINITIONS)
+#endforeach()
 
 #Print our hardwork out
-message(STATUS "Found ${__name} include paths: ${${__NAME}_INCLUDE_DIRS}")
-message(STATUS "Found ${__name} libraries: ${${__NAME}_LIBRARIES}")
-message(STATUS "Found ${__name} options: ${${__NAME}_COMPILE_OPTIONS}")
-message(STATUS "Found ${__name} definitions: ${${__NAME}_COMPILE_DEFINITIONS}")
+#message(STATUS "Found ${__name} include paths: ${${__NAME}_INCLUDE_DIRS}")
+#message(STATUS "Found ${__name} libraries: ${${__NAME}_LIBRARIES}")
+#message(STATUS "Found ${__name} options: ${${__NAME}_COMPILE_OPTIONS}")
+#message(STATUS "Found ${__name} definitions: ${${__NAME}_COMPILE_DEFINITIONS}")
