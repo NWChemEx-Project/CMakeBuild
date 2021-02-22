@@ -79,18 +79,18 @@ set(HDF5_ROOT @HDF5_ROOT@)
 #USE_TALSH,LAPACK_ILP64
 
 #Find the dependencies
-include(DependencyMacros)
-set(__depends @CMSB_DEPENDENCIES@)
-foreach(__depend_i ${__depends})
-    cmsb_find_dependency(${__depend_i})
-    dependency_to_variables(${__depend_i} ${__NAME}_INCLUDE_DIRS
-                                          ${__NAME}_LIBRARIES
-                                          ${__NAME}_COMPILE_OPTIONS
-                                          ${__NAME}_COMPILE_DEFINITIONS)
-endforeach()
+#include(DependencyMacros)
+#set(__depends @CMSB_DEPENDENCIES@)
+#foreach(__depend_i ${__depends})
+#    cmsb_find_dependency(${__depend_i})
+#    dependency_to_variables(${__depend_i} ${__NAME}_INCLUDE_DIRS
+#                                          ${__NAME}_LIBRARIES
+#                                          ${__NAME}_COMPILE_OPTIONS
+#                                          ${__NAME}_COMPILE_DEFINITIONS)
+#endforeach()
 
 #Print our hardwork out
-message(STATUS "Found ${__name} include paths: ${${__NAME}_INCLUDE_DIRS}")
-message(STATUS "Found ${__name} libraries: ${${__NAME}_LIBRARIES}")
-message(STATUS "Found ${__name} options: ${${__NAME}_COMPILE_OPTIONS}")
-message(STATUS "Found ${__name} definitions: ${${__NAME}_COMPILE_DEFINITIONS}")
+#message(STATUS "Found ${__name} include paths: ${${__NAME}_INCLUDE_DIRS}")
+#message(STATUS "Found ${__name} libraries: ${${__NAME}_LIBRARIES}")
+#message(STATUS "Found ${__name} options: ${${__NAME}_COMPILE_OPTIONS}")
+#message(STATUS "Found ${__name} definitions: ${${__NAME}_COMPILE_DEFINITIONS}")

@@ -24,7 +24,7 @@ endif()
 
 ExternalProject_Add(LAPACK_External
         GIT_REPOSITORY ${LAPACK_URL}
-        GIT_TAG 4aefeb7478306d935b69ab6fc1d5b3cc70f96b00
+        GIT_TAG 8960228bf20c3d5bf718ebd63e92041992bf29d9
         UPDATE_DISCONNECTED 1
         CMAKE_ARGS ${DEPENDENCY_CMAKE_OPTIONS}
                    -DUSE_OPTIMIZED_BLAS=ON

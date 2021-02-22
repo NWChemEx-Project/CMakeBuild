@@ -1,6 +1,6 @@
 ExternalProject_Add(cereal_External
     GIT_REPOSITORY https://github.com/USCiLab/cereal
-    GIT_TAG 51cbda5f30e56c801c07fe3d3aba5d7fb9e6cca4
+    GIT_TAG 64f50dbd5cecdaba785217e2b0aeea3a4f1cdfab
     CMAKE_ARGS ${DEPENDENCY_CMAKE_OPTIONS}
                -DSKIP_PORTABILITY_TEST=TRUE
                -DJUST_INSTALL_CEREAL=TRUE

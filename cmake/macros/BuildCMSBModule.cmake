@@ -270,7 +270,7 @@ function(build_cmsb_module SUPER_PROJECT_ROOT)
         endforeach()
 
         if(${BUILD_TESTS})
-            list(APPEND TEST_DEPENDS "CMakeBuild" "${__project}")
+            list(APPEND TEST_DEPENDS "CMakeBuild" "${__project}" "${${__project}_DEPENDENCIES}")
             ExternalProject_Add(${__project}_Tests_External
                     SOURCE_DIR ${${__project}_TEST_DIR}
                     CMAKE_ARGS -DSUPER_PROJECT_ROOT=${SUPER_PROJECT_ROOT}
@@ -295,7 +295,7 @@ function(build_cmsb_module SUPER_PROJECT_ROOT)
                     "subdirs(test_stage${CMAKE_INSTALL_PREFIX}/tests)")
         endif()
         if(${BUILD_METHODS})
-            list(APPEND METHOD_DEPENDS "CMakeBuild" "${__project}")
+            list(APPEND METHOD_DEPENDS "CMakeBuild" "${__project}" "${${__project}_DEPENDENCIES}")
             ExternalProject_Add(${__project}_Methods_External
                     SOURCE_DIR ${${__project}_METHODS_DIR}
                     CMAKE_ARGS -DSUPER_PROJECT_ROOT=${SUPER_PROJECT_ROOT}
