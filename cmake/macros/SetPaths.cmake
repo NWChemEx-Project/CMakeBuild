@@ -31,7 +31,7 @@ macro(set_paths)
 
     #Source and include our macros
     list(APPEND CMAKE_MODULE_PATH ${CMSB_MACROS} ${CMSB_FIND_SCRIPTS}
-                ${CMSB_BUILD_SCRIPTS})
+                ${CMSB_BUILD_SCRIPTS} ${CMSB_LAM_PATH})
 
     #Prepend our stage install dir so staged dependencies and their CMake
     #files can be found (and are preferred)

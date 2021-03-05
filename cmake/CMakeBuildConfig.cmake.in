@@ -50,7 +50,8 @@ endforeach()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKEBUILD_MODULE_PATH}/macros
                               ${CMAKEBUILD_MODULE_PATH}/find_external
-                              ${CMAKEBUILD_MODULE_PATH}/build_external)
+                              ${CMAKEBUILD_MODULE_PATH}/build_external
+                              ${CMAKEBUILD_MODULE_PATH}/linalg-cmake-modules)
 
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(CMAKEBUILD DEFAULT_MSG
                                   ${CMAKEBUILD_MODULES})

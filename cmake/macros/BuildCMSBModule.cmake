@@ -120,8 +120,8 @@ function(build_cmsb_module SUPER_PROJECT_ROOT)
     #Make a list of all CMake variables that should be passed to all dependencies
     bundle_cmake_args(CORE_CMAKE_OPTIONS ${CMSB_CORE_OPTIONS})
 
-    bundle_cmake_list(CORE_CMAKE_LISTS CMAKE_PREFIX_PATH CMAKE_MODULE_PATH
-                                       CMAKE_INSTALL_RPATH_USE_LINK_PATH)
+    bundle_cmake_list(CORE_CMAKE_LISTS CMAKE_PREFIX_PATH CMAKE_MODULE_PATH 
+                         CMSB_LAM_PATH CMAKE_INSTALL_RPATH_USE_LINK_PATH)
 
     bundle_cmake_strings(CORE_CMAKE_STRINGS ${CMSB_CXX_FLAGS})
 
