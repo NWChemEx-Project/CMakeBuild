@@ -174,6 +174,8 @@ function(build_cmsb_module SUPER_PROJECT_ROOT)
 
         if(USE_CUDA)
             set(TAMM_CXX_FLAGS "${TAMM_CXX_FLAGS} -DUSE_CUDA")
+        elseif(USE_HIP)
+            set(TAMM_CXX_FLAGS "${TAMM_CXX_FLAGS} -DUSE_HIP")
         endif()
 
         if(USE_DPCPP)
@@ -231,6 +233,10 @@ function(build_cmsb_module SUPER_PROJECT_ROOT)
                     message(FATAL_ERROR "USE_CUTENSOR=ON, but CUTENSOR_INSTALL_PREFIX not provided")
                 endif()
             endif()
+        endif()
+
+        if(USE_HIP)
+            bundle_cmake_strings(CORE_CMAKE_STRINGS USE_HIP ROCM_ROOT)
         endif()
 
         if(USE_OPENMP)
