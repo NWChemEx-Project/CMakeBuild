@@ -11,7 +11,9 @@ include(OptionMacros)
 
 enable_language(C)
 
-set(DEP_ABUILD "GauXC" "Eigen3" "LibInt2" "HPTT" "HDF5" "TALSH" "GlobalArrays") # "GlobalArrays" "BLIS" "AntlrCppRuntime"
+set(DEP_ABUILD "GauXC" "Eigen3" "LibInt2" "HPTT" "HDF5" "TALSH" "GlobalArrays" "TAMM") # "BLIS" "AntlrCppRuntime"
+set(DEP_ABUILD_MISC "MSGSL" "NJSON" "DOCTEST")
+list(APPEND DEP_ABUILD ${DEP_ABUILD_MISC})
 if(USE_GA_AT)
     set(DEP_ABUILD "Eigen3" "LibInt2" "HPTT" "HDF5" "TALSH")
 
@@ -129,6 +131,21 @@ function(cmsb_find_dependency __name)
       set( ${__name_lower}_LIBRARIES ${${__name_upper}_LIBRARIES} )
     endif()
 
+    set(_dep_name ${__name})
+    if(${__name} STREQUAL "DOCTEST")
+      set(_dep_name doctest)
+    elseif(${__name} STREQUAL "NJSON")
+      set(_dep_name nlohmann_json)
+    elseif(${__name} STREQUAL "MSGSL")
+      set(_dep_name Microsoft.GSL)
+    endif()
+    if(${__name} IN_LIST DEP_ABUILD_MISC)
+      set(__dep_target_name ${_dep_name}::${_dep_name})
+      if(${__name} STREQUAL "MSGSL")
+        set(__dep_target_name Microsoft.GSL::GSL)
+      endif()
+    endif()
+
     if(TARGET ${__name}_External)
         debug_message("${__name} already handled.")
     else()
@@ -143,11 +160,11 @@ function(cmsb_find_dependency __name)
                 set(DEP_PATHS ${DEP_STAGE_DIR} ${CMAKE_INSTALL_PREFIX} 
                               ${${__name}_ROOT})
                 # set(${__name}_DIR ${DEP_PATHS}) 
-                find_package(${__name} CONFIG
+                find_package(${_dep_name} CONFIG
                              HINTS ${DEP_PATHS}
                             #  PATHS ${DEP_PATHS}
                              NO_DEFAULT_PATH
-                            )        
+                            )    
                 # find_package(${__name} QUIET)       
             else()
                 find_package(${__name})            
@@ -158,14 +175,16 @@ function(cmsb_find_dependency __name)
         string(TOUPPER ${__name} __NAME)
         is_valid_and_true(${__NAME}_FOUND _upper)
         is_valid_and_true(${__name}_FOUND _lower)
-        if(_upper OR _lower)
+        if(_upper OR _lower OR TARGET ${__dep_target_name})
             set(_tname ${__name}_External)
             add_library(${_tname} INTERFACE)
             #By convention CMake variables are supposed to be all caps, 
             #but some projects instead use the same name
-            foreach(name_var ${__NAME} ${__name})
+            foreach(name_var ${__name}) #${__NAME}
                 if(${__NAME} STREQUAL "INTELSYCL")
                     set(name_var INTEL_SYCL)
+                elseif(${__NAME} STREQUAL "EIGEN3")
+                    set(name_var ${__NAME})
                 endif()
 
                 if(${__NAME} STREQUAL "MPI")
@@ -181,17 +200,19 @@ function(cmsb_find_dependency __name)
                 endif()
 
                 if(${__NAME} STREQUAL "LIBINT2")
-                    set(${name_var}_LIBRARIES Libint2::libint2_cxx)
-                    get_property(_li_cd TARGET Libint2::libint2_cxx
+                    set(${name_var}_LIBRARIES Libint2::cxx)
+                    get_property(_li_cd TARGET Libint2::cxx
                         PROPERTY INTERFACE_COMPILE_DEFINITIONS) 
                     set(${name_var}_COMPILE_DEFINITIONS "${_li_cd}")     
-                endif() 
 
-                if(${__NAME} STREQUAL "HDF5")
+                elseif(${__NAME} STREQUAL "HDF5")
                     set(${name_var}_LIBRARIES hdf5-static)
                     target_include_directories(${_tname} SYSTEM INTERFACE
-                            ${${name_var}_INCLUDE_DIR})                    
-                endif()
+                            ${${name_var}_INCLUDE_DIR})  
+
+                elseif(${__NAME} IN_LIST DEP_ABUILD_MISC)
+                    set(${name_var}_LIBRARIES ${__dep_target_name})
+                endif()                
 
                 # if(${__NAME} STREQUAL "MSGSL")
                 #     set(${name_var}_LIBRARIES Microsoft.GSL::GSL)
@@ -203,7 +224,6 @@ function(cmsb_find_dependency __name)
                             ${${name_var}_LIBRARIES})
                 endif() 
 
-
                 # is_valid(${name_var}_DEFINITIONS __has_defs)
                 # if(__has_defs)
                 #     target_compile_definitions(${_tname} INTERFACE
@@ -213,7 +233,7 @@ function(cmsb_find_dependency __name)
                 is_valid(${name_var}_COMPILE_OPTIONS __has_defs)
                 if(__has_defs)
                     target_compile_options(${_tname} INTERFACE
-                            ${${name_var}_COMPILE_OPTIONS})
+                                ${${name_var}_COMPILE_OPTIONS})
                 endif()                
 
                 is_valid(${name_var}_COMPILE_DEFINITIONS __has_defs)  

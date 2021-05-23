@@ -60,9 +60,9 @@ function(cmsb_set_up_target __name __flags __lflags __install)
     endif()
     is_valid(_tco __has_defs)
     if(__has_defs)
-        target_compile_options(${__name} PRIVATE "${__flags} ${_tco}")
+        target_compile_options(${__name} PRIVATE ${${__flags}} ${_tco})
     else()
-        target_compile_options(${__name} PRIVATE "${__flags}")
+        target_compile_options(${__name} PRIVATE ${${__flags}})
     endif()
     is_valid(_tcd __has_defs)
     if(__has_defs)
@@ -71,16 +71,17 @@ function(cmsb_set_up_target __name __flags __lflags __install)
     target_include_directories(${__name} PRIVATE ${CMSB_INCLUDE_DIR})
     target_include_directories(${__name} PRIVATE ${_tid})
     set_property(TARGET ${__name} PROPERTY CXX_STANDARD ${CMAKE_CXX_STANDARD})
-    set_property(TARGET ${__name} PROPERTY LINK_FLAGS "${__lflags}") 
+    set_property(TARGET ${__name} PROPERTY LINK_FLAGS "${${__lflags}}") 
 endfunction()
 
 function(cmsb_add_executable __name __srcs __flags __lflags)
+    set(__flags __CMSB_PROJECT_CXX_FLAGS)
     set(__srcs_copy ${${__srcs}})
     make_full_paths(__srcs_copy)
     add_executable(${__name} ${__srcs_copy})
     cmsb_set_up_target(${__name}
-                           "${${__flags}}"
-                           "${${__lflags}}"
+                           "${__flags}"
+                           "${__lflags}"
                            bin/${__name})
     install(TARGETS ${__name} DESTINATION bin/${__name})
 endfunction()
@@ -92,8 +93,8 @@ function(cmsb_add_library __name __srcs __headers __flags __lflags)
     if(HAS_LIBRARY)
         add_library(${__name} ${__srcs_copy})
         cmsb_set_up_target(${__name}
-                "${${_flags}}"
-                "${${__lflags}}"
+                "${__flags}"
+                "${__lflags}"
                 lib/${__name})
         install(TARGETS ${__name}
                 ARCHIVE DESTINATION lib
@@ -104,8 +105,8 @@ function(cmsb_add_library __name __srcs __headers __flags __lflags)
     set(CMSB_LIBRARY_HEADERS ${${__headers}})
     get_filename_component(__CONFIG_FILE ${DIR_OF_TARGET_MACROS} DIRECTORY)
     configure_file("${__CONFIG_FILE}/CMSBTargetConfig.cmake.in"
-                    ${__name}Config.cmake @ONLY)
-    install(FILES ${CMAKE_BINARY_DIR}/${__name}Config.cmake
+                    ${__name}-config.cmake @ONLY)
+    install(FILES ${CMAKE_BINARY_DIR}/${__name}-config.cmake
             DESTINATION share/cmake/${__name})
     foreach(__header_i ${${__headers}})
         #We want to preserve structure so get directory (if it exists)
@@ -116,6 +117,7 @@ function(cmsb_add_library __name __srcs __headers __flags __lflags)
 endfunction()
 
 function(cmsb_add_pymodule __name __srcs __headers __flags __lflags __init)
+    set(__flags __CMSB_PROJECT_CXX_FLAGS)
     cmsb_add_library(${__name} ${__srcs} ${__headers} ${__flags}
             ${__lflags})
     SET_TARGET_PROPERTIES(${__name} PROPERTIES PREFIX "")
@@ -123,11 +125,11 @@ function(cmsb_add_pymodule __name __srcs __headers __flags __lflags __init)
             DESTINATION lib/${__name})
 endfunction()
 
-function(cmsb_add_test __name __test_file)
+function(cmsb_add_test __name __test_file __flags)
     set(__file_copy ${__test_file})
     make_full_paths(__file_copy)
     add_executable(${__name} ${__file_copy})
-    cmsb_set_up_target(${__name} "" "" "tests")
+    cmsb_set_up_target(${__name} ${__flags} "" "tests")
     install(TARGETS ${__name} DESTINATION tests)
     add_test(NAME ${__name} COMMAND ${CMAKE_BINARY_DIR}/${__name})
     target_include_directories(${__name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
@@ -135,7 +137,8 @@ function(cmsb_add_test __name __test_file)
 endfunction()
 
 function(add_cxx_unit_test __name)
-    cmsb_add_test(${__name} ${__name}.cpp)
+    set(__flags __CMSB_PROJECT_CXX_FLAGS)
+    cmsb_add_test(${__name} ${__name}.cpp ${__flags})
     set_tests_properties(${__name} PROPERTIES LABELS "UnitTest")
 endfunction()
 
@@ -154,10 +157,10 @@ function(cmsb_set_up_cuda_target __name __testcudalib __flags __lflags __install
     if(TAMM_EXTRA_LIBS)
         target_link_libraries(${__name} PRIVATE "${TAMM_EXTRA_LIBS}")
     endif()
-    target_compile_definitions(${__name} PRIVATE "${__flags}")
+    target_compile_options(${__name} PRIVATE "${${__flags}}")
     target_include_directories(${__name} PRIVATE ${CMSB_INCLUDE_DIR} ${CUDA_TOOLKIT_INCLUDE})
     set_property(TARGET ${__name} PROPERTY CXX_STANDARD ${CMAKE_CXX_STANDARD})
-    set_property(TARGET ${__name} PROPERTY LINK_FLAGS "${__lflags}") 
+    set_property(TARGET ${__name} PROPERTY LINK_FLAGS "${${__lflags}}") 
     # set_property(TARGET ${__name} PROPERTY CUDA_SEPARABLE_COMPILATION ON)
     target_compile_options( ${__name}
     PRIVATE
@@ -166,6 +169,7 @@ function(cmsb_set_up_cuda_target __name __testcudalib __flags __lflags __install
 endfunction()
 
 function(add_mpi_cuda_unit_test __name __cudasrcs __np __testargs)
+    set(__flags __CMSB_PROJECT_CXX_FLAGS)
     string(TOUPPER ${__name} __NAME)
     string(SUBSTRING ${__NAME} 0 5 _test_prefix)
     set(_dest_install_folder "methods")
@@ -186,7 +190,7 @@ function(add_mpi_cuda_unit_test __name __cudasrcs __np __testargs)
         list(APPEND cmsb_cuda_incs ${_tmp_incs})
     endforeach()
 
-    set(__testcudalib "tce_${__name}")
+    set(__testcudalib "cmsb_cudalib_${__name}")
 
     add_library(${__testcudalib} ${__cudasrcs})
     target_include_directories(${__testcudalib} PRIVATE ${cmsb_cuda_incs} ${CUDA_TOOLKIT_INCLUDE})
@@ -195,12 +199,12 @@ function(add_mpi_cuda_unit_test __name __cudasrcs __np __testargs)
       $<$<COMPILE_LANGUAGE:CUDA>: -Xptxas -v > 
     )
     # set_property(TARGET ${__testcudalib} PROPERTY CUDA_SEPARABLE_COMPILATION ON)
-    
+
     add_executable(${__name} ${__file_copy})
     #set_property(TARGET ${__name} PROPERTY LINKER_LANGUAGE CXX)
     #set_source_files_properties(${sources} PROPERTIES LANGUAGE "CUDA")
 
-    cmsb_set_up_cuda_target(${__name} ${__testcudalib} "" "" ${_dest_install_folder})
+    cmsb_set_up_cuda_target(${__name} ${__testcudalib} ${__flags} "" ${_dest_install_folder})
     install(TARGETS ${__name} DESTINATION ${_dest_install_folder})
     set(__cmsb_mpiexec ${MPIEXEC_EXECUTABLE})
     if(MPIEXEC)
@@ -213,6 +217,7 @@ function(add_mpi_cuda_unit_test __name __cudasrcs __np __testargs)
 endfunction()
 
 function(add_mpi_unit_test __name __np __testargs)
+    set(__flags __CMSB_PROJECT_CXX_FLAGS)
     string(TOUPPER ${__name} __NAME)
     string(SUBSTRING ${__NAME} 0 5 _test_prefix)
     set(_dest_install_folder "methods")
@@ -224,7 +229,7 @@ function(add_mpi_unit_test __name __np __testargs)
     set(__file_copy ${__test_file})
     make_full_paths(__file_copy)
     add_executable(${__name} ${__file_copy})
-    cmsb_set_up_target(${__name} "" "" ${_dest_install_folder})
+    cmsb_set_up_target(${__name} ${__flags} "" ${_dest_install_folder})
     install(TARGETS ${__name} DESTINATION ${_dest_install_folder})
     set(__cmsb_mpiexec ${MPIEXEC_EXECUTABLE})
     if(MPIEXEC)

@@ -9,7 +9,8 @@ foreach(depend BLAS LAPACK)
 endforeach()
 
 
-set(ScaLAPACK_URL https://github.com/Reference-ScaLAPACK/scalapack)
+# set(ScaLAPACK_URL https://github.com/Reference-ScaLAPACK/scalapack)
+set(ScaLAPACK_URL https://github.com/NWChemEx-Project/scalapack)
 
 # append platform-specific optimization options for non-Debug builds
 # set(ScaLAPACK_FLAGS "-Wno-unused-variable -O3")
@@ -47,8 +48,8 @@ ExternalProject_Add(ScaLAPACK_External
                    #-DBUILD_SHARED_LIBS=OFF
                    -DCMAKE_C_FLAGS=${SCALAPACK_FLAGS}
                    -DCMAKE_Fortran_FLAGS=${SCALAPACK_F_FLAGS}
-                   -DBLAS_LIBRARIES=${BLAS_LIBRARIES}
-                   -DLAPACK_LIBRARIES=${LAPACK_LIBRARIES}
+                #    -DBLAS_LIBRARIES=${BLAS_LIBRARIES}
+                #    -DLAPACK_LIBRARIES=${LAPACK_LIBRARIES}
         INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install #DESTDIR=${STAGE_DIR}
         CMAKE_CACHE_ARGS ${DEPENDENCY_PATHS} ${CORE_CMAKE_LISTS} ${CORE_CMAKE_STRINGS}
         )

@@ -12,7 +12,7 @@ set(CMAKEBUILD_MODULE_PATH  "${CMAKE_CURRENT_LIST_DIR}")
 #Find assert module
 find_path(ASSERT_MODULE_PATH macros/AssertMacros.cmake
           PATHS ${CMAKEBUILD_MODULE_PATH})
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(ASSERT_MODULE DEFAULT_MSG ASSERT_MODULE_PATH)
+#FIND_PACKAGE_HANDLE_STANDARD_ARGS(ASSERT_MODULE DEFAULT_MSG ASSERT_MODULE_PATH)
 include(${ASSERT_MODULE_PATH}/macros/AssertMacros.cmake)
 #For good measure make sure it's the one we think it is
 assert_strings_are_equal(ASSERT_MODULE_PATH CMAKEBUILD_MODULE_PATH)
@@ -53,7 +53,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKEBUILD_MODULE_PATH}/macros
                               ${CMAKEBUILD_MODULE_PATH}/build_external
                               ${CMAKEBUILD_MODULE_PATH}/linalg-cmake-modules)
 
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(CMAKEBUILD DEFAULT_MSG
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(CMakeBuild DEFAULT_MSG
                                   ${CMAKEBUILD_MODULES})
-set(CMakeBuild_FOUND ${CMAKEBUILD_FOUND})
+#set(CMakeBuild_FOUND ${CMAKEBUILD_FOUND})
 include(BuildCMSBModule)

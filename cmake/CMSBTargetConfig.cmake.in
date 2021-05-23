@@ -10,27 +10,31 @@ include(AssertMacros)
 #Get the install root by assuming we are in root/share/cmake/ProjectName
 set(INSTALL_ROOT      "${CMAKE_CURRENT_LIST_DIR}") #ProjectName/
 
+enable_language(C)
+
 foreach(__iter RANGE 2)
-    get_filename_component(INSTALL_ROOT "${INSTALL_ROOT}" DIRECTORY)
+  get_filename_component(INSTALL_ROOT "${INSTALL_ROOT}" DIRECTORY)
 endforeach()
 
 #Name of the library
-set(__name @CMSB_LIBRARY_NAME@)
-string(TOUPPER ${__name} __NAME)
+set(__cmsb_libname @CMSB_LIBRARY_NAME@)
+string(TOUPPER ${__cmsb_libname} __CMSB_LIBNAME)
+
+set(CMAKE_FIND_PACKAGE_NAME ${__CMSB_LIBNAME})
 
 #Find the actual library (if there is one)
 if(@HAS_LIBRARY@)
-    set(__names "")
+    set(__cmsb_libnames "")
     foreach(_prefix "lib" "")
         foreach(_suffix ${CMAKE_SHARED_LIBRARY_SUFFIX}
                         ${CMAKE_STATIC_LIBRARY_SUFFIX})
-            list(APPEND __names ${_prefix}${__name}${_suffix})
+            list(APPEND __cmsb_libnames ${_prefix}${__cmsb_libname}${_suffix})
         endforeach()
     endforeach()
 
-    find_library(${__NAME}_LIBRARY NAMES ${__names}
-                 PATHS ${INSTALL_ROOT}/lib/${__name})
-    FIND_PACKAGE_HANDLE_STANDARD_ARGS(${__NAME} DEFAULT_MSG ${__NAME}_LIBRARY)
+    find_library(${__CMSB_LIBNAME}_LIBRARY NAMES ${__cmsb_libnames}
+                 PATHS ${INSTALL_ROOT}/lib/${__cmsb_libname})
+    find_package_handle_standard_args(${__CMSB_LIBNAME} DEFAULT_MSG ${__CMSB_LIBNAME}_LIBRARY)
 endif()
 
 #Find paths to all header files part of the public API
@@ -40,57 +44,134 @@ foreach(__header_i ${__headers})
 
    #Make a list of where we found each header file and ensure they all have
    #the same include path
-   list(APPEND ${__name}_HEADERS ${__file_name}_INCLUDE_DIR)
+   list(APPEND ${__cmsb_libname}_HEADERS ${__file_name}_INCLUDE_DIR)
 
    #If another dependency has the same include this value is still set..
    unset(${__file_name}_INCLUDE_DIR CACHE)
-   find_path(${__file_name}_INCLUDE_DIR ${__name}/${__header_i}
+   find_path(${__file_name}_INCLUDE_DIR ${__cmsb_libname}/${__header_i}
              PATHS ${INSTALL_ROOT}/include)
    #All header files better result in same include path...
-   if(${__NAME}_INCLUDE_DIR)
-       assert_strings_are_equal(${__NAME}_INCLUDE_DIR
+   if(${__CMSB_LIBNAME}_INCLUDE_DIR)
+       assert_strings_are_equal(${__CMSB_LIBNAME}_INCLUDE_DIR
                                 ${__file_name}_INCLUDE_DIR)
    else()
-       set(${__NAME}_INCLUDE_DIR ${${__file_name}_INCLUDE_DIR})
+       set(${__CMSB_LIBNAME}_INCLUDE_DIR ${${__file_name}_INCLUDE_DIR})
    endif()
 endforeach()
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(${__NAME} DEFAULT_MSG  "${${__name}_HEADERS}")
+find_package_handle_standard_args(${__CMSB_LIBNAME} DEFAULT_MSG  "${${__cmsb_libname}_HEADERS}")
 
 #find_package will only crash for a variable of the same case
-set(${__name}_FOUND ${${__NAME}_FOUND})
+#set(${__cmsb_libname}_FOUND ${${__CMSB_LIBNAME}_FOUND})
 
 
-set(${__NAME}_LIBRARIES ${${__NAME}_LIBRARY})
-set(${__NAME}_INCLUDE_DIRS ${${__NAME}_INCLUDE_DIR})
-set(${__NAME}_COMPILE_OPTIONS ${${__NAME}_COMPILE_OPTIONS})
-set(${__NAME}_COMPILE_DEFINITIONS ${${__NAME}_COMPILE_DEFINITIONS})
+set(${__CMSB_LIBNAME}_LIBRARIES ${${__CMSB_LIBNAME}_LIBRARY})
+set(${__CMSB_LIBNAME}_INCLUDE_DIRS ${${__CMSB_LIBNAME}_INCLUDE_DIR})
+set(${__CMSB_LIBNAME}_COMPILE_DEFINITIONS ${${__CMSB_LIBNAME}_COMPILE_DEFINITIONS})
 
-#set(TAMM_EXTRA_LIBS "@TAMM_EXTRA_LIBS@")
-#set(USE_BLIS @USE_BLIS@)
-#set(USE_CUTENSOR @USE_CUTENSOR@)
-#set(USE_OPENMP @USE_OPENMP@)
-#set(USE_CUDA @USE_CUDA@)
-#set(USE_GA_DEV @USE_GA_DEV@)
-#set(USE_SCALAPACK @USE_SCALAPACK@)
-#set(CUDA_MAXREGCOUNT @CUDA_MAXREGCOUNT@)
+set(CMAKE_CXX_STANDARD @CMAKE_CXX_STANDARD@)
+set(USE_HIP   @USE_HIP@)
+#USE_CUDA implies USE_TALSH if true for now
+set(USE_CUDA  @USE_CUDA@)
+set(USE_DPCPP @USE_DPCPP@)
+
+if(USE_CUDA)
+  set(NV_GPU_ARCH @NV_GPU_ARCH@)
+  set(CUDA_MAXREGCOUNT @CUDA_MAXREGCOUNT@)
+  include(CheckLanguage)
+  check_language(CUDA)
+  if(CMAKE_CUDA_COMPILER)
+      enable_language(CUDA)
+      set(CMAKE_CUDA_ARCHITECTURES ${NV_GPU_ARCH})
+      set(CMAKE_CUDA_FLAGS "--maxrregcount ${CUDA_MAXREGCOUNT} --use_fast_math -DUSE_CUDA")
+  endif()  
+endif()
+
+if(${__CMSB_LIBNAME} STREQUAL TAMM)
+  string (REPLACE " " ";" TAMM_CXX_FLAGS "@TAMM_CXX_FLAGS@")
+  set(${__CMSB_LIBNAME}_COMPILE_OPTIONS ${TAMM_CXX_FLAGS})
+  if(USE_DPCPP)
+    list(APPEND ${__CMSB_LIBNAME}_COMPILE_OPTIONS -Xsycl-target-backend "-device @SYCL_TBE@")
+  endif()
+  unset(TAMM_CXX_FLAGS)
+
+  string (REPLACE " " ";" TAMM_EXTRA_LIBS "@TAMM_EXTRA_LIBS@")
+  list(APPEND ${__CMSB_LIBNAME}_LIBRARIES ${TAMM_EXTRA_LIBS})
+  unset(TAMM_EXTRA_LIBS)
+endif()
+
+set(__depends @CMSB_DEPENDENCIES@)
+set(__depends_tlist HPTT TALSH GauXC)
+set(__tip @CMAKE_INSTALL_PREFIX@)
+set(__tip_stage @STAGE_DIR@/@CMAKE_INSTALL_PREFIX@)
+
 set(LibInt2_ROOT @LibInt2_ROOT@)
-set(HDF5_ROOT @HDF5_ROOT@)
+#set(HDF5_ROOT @HDF5_ROOT@)
 
-#USE_TALSH,LAPACK_ILP64
+#list(PREPEND CMAKE_MODULE_PATH @STAGE_DIR@/@CMAKE_INSTALL_PREFIX@)
+#list(PREPEND CMAKE_MODULE_PATH @CMAKE_INSTALL_PREFIX@)
 
 #Find the dependencies
 #include(DependencyMacros)
-#set(__depends @CMSB_DEPENDENCIES@)
-#foreach(__depend_i ${__depends})
-#    cmsb_find_dependency(${__depend_i})
-#    dependency_to_variables(${__depend_i} ${__NAME}_INCLUDE_DIRS
-#                                          ${__NAME}_LIBRARIES
-#                                          ${__NAME}_COMPILE_OPTIONS
-#                                          ${__NAME}_COMPILE_DEFINITIONS)
-#endforeach()
+#cmsb_find_dependency(${__depend_i})
+foreach(__depend_i ${__depends})
 
-#Print our hardwork out
-#message(STATUS "Found ${__name} include paths: ${${__NAME}_INCLUDE_DIRS}")
-#message(STATUS "Found ${__name} libraries: ${${__NAME}_LIBRARIES}")
-#message(STATUS "Found ${__name} options: ${${__NAME}_COMPILE_OPTIONS}")
-#message(STATUS "Found ${__name} definitions: ${${__NAME}_COMPILE_DEFINITIONS}")
+    string(TOLOWER ${__depend_i} __depend_lc)
+    set(__depend_cfg ${__depend_lc}-config.cmake)
+
+    set(__cur_dep ${__depend_lc})
+    if(${__depend_i} STREQUAL "MSGSL")
+      set(__cur_dep "Microsoft.GSL")
+      set(__depend_cfg "Microsoft.GSLConfig.cmake")
+      list(APPEND ${__CMSB_LIBNAME}_LIBRARIES Microsoft.GSL::GSL)
+    elseif(${__depend_i} STREQUAL "NJSON")
+      set(__cur_dep "nlohmann_json")
+      set(__depend_cfg "nlohmann_jsonConfig.cmake")
+      set(CMAKE_FIND_PACKAGE_NAME nlohmann_json)
+      list(APPEND ${__CMSB_LIBNAME}_LIBRARIES nlohmann_json::nlohmann_json)
+    elseif(${__depend_i} STREQUAL "Eigen3")
+      set(__depend_cfg "Eigen3Config.cmake")  
+      list(APPEND ${__CMSB_LIBNAME}_LIBRARIES Eigen3::Eigen)
+    elseif(${__depend_i} STREQUAL "LibInt2")
+      set(_dep_pp ${${__depend_i}_ROOT})
+      list(APPEND ${__CMSB_LIBNAME}_LIBRARIES Libint2::cxx)         
+    elseif(${__depend_i} STREQUAL "GlobalArrays")
+      set(__cur_dep ${__depend_i})   
+      list(APPEND ${__CMSB_LIBNAME}_LIBRARIES GlobalArrays::ga)
+    elseif(${__depend_i} STREQUAL "DOCTEST")
+      set(__depend_cfg ${__depend_lc}Config.cmake)
+      list(APPEND ${__CMSB_LIBNAME}_LIBRARIES doctest::doctest)         
+    elseif(${__depend_i} STREQUAL "HDF5")
+      list(APPEND ${__CMSB_LIBNAME}_LIBRARIES hdf5-static)         
+    elseif(${__depend_i} IN_LIST __depends_tlist)
+      #HPTT,TALSH,GauXC
+      list(APPEND ${__CMSB_LIBNAME}_LIBRARIES ${__depend_lc}::${__depend_lc})         
+    endif()
+
+    if(${__depend_i} STREQUAL "BLIS")
+        set(BLIS_ROOT ${__tip} ${__tip_stage})
+        find_package(BLIS)
+        list(APPEND ${__CMSB_LIBNAME}_LIBRARIES ${BLIS_LIBRARIES})  
+    else()
+        find_path(_dep_ct_${__cur_dep} ${__depend_cfg}
+                HINTS ${__tip} ${__tip_stage} ${_dep_pp}
+                PATH_SUFFIXES lib/cmake/${__cur_dep}
+                            lib64/cmake/${__cur_dep}
+                            share/cmake/${__cur_dep}
+                            share/${__cur_dep}/cmake
+                NO_DEFAULT_PATH
+            )
+        include(${_dep_ct_${__cur_dep}}/${__depend_cfg})
+    endif()
+
+    if(${__depend_i} STREQUAL "TAMM")
+      list(APPEND ${__CMSB_LIBNAME}_LIBRARIES ${TAMM_LIBRARIES}) 
+    endif()
+endforeach()
+
+#list(REMOVE_AT CMAKE_MODULE_PATH 0)
+#list(REMOVE_AT CMAKE_MODULE_PATH 0)
+
+message(STATUS "Found ${__CMSB_LIBNAME} include paths: ${${__CMSB_LIBNAME}_INCLUDE_DIRS}")
+message(STATUS "Found ${__CMSB_LIBNAME} libraries: ${${__CMSB_LIBNAME}_LIBRARIES}")
+message(STATUS "Found ${__CMSB_LIBNAME} compile options: ${${__CMSB_LIBNAME}_COMPILE_OPTIONS}")
+#message(STATUS "Found ${__CMSB_LIBNAME} definitions: ${${__CMSB_LIBNAME}_COMPILE_DEFINITIONS}")

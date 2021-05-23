@@ -4,7 +4,7 @@ project(CMakeBuild VERSION 0.0.0 LANGUAGES C CXX Fortran)
 include( FetchContent )
 FetchContent_Declare(linalg-cmake-modules
   GIT_REPOSITORY https://github.com/ajaypanyala/linalg-cmake-modules.git
-  GIT_TAG 206ae02ea5e9e53065f76231fd2a758079433dba
+  GIT_TAG f6629057033a9dd31416b259f83233340106fa78
 )
 
 FetchContent_MakeAvailable( linalg-cmake-modules )
