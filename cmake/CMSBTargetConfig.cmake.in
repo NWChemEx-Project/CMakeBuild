@@ -153,7 +153,7 @@ foreach(__depend_i ${__depends})
         list(APPEND ${__CMSB_LIBNAME}_LIBRARIES ${BLIS_LIBRARIES})  
     else()
         find_path(_dep_ct_${__cur_dep} ${__depend_cfg}
-                HINTS ${__tip} ${__tip_stage} ${_dep_pp}
+                HINTS ${__tip} ${__tip_stage} ${_dep_pp} ${CMAKE_PREFIX_PATH}
                 PATH_SUFFIXES lib/cmake/${__cur_dep}
                             lib64/cmake/${__cur_dep}
                             share/cmake/${__cur_dep}
@@ -170,6 +170,34 @@ endforeach()
 
 #list(REMOVE_AT CMAKE_MODULE_PATH 0)
 #list(REMOVE_AT CMAKE_MODULE_PATH 0)
+
+set(__cmsb_lib_is_shared @BUILD_SHARED_LIBS@)
+set(__cmsb_target_exp ${__cmsb_libname}::${__cmsb_libname})
+
+if(NOT TARGET ${__cmsb_target_exp})
+  if(__cmsb_lib_is_shared)
+    add_library(${__cmsb_target_exp} SHARED IMPORTED)
+  else()
+    add_library(${__cmsb_target_exp} STATIC IMPORTED)
+  endif()
+  set_target_properties(${__cmsb_target_exp} PROPERTIES
+    INTERFACE_COMPILE_OPTIONS "${${__CMSB_LIBNAME}_COMPILE_OPTIONS}"
+    INTERFACE_INCLUDE_DIRECTORIES "${${__CMSB_LIBNAME}_INCLUDE_DIRS}"
+    INTERFACE_LINK_LIBRARIES "${${__CMSB_LIBNAME}_LIBRARIES}"
+  )
+
+  set(__cmsb_build_type @CMAKE_BUILD_TYPE@)
+  string(TOUPPER ${__cmsb_build_type} __cmsb_build_type)
+
+  set_property(TARGET ${__cmsb_target_exp} APPEND PROPERTY IMPORTED_CONFIGURATIONS ${__cmsb_build_type})
+  set_target_properties(${__cmsb_target_exp} PROPERTIES
+    IMPORTED_LINK_INTERFACE_LANGUAGES_${__cmsb_build_type} "C;CXX;Fortran"
+    IMPORTED_LOCATION_${__cmsb_build_type} "${${__CMSB_LIBNAME}_LIBRARY}"
+  )
+  set_property(TARGET ${__cmsb_target_exp} PROPERTY IMPORTED_GLOBAL TRUE)
+endif()
+
+set(${__CMSB_LIBNAME}_LIBRARIES ${__cmsb_target_exp})
 
 message(STATUS "Found ${__CMSB_LIBNAME} include paths: ${${__CMSB_LIBNAME}_INCLUDE_DIRS}")
 message(STATUS "Found ${__CMSB_LIBNAME} libraries: ${${__CMSB_LIBNAME}_LIBRARIES}")

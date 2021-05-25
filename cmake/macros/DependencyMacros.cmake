@@ -165,7 +165,11 @@ function(cmsb_find_dependency __name)
                             #  PATHS ${DEP_PATHS}
                              NO_DEFAULT_PATH
                             )    
-                # find_package(${__name} QUIET)       
+                # find_package(${__name} QUIET)  
+                if(NOT ${_dep_name}_FOUND)     
+                  find_package(${_dep_name} CONFIG
+                    HINTS ${CMAKE_PREFIX_PATH} NO_DEFAULT_PATH)  
+                endif()
             else()
                 find_package(${__name})            
             endif()
