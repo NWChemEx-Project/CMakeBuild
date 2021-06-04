@@ -183,21 +183,16 @@ function(add_mpi_cuda_unit_test __name __cudasrcs __np __testargs)
     set(__file_copy ${__test_file})
     make_full_paths(__file_copy)
     
-    foreach(__depend ${CMSB_DEPENDENCIES})
-        cmsb_find_dependency(${__depend})
-        get_property(_tmp_incs TARGET ${__depend}_External
-                PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
-        list(APPEND cmsb_cuda_incs ${_tmp_incs})
-    endforeach()
 
     set(__testcudalib "cmsb_cudalib_${__name}")
 
     add_library(${__testcudalib} ${__cudasrcs})
-    target_include_directories(${__testcudalib} PRIVATE ${cmsb_cuda_incs} ${CUDA_TOOLKIT_INCLUDE})
     target_compile_options( ${__testcudalib}
     PRIVATE
       $<$<COMPILE_LANGUAGE:CUDA>: -Xptxas -v > 
     )
+    cmsb_set_up_target(${__testcudalib} "" "" ${_dest_install_folder})
+
     # set_property(TARGET ${__testcudalib} PROPERTY CUDA_SEPARABLE_COMPILATION ON)
 
     add_executable(${__name} ${__file_copy})
