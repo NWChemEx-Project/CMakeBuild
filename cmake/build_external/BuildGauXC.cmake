@@ -60,10 +60,14 @@
         endif()
     endif()
 
+    set(GXC_GIT_TAG e85fae64044e3bdd04a7650a22eb4b0e33c159ef)
+    if(ENABLE_DEV_MODE)
+      set(GXC_GIT_TAG master)
+    endif()
 
 ExternalProject_Add(GauXC_External
     GIT_REPOSITORY https://github.com/ajaypanyala/GauXC.git
-    GIT_TAG e85fae64044e3bdd04a7650a22eb4b0e33c159ef
+    GIT_TAG ${GXC_GIT_TAG}
     UPDATE_DISCONNECTED 1
     CMAKE_ARGS ${DEPENDENCY_CMAKE_OPTIONS} -DCMAKE_CXX_FLAGS_INIT="-DOMPI_SKIP_MPICXX" -DGAUXC_ENABLE_TESTS=OFF
         -DGAUXC_ENABLE_CUDA=${USE_CUDA} -DENABLE_XHOST=OFF -DCMAKE_CUDA_ARCHITECTURES=${NV_GPU_ARCH} 

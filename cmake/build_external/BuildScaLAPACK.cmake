@@ -11,6 +11,10 @@ endforeach()
 
 # set(ScaLAPACK_URL https://github.com/Reference-ScaLAPACK/scalapack)
 set(ScaLAPACK_URL https://github.com/NWChemEx-Project/scalapack)
+set(SL_GIT_TAG 61c60f570666d5324d086dec37287ffe920e115d)
+if(ENABLE_DEV_MODE)
+  set(SL_GIT_TAG master)
+endif()
 
 # append platform-specific optimization options for non-Debug builds
 # set(ScaLAPACK_FLAGS "-Wno-unused-variable -O3")
@@ -38,7 +42,7 @@ endif()
 
 ExternalProject_Add(ScaLAPACK_External
                 GIT_REPOSITORY ${ScaLAPACK_URL}
-                GIT_TAG 61c60f570666d5324d086dec37287ffe920e115d
+                GIT_TAG ${SL_GIT_TAG}
                 UPDATE_DISCONNECTED 1
                 CMAKE_ARGS
                     ${DEPENDENCY_CMAKE_OPTIONS}

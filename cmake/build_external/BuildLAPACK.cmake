@@ -4,6 +4,10 @@ find_or_build_dependency(BLAS)
 package_dependency(BLAS DEPENDENCY_PATHS)
 
 set(LAPACK_URL https://github.com/Reference-LAPACK/lapack.git)
+set(LAPACK_GIT_TAG 8960228bf20c3d5bf718ebd63e92041992bf29d9)
+if(ENABLE_DEV_MODE)
+  set(LAPACK_GIT_TAG master)
+endif()
 
 # append platform-specific optimization options for non-Debug builds
 # set(LAPACK_FLAGS "-Wno-unused-variable")
@@ -24,7 +28,7 @@ endif()
 
 ExternalProject_Add(LAPACK_External
         GIT_REPOSITORY ${LAPACK_URL}
-        GIT_TAG 8960228bf20c3d5bf718ebd63e92041992bf29d9
+        GIT_TAG ${LAPACK_GIT_TAG}
         UPDATE_DISCONNECTED 1
         CMAKE_ARGS ${DEPENDENCY_CMAKE_OPTIONS}
                    -DUSE_OPTIMIZED_BLAS=ON

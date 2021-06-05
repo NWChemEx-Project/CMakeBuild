@@ -2,9 +2,14 @@ cmake_minimum_required(VERSION 3.18.0)
 project(CMakeBuild VERSION 0.0.0 LANGUAGES C CXX Fortran)
 
 include( FetchContent )
+set(LAM_GIT_TAG f6629057033a9dd31416b259f83233340106fa78)
+if(ENABLE_DEV_MODE)
+  set(LAM_GIT_TAG main)
+endif()
+
 FetchContent_Declare(linalg-cmake-modules
   GIT_REPOSITORY https://github.com/ajaypanyala/linalg-cmake-modules.git
-  GIT_TAG f6629057033a9dd31416b259f83233340106fa78
+  GIT_TAG ${LAM_GIT_TAG}
 )
 
 FetchContent_MakeAvailable( linalg-cmake-modules )

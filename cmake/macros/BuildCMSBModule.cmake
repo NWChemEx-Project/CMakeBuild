@@ -29,6 +29,7 @@ function(build_cmsb_module SUPER_PROJECT_ROOT)
     option_w_default(USE_SCALAPACK OFF)
     option_w_default(CUDA_MAXREGCOUNT 64)
     option_w_default(BUILD_SHARED_LIBS OFF)
+    option_w_default(ENABLE_DEV_MODE OFF)
 
 
     if(USE_DPCPP)
@@ -141,7 +142,7 @@ function(build_cmsb_module SUPER_PROJECT_ROOT)
     ################################################################################
 
 
-    bundle_cmake_strings(CORE_CMAKE_STRINGS LINALG_VENDOR)
+    bundle_cmake_strings(CORE_CMAKE_STRINGS LINALG_VENDOR ENABLE_DEV_MODE)
     set(DEPENDENCY_ROOT_DIRS)
 
     foreach(__project ${CMSB_PROJECTS})
