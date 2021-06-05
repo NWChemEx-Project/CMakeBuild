@@ -127,8 +127,10 @@ else()
     endif()
 
     set(GA_REPO "https://github.com/GlobalArrays/ga.git")
+    set(GA_GIT_TAG f0a8d35f6aa1102bfb643295b63a0baa20bf24e3)
     if(USE_GA_DEV)
         set(GA_REPO "https://github.com/ajaypanyala/ga.git")
+        set(GA_GIT_TAG develop)
     endif()
 
     if(GCCROOT)
@@ -213,7 +215,7 @@ else()
     ExternalProject_Add(GlobalArrays_External
         # # URL https://github.com/GlobalArrays/ga/releases/download/v${PROJECT_VERSION}/ga-${PROJECT_VERSION}.tar.gz
         GIT_REPOSITORY ${GA_REPO}
-        GIT_TAG develop
+        GIT_TAG ${GA_GIT_TAG}
         UPDATE_DISCONNECTED 1
         CMAKE_ARGS ${DEPENDENCY_CMAKE_OPTIONS} -DENABLE_BLAS=ON -DLINALG_VENDOR=${LINALG_VENDOR} ${GA_LINALG_ROOT}
         ${GA_DPCPP} -DGA_RUNTIME=${GA_RUNTIME} -DENABLE_PROFILING=${USE_GA_PROFILER} ${GA_CMSB_EXTRA_LIBS} ${Clang_GCCROOT}

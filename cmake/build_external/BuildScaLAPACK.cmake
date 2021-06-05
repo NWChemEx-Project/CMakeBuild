@@ -38,6 +38,7 @@ endif()
 
 ExternalProject_Add(ScaLAPACK_External
                 GIT_REPOSITORY ${ScaLAPACK_URL}
+                GIT_TAG 61c60f570666d5324d086dec37287ffe920e115d
                 UPDATE_DISCONNECTED 1
                 CMAKE_ARGS
                     ${DEPENDENCY_CMAKE_OPTIONS}

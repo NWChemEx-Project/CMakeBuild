@@ -1,7 +1,7 @@
 bundle_cmake_args(PYBIND11_PYTHON PYTHON_INCLUDE_DIRS PYTHON_LIBRARIES)
 ExternalProject_Add(pybind11_External
     GIT_REPOSITORY https://github.com/pybind/pybind11
-    GIT_TAG 8edc147d67ca85a93ed1f53628004528dc36a04d
+    GIT_TAG e25b1505dbca042289c4076141092cff49b0b96b
     CMAKE_ARGS ${DEPENDENCY_CMAKE_OPTIONS}
                ${PYBIND11_PYTHON}
                -DPYBIND11_TEST=FALSE
