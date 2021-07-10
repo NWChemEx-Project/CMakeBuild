@@ -81,8 +81,8 @@ function(build_cmsb_module SUPER_PROJECT_ROOT)
     string(TOUPPER ${CMAKE_BUILD_TYPE} CMSB_CMAKE_BUILD_TYPE)
     set(CMSB_CXX_FLAGS CMAKE_CXX_FLAGS_${CMSB_CMAKE_BUILD_TYPE})
 
-    if(NOT BLAS_INT4 AND USE_SCALAPACK AND NOT "${LINALG_VENDOR}" STREQUAL "IntelMKL")
-        message( FATAL_ERROR "ReferenceScaLAPACK with ILP64 interface is currently not supported. Please set -DBLAS_INT4=ON" )
+    if(NOT BLAS_INT4 AND USE_SCALAPACK) # AND NOT "${LINALG_VENDOR}" STREQUAL "IntelMKL")
+        message( FATAL_ERROR "ScaLAPACK build with ILP64 interface is currently not supported. Please set -DBLAS_INT4=ON" )
     endif()
 
     print_banner("Configuration Options")
